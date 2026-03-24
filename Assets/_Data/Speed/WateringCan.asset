@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804f64c9d65b4614ea07e766e8965791, type: 3}
+  m_Name: WateringCan
+  m_EditorClassIdentifier: Assembly-CSharp::ToolItemData
+  displayName: WateringCan
+  icon: {fileID: 21300000, guid: 2a58fcfbf9908134ba736113fe23b9bc, type: 3}
+  itemType: 0
+  isStackable: 0
+  maxStack: 99
+  sellPrice: 25
+  buyPrice: 39
+  toolType: 5
+  toolTier: 1
+  baseDamage: 10
+  durability: 10
+  staminaCost: 5
+  toolPrefab: {fileID: 6613215776599468368, guid: c029316858c5c4d44b2ddf08e9ef372b, type: 3}

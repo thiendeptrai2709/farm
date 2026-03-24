@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804f64c9d65b4614ea07e766e8965791, type: 3}
+  m_Name: Plow
+  m_EditorClassIdentifier: Assembly-CSharp::ToolItemData
+  displayName: Plow Stone
+  icon: {fileID: 21300000, guid: 4af16b6199d7fad4bb944d2abd463e1c, type: 3}
+  itemType: 0
+  isStackable: 0
+  maxStack: 99
+  sellPrice: 50
+  buyPrice: 63
+  toolType: 3
+  toolTier: 1
+  baseDamage: 10
+  durability: 25
+  staminaCost: 5
+  toolPrefab: {fileID: 7871065577559686825, guid: 2023a4fc9b1987f48af2a277f2a69811, type: 3}

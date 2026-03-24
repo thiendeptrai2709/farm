@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b6307e14f37d624986ee407cf850f0b, type: 3}
+  m_Name: TomatoSeed
+  m_EditorClassIdentifier: Assembly-CSharp::SeedItemData
+  displayName: Tomato Seed
+  icon: {fileID: 21300000, guid: 2b423c336a7c8cc41ba35c4a6971837d, type: 3}
+  itemType: 2
+  isStackable: 1
+  maxStack: 36
+  sellPrice: 7
+  buyPrice: 15
+  growTime: 5760
+  cropPrefab: {fileID: 4609520284317887856, guid: 602d12c37ec5f4945b72e767e9676ef9, type: 3}
+  yieldItem: {fileID: 11400000, guid: 2b6f74bdbac13704bb2e62e8d1d17a07, type: 2}
+  yieldAmount: 10
+  woodItem: {fileID: 0}
+  woodAmount: 3
+  fruitModelPrefab: {fileID: 0}
+  isMultiHarvest: 1
+  maxHarvestTimes: 3
+  regrowTime: 2880
+  isBigTree: 0
