@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FishTier1
   m_EditorClassIdentifier: Assembly-CSharp::FishItemData
   displayName: Tier1
-  icon: {fileID: 21300000, guid: 12a2b2176d386a94ba6b5099811eecea, type: 3}
+  icon: {fileID: 21300000, guid: 013aef0678ad4de44a2aae4c99b759eb, type: 3}
   itemType: 5
   isStackable: 0
   maxStack: 1

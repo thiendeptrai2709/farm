@@ -14,6 +14,8 @@ public class PlayerInteraction : MonoBehaviour
 
     private PlayerScanner scanner; // Tham chiếu sang Mắt Radar
     public IInteractable currentTarget => scanner != null ? scanner.currentTarget : null;
+
+
     private void Awake()
     {
         scanner = GetComponent<PlayerScanner>();
