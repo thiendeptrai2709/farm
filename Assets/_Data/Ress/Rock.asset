@@ -19,3 +19,4 @@ MonoBehaviour:
   maxStack: 36
   sellPrice: 12
   buyPrice: 15
+  materialCategory: 1

@@ -111,4 +111,8 @@ public class InventoryUI : MonoBehaviour
         inventoryPanel.SetActive(false);
         // KHÔNG fire OnInventoryUIToggled ở đây
     }
+    public bool IsOpen()
+    {
+        return inventoryPanel != null && inventoryPanel.activeSelf;
+    }
 }

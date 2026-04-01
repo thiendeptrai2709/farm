@@ -24,11 +24,27 @@ public class DayNightSystem : MonoBehaviour
     public List<SkyboxMapping> skyboxPhases;
     public float transitionSpeed = 0.5f; // Tốc độ hòa trộn màu
 
+    [Header("Hiệu ứng Âm U khi Mưa")]
+    public float sunnyIntensity = 1.0f;  // Độ chói lúc nắng
+    public float rainyIntensity = 0.3f;  // Độ chói lúc mưa (âm u)
+    public float lightChangeSpeed = 0.5f;
+
     private bool dayTriggerLocked = false;
+
+    [Header("Hiệu ứng Sương Mù (Fog)")]
+    public float sunnyFogDensity = 0.002f; // Nắng: Sương mỏng dính (gần như ko có)
+    public float rainyFogDensity = 0.03f;  // Mưa: Sương mù mịt che khuất tầm nhìn
+    public Color rainyFogColor = new Color(0.5f, 0.5f, 0.5f);
 
     private void Start()
     {
         timeClock = GetComponent<TimeSystem>();
+        RenderSettings.fog = true;
+        RenderSettings.fogMode = FogMode.ExponentialSquared; // Kiểu sương mù đẹp và chân thực nhất
+        RenderSettings.fogColor = rainyFogColor;
+
+
+
     }
 
     private void Update()
@@ -39,6 +55,18 @@ public class DayNightSystem : MonoBehaviour
         // 1. Xoay mặt trời
         float rotX = (p * 360f) - 90f;
         sunLight.transform.localRotation = Quaternion.Euler(rotX, 170f, 0f);
+
+        float targetIntensity = sunnyIntensity;
+        float targetFog = sunnyFogDensity;
+
+        if (WeatherManager.Instance != null && WeatherManager.Instance.currentWeather == WeatherState.Raining)
+        {
+            targetIntensity = rainyIntensity;
+            targetFog = rainyFogDensity;
+        }
+        // Từ từ làm tối/sáng mặt trời cho mượt
+        sunLight.intensity = Mathf.Lerp(sunLight.intensity, targetIntensity, Time.deltaTime * lightChangeSpeed);
+        RenderSettings.fogDensity = Mathf.Lerp(RenderSettings.fogDensity, targetFog, Time.deltaTime * lightChangeSpeed);
 
         // 2. HIỆN GIỜ VÀ PHÚT LÊN UI
         if (timeUI != null)

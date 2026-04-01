@@ -190,6 +190,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""65a051e4-c881-4282-b717-150642e664bb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -357,6 +366,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Split"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""660790e9-e68a-4621-a189-211a4dd6887e"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -376,6 +396,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_HotbarScroll = m_Player.FindAction("HotbarScroll", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Split = m_Player.FindAction("Split", throwIfNotFound: true);
+        m_Player_BuildMenu = m_Player.FindAction("BuildMenu", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -467,6 +488,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_HotbarScroll;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Split;
+    private readonly InputAction m_Player_BuildMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -522,6 +544,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Split".
         /// </summary>
         public InputAction @Split => m_Wrapper.m_Player_Split;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/BuildMenu".
+        /// </summary>
+        public InputAction @BuildMenu => m_Wrapper.m_Player_BuildMenu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -581,6 +607,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Split.started += instance.OnSplit;
             @Split.performed += instance.OnSplit;
             @Split.canceled += instance.OnSplit;
+            @BuildMenu.started += instance.OnBuildMenu;
+            @BuildMenu.performed += instance.OnBuildMenu;
+            @BuildMenu.canceled += instance.OnBuildMenu;
         }
 
         /// <summary>
@@ -625,6 +654,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Split.started -= instance.OnSplit;
             @Split.performed -= instance.OnSplit;
             @Split.canceled -= instance.OnSplit;
+            @BuildMenu.started -= instance.OnBuildMenu;
+            @BuildMenu.performed -= instance.OnBuildMenu;
+            @BuildMenu.canceled -= instance.OnBuildMenu;
         }
 
         /// <summary>
@@ -742,5 +774,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSplit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BuildMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBuildMenu(InputAction.CallbackContext context);
     }
 }

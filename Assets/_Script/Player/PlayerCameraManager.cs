@@ -15,6 +15,9 @@ public class PlayerCameraManager : MonoBehaviour
     private bool isShopOpen = false;
     private bool isBuilderOpen = false;
     private bool isSiteUIOpen = false;
+    private bool isHammerOpen = false;
+    private bool isAnimalUIOpen = false;
+    private bool isFoodTroughOpen = false;
 
     public Behaviour cameraInputProvider;
     public GameObject cameraObject;
@@ -23,8 +26,14 @@ public class PlayerCameraManager : MonoBehaviour
     public Texture2D cursorTexture; 
     public Vector2 cursorHotspot = Vector2.zero;
 
+    public Texture2D aimCrosshairTexture;
+    public Vector2 crosshairHotspot = new Vector2(16, 16);
+
     public GameObject fishingCamera;
     private bool isFishingCameraActive = false;
+
+    public GameObject throwCamera; // Kéo Virtual Camera ngắm ném vào đây
+    private bool isThrowCameraActive = false;
     private void Awake()
     {
         // [ĐÃ THÊM 1.1]: Khởi tạo Singleton
@@ -39,6 +48,7 @@ public class PlayerCameraManager : MonoBehaviour
         {
             Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
         }
+        SetNormalCursor();
 
         SetCursorState(true);
 
@@ -90,20 +100,47 @@ public class PlayerCameraManager : MonoBehaviour
         {
             SiteConstructionUIManager.Instance.OnSiteConstructionUIToggled += (isOpen) => {
                 isSiteUIOpen = isOpen;
-
-                // Đồng bộ luôn: Vì bảng Nộp đồ mở ra là ép Balo mở theo, nên phải báo cho hệ thống biết là Balo cũng đang mở!
                 isInventoryOpen = isOpen;
 
                 UpdateCursorState();
             };
         }
-    }
+        if (HammerUIManager.Instance != null)
+        {
+            HammerUIManager.Instance.OnHammerUIToggled += (isOpen) => {
+                isHammerOpen = isOpen;
+                UpdateCursorState();
+            };
+        }
+        if (AnimalPenUIManager.Instance != null)
+        {
+            AnimalPenUIManager.Instance.OnAnimalUIToggled += (isOpen) => {
+                isAnimalUIOpen = isOpen;
+                UpdateCursorState();
+            };
+        }
+        if (FoodTroughUIManager.Instance != null)
+        {
+            FoodTroughUIManager.Instance.OnTroughUIToggled += (isOpen) => {
+                isFoodTroughOpen = isOpen;
+                isInventoryOpen = isOpen;
+                if (InventoryUI.Instance != null)
+                    InventoryUI.Instance.TogglePanel(isOpen);
 
+                UpdateCursorState();
+            };
+        }
+    }
     private void Update()
     {
         // 1. NÚT TAB: Bật/Tắt túi đồ
         if (inputHandler.InventoryTriggered)
         {
+            if (isHammerOpen)
+            {
+                if (HammerUIManager.Instance != null) HammerUIManager.Instance.CloseUI();
+                return;
+            }
             if (isChestOpen)
             {
                 InventoryManager.Instance.CloseChest();
@@ -119,7 +156,11 @@ public class PlayerCameraManager : MonoBehaviour
                 if (SiteConstructionUIManager.Instance != null) SiteConstructionUIManager.Instance.CloseUI();
                 return; // Thoát, không cho Balo tự tắt mở lung tung
             }
-
+            if (isFoodTroughOpen)
+            {
+                if (FoodTroughUIManager.Instance != null) FoodTroughUIManager.Instance.CloseTroughUI();
+                return; // Thoát luôn, chặn không cho Balo tự tắt/mở lung tung
+            }
             isInventoryOpen = !isInventoryOpen;
 
             if (InventoryUI.Instance != null)
@@ -127,11 +168,8 @@ public class PlayerCameraManager : MonoBehaviour
 
             UpdateCursorState();
         }
-
-
-
         // 3. Chuột TRÁI: Nếu đang mở UI mà click ra ngoài viền thì khóa chuột lại
-        if (inputHandler.ClickTriggered && !isCursorLocked && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen)
+        if (inputHandler.ClickTriggered && !isCursorLocked && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen)
         {
             SetCursorState(true);
         }
@@ -140,7 +178,7 @@ public class PlayerCameraManager : MonoBehaviour
     // Hàm tổng hợp: Chỉ khóa chuột khi TẤT CẢ các bảng UI đều đang tắt
     private void UpdateCursorState()
     {
-        if (isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen)
+        if (isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen)
         {
             SetCursorState(false); // Nhả chuột ra để kéo thả UI
 
@@ -154,7 +192,7 @@ public class PlayerCameraManager : MonoBehaviour
             // Mở khóa Camera
             if (cameraInputProvider != null)
             {
-                cameraInputProvider.enabled = !isFishingCameraActive;
+                cameraInputProvider.enabled = !isFishingCameraActive && !isThrowCameraActive;
             }
         }
     }
@@ -173,6 +211,20 @@ public class PlayerCameraManager : MonoBehaviour
             Cursor.visible = true;
         }
     }
+    public void SetNormalCursor()
+    {
+        if (cursorTexture != null)
+            Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
+        else
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+    }
+    public void SetAimCrosshairCursor()
+    {
+        if (aimCrosshairTexture != null)
+            Cursor.SetCursor(aimCrosshairTexture, crosshairHotspot, CursorMode.Auto);
+        else
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); // Nếu không có ảnh thì về chuột nhọn mặc định
+    }
     public void ToggleFishingCamera(bool isFishing)
     {
         isFishingCameraActive = isFishing; // Chốt cờ đang câu cá
@@ -181,6 +233,15 @@ public class PlayerCameraManager : MonoBehaviour
         {
             // Bật ảo ảnh Camera này lên, Cinemachine sẽ tự động mượt mà lướt tới
             fishingCamera.SetActive(isFishing);
+        }
+        UpdateCursorState();
+    }
+    public void ToggleThrowCamera(bool isAiming)
+    {
+        isThrowCameraActive = isAiming;
+        if (throwCamera != null)
+        {
+            throwCamera.SetActive(isAiming);
         }
         UpdateCursorState();
     }

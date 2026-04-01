@@ -18,6 +18,7 @@ public class PlayerAnimation : MonoBehaviour
     public float fallTimeout = 0.15f; // Thời gian châm chước (0.15s là chuẩn mực game AAA)
     private float fallTimeoutDelta;
 
+    private bool wasLocked = false;
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -41,7 +42,30 @@ public class PlayerAnimation : MonoBehaviour
         Vector2 input = inputHandler.MoveInput;
         bool isMoving = input.magnitude > 0.1f;
 
-        if (PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked)
+        bool isLocked = PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked;
+
+        // Detect đúng cái moment locked -> unlocked
+        if (wasLocked && !isLocked)
+        {
+            // Bơm thẳng giá trị vào Animator NGAY LẬP TỨC để đè cái Idle xuống
+            anim.SetBool("IsMoving", isMoving);
+
+            if (isMoving)
+            {
+                // Nếu đang đè phím, ép nó vọt luôn không cần làm mượt
+                anim.SetFloat("InputX", input.x);
+                anim.SetFloat("InputY", input.y);
+                anim.CrossFadeInFixedTime("Locomotion", 0.15f);
+            }
+            else
+            {
+                anim.SetFloat("InputX", 0f);
+                anim.SetFloat("InputY", 0f);
+            }
+        }
+        wasLocked = isLocked;
+
+        if (isLocked)
         {
             anim.SetBool("IsMoving", false);
 

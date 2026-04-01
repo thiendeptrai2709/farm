@@ -34,7 +34,29 @@ public class FarmPlot : MonoBehaviour, IInteractable
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) playerTransform = playerObj.transform;
+
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.OnWeatherChanged += HandleWeatherChange;
+            // Ép xử lý ngay lúc vừa spawn ra lỡ đang mưa sẵn
+            HandleWeatherChange(WeatherManager.Instance.currentWeather);
+        }
+
         UpdateVisuals();
+    }
+    private void HandleWeatherChange(WeatherState newWeather)
+    {
+        if (newWeather == WeatherState.Raining)
+        {
+            // Nếu trời mưa, mà đang trồng cây và chưa ướt -> Tự cho ướt luôn
+            if (currentState == PlotState.Planted && !isWatered)
+            {
+                isWatered = true;
+                UpdateVisuals();
+                growTimer += GetBaseTime() * 0.25f; // Mưa tự động buff 25% thời gian như tưới tay
+                Debug.Log("Trời mưa! Luống đất đã tự động ướt mèm!");
+            }
+        }
     }
     public void SetTargeted(bool targeted)
     {
@@ -100,6 +122,9 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
     public bool CanBeWatered()
     {
+        if (WeatherManager.Instance != null && WeatherManager.Instance.currentWeather == WeatherState.Raining)
+            return false;
+
         return !isWatered && HasPersonalItem(wateringCanItem);
     }
 
@@ -179,6 +204,12 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
         isWatered = false;
         isFertilized = false;
+
+        if (WeatherManager.Instance != null && WeatherManager.Instance.currentWeather == WeatherState.Raining)
+        {
+            isWatered = true;
+            growTimer += GetBaseTime() * 0.25f;
+        }
 
         UpdateVisuals();
         Debug.Log($"Đã trồng: {seedPlanted.displayName}. Cần {seedPlanted.growTime} giây để lớn.");
@@ -318,5 +349,31 @@ public class FarmPlot : MonoBehaviour, IInteractable
                 GrowUp();
             }
         }
+    }
+    public bool BeEatenByAnimal()
+    {
+        // Gà sẽ ăn cả hạt giống đang mọc (Planted) và cây đã lớn (Grown)
+        if (currentState == PlotState.Planted || currentState == PlotState.Grown)
+        {
+            // 1. Phá hủy hình ảnh cái cây/mầm
+            if (matureCropObject != null) Destroy(matureCropObject);
+            if (seedSprout) seedSprout.SetActive(false);
+
+            // 2. Reset luống đất về trạng thái vừa cuốc (Tilled) 
+            // Hoặc ông có thể dùng Destroy(gameObject) nếu muốn nó cày nát luôn cả luống đất
+            currentState = PlotState.Tilled;
+            plantedSeed = null;
+            growTimer = 0f;
+            currentHarvestCount = 0;
+            isWatered = false;
+            isFertilized = false;
+
+            UpdateVisuals();
+
+            Debug.LogWarning("BÁO ĐỘNG: Động vật đã ăn trộm cây trồng của bạn!");
+            return true; // Trả về true để báo cho con Gà biết là nó đã ăn no
+        }
+
+        return false; // Nếu đất trống thì không ăn được
     }
 }

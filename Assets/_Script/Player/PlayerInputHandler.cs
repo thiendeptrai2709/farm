@@ -19,6 +19,7 @@ public class PlayerInputHandler : MonoBehaviour
     public bool ArrowDownTriggered { get; private set; }
     public bool ArrowLeftTriggered { get; private set; }
     public bool ArrowRightTriggered { get; private set; }
+    public bool BuildMenuTriggered { get; private set; }
     public event Action OnSplitActionTriggered;
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class PlayerInputHandler : MonoBehaviour
         ClickTriggered = controls.Player.Click.WasPressedThisFrame();
         InteractTriggered = controls.Player.Interact.WasPressedThisFrame(); 
         InventoryTriggered = controls.Player.Inventory.WasPressedThisFrame();
+        BuildMenuTriggered = controls.Player.BuildMenu.WasPressedThisFrame();
 
         ScrollValue = controls.Player.HotbarScroll.ReadValue<Vector2>().y;
 
@@ -76,7 +78,9 @@ public class PlayerInputHandler : MonoBehaviour
             OnSplitActionTriggered?.Invoke();
         }
         // 3. XỬ LÝ LĂN CHUỘT KHI ĐANG CHƠI (Không cuộn khi mở Balo)
-        if (ScrollValue != 0 && Cursor.lockState == CursorLockMode.Locked)
+        bool isPlacingBuilding = (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing());
+
+        if (!isPlacingBuilding)
         {
             InventoryManager.Instance.ScrollHotbar(ScrollValue);
         }

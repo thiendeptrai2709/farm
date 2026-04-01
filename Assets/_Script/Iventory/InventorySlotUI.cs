@@ -227,8 +227,16 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                         return;
                     }
                 }
-
                 InventoryManager.Instance.SwapItems(draggedSlot.storageType, draggedSlot.slotIndex, this.storageType, this.slotIndex);
+                return;
+            }
+            UITroughDropSlot draggedTroughSlot = droppedObject.GetComponent<UITroughDropSlot>();
+            if (draggedTroughSlot != null)
+            {
+                if (FoodTroughUIManager.Instance != null)
+                {
+                    FoodTroughUIManager.Instance.HandleItemTakenBack(draggedTroughSlot.troughSlotIndex, this);
+                }
             }
         }
     }

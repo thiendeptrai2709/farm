@@ -22,6 +22,6 @@ MonoBehaviour:
   toolType: 4
   toolTier: 1
   baseDamage: 10
-  durability: 100
+  durability: 15
   staminaCost: 5
   toolPrefab: {fileID: 5292356741113627667, guid: a8a6b5a8455d56a42aad3e813e2c23f3, type: 3}

@@ -395,7 +395,7 @@ public class InventoryManager : MonoBehaviour
     public void ScrollHotbar(float scrollDelta)
     {
         if (PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked) return;
-
+        if (Mathf.Abs(scrollDelta) < 0.1f) return;
         if (selectedHotbarIndex == -1)
         {
             selectedHotbarIndex = scrollDelta > 0 ? maxHotbarSlots - 1 : 0;
@@ -488,33 +488,40 @@ public class InventoryManager : MonoBehaviour
     public void UseHotbarSlot(int index)
     {
         if (PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked) return;
-
         if (index < 0 || index >= maxHotbarSlots) return;
 
         InventorySlot slot = hotbarSlots[index];
 
+        // ==========================================
+        // 1. ƯU TIÊN KIỂM TRA ĐỒ ĂN TRƯỚC 
+        // (Dù đang sáng viền hay không, cứ là đồ ăn thì bấm vào là nhai luôn)
+        // ==========================================
         if (slot.item is ConsumableItemData)
         {
             ConsumeItem(StorageType.Hotbar, index);
+            return; // Đã gọi lệnh ăn thì thoát hàm, không chạy xuống dưới nữa
+        }
+
+        // ==========================================
+        // 2. NẾU KHÔNG PHẢI ĐỒ ĂN (Vũ khí, Công cụ, Rỗng...)
+        // ==========================================
+        if (selectedHotbarIndex == index)
+        {
+            // Bấm lại đúng ô đang cầm -> Cất tay không
+            CancelPendingConsume();
+            selectedHotbarIndex = -1;
+            Debug.Log("Đã cất đồ. Đang rảnh tay!");
         }
         else
         {
+            // Bấm sang ô mới -> Cầm đồ lên
             CancelPendingConsume();
-
-            if (selectedHotbarIndex == index)
-            {
-                selectedHotbarIndex = -1;
-                Debug.Log("Đã cất đồ. Đang rảnh tay!");
-            }
-            else
-            {
-                selectedHotbarIndex = index;
-                string itemName = slot.item != null ? slot.item.displayName : "Tay không";
-                Debug.Log($"Đang cầm: {itemName} ở ô số {index + 1}");
-            }
-
-            OnInventoryChanged?.Invoke();
+            selectedHotbarIndex = index;
+            string itemName = slot.item != null ? slot.item.displayName : "Tay không";
+            Debug.Log($"Đang cầm: {itemName} ở ô số {index + 1}");
         }
+
+        OnInventoryChanged?.Invoke();
     }
     public void RefreshInventoryUI()
     {
@@ -732,5 +739,32 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.Log("Bạn phải cầm Bình Tưới trên tay mới múc được nước!");
         }
+    }
+    public int GetPersonalItemCount(ItemData targetItem)
+    {
+        if (targetItem == null) return 0;
+        int total = 0;
+
+        // Chỉ quét Hotbar
+        foreach (var slot in hotbarSlots) { if (slot.item == targetItem) total += slot.amount; }
+
+        // Chỉ quét Balo
+        foreach (var slot in inventorySlots) { if (slot.item == targetItem) total += slot.amount; }
+
+        return total;
+    }
+
+    public void ConsumePersonalItems(ItemData targetItem, int amountNeeded)
+    {
+        if (targetItem == null || amountNeeded <= 0) return;
+
+        // Rút từ Hotbar trước
+        amountNeeded = DeductFromList(hotbarSlots, targetItem, amountNeeded);
+        if (amountNeeded <= 0) { OnInventoryChanged?.Invoke(); return; }
+
+        // Thiếu thì vét tiếp trong Balo
+        amountNeeded = DeductFromList(inventorySlots, targetItem, amountNeeded);
+
+        OnInventoryChanged?.Invoke();
     }
 }

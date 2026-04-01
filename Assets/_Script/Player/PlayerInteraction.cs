@@ -48,25 +48,35 @@ public class PlayerInteraction : MonoBehaviour
         pendingInteractable = null;
         pendingBuildSite = null;
 
+        // ==========================================
+        // [ĐÃ SỬA]: LUÔN MỞ KHÓA CHÂN TRƯỚC TIÊN CHO CHẮC CÚ!
+        // ==========================================
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (movement != null) movement.isActionLocked = false;
+
+        // KIỂM TRA XEM CÓ AUTO LÀM TIẾP KHÔNG
         if (autoActionTarget != null)
         {
             MonoBehaviour targetMono = autoActionTarget as MonoBehaviour;
             if (targetMono != null && targetMono.gameObject.activeInHierarchy)
             {
-                PlayerMovement movement = GetComponent<PlayerMovement>();
-                if (movement != null) movement.isActionLocked = true;
-
-                ExecuteInteraction(autoActionTarget);
-                return;
+                if (IsActionable(autoActionTarget))
+                {
+                    // Chuyển quyền quyết định Khóa Chân lại cho ExecuteInteraction
+                    // Nếu là hành động Cần Khóa (Chặt/Cuốc), ExecuteInteraction sẽ tự động khóa lại.
+                    // Nếu là hành động Nhanh (Hái quả/Nhặt đồ), nó sẽ để im cho nhân vật tự do.
+                    ExecuteInteraction(autoActionTarget);
+                }
+                else
+                {
+                    autoActionTarget = null;
+                }
             }
             else
             {
                 autoActionTarget = null;
             }
         }
-
-        PlayerMovement movement2 = GetComponent<PlayerMovement>();
-        if (movement2 != null) movement2.isActionLocked = false;
     }
 
     public void AE_OnInteractImpact()
@@ -104,6 +114,13 @@ public class PlayerInteraction : MonoBehaviour
             fz.currentState = FishingZone.FishingState.NotFishing;
         }
     }
+    public void AE_ReleaseStone()
+    {
+        if (StoneThrower.Instance != null)
+        {
+            StoneThrower.Instance.ExecuteThrowAction();
+        }
+    }
     private void Update()
     {
         if (inputHandler.MoveInput.sqrMagnitude > 0)
@@ -111,6 +128,12 @@ public class PlayerInteraction : MonoBehaviour
             autoActionTarget = null;
         }
 
+        bool isPlayingMinigame = ThrowMinigameUI.Instance != null && ThrowMinigameUI.Instance.IsMinigameActive();
+        if (isPlayingMinigame)
+        {
+            autoActionTarget = null;
+            return;
+        }
         // Tắt hành động nếu chuột đang mở
         if (Cursor.lockState != CursorLockMode.Locked)
         {
@@ -121,7 +144,11 @@ public class PlayerInteraction : MonoBehaviour
         PlayerMovement movement = GetComponent<PlayerMovement>();
         bool isDoingAction = movement != null && movement.isActionLocked;
 
-        // XIN THÔNG TIN TỪ SCANNER
+        if (StoneThrower.Instance != null && StoneThrower.Instance.IsAiming)
+        {
+            return;
+        }
+
         IInteractable target = scanner.currentTarget;
 
         if (target is FishingZone)
@@ -208,6 +235,7 @@ public class PlayerInteraction : MonoBehaviour
         if (!IsActionable(target))
         {
             autoActionTarget = null;
+
             return;
         }
 
@@ -257,7 +285,10 @@ public class PlayerInteraction : MonoBehaviour
         else
         {
             autoActionTarget = null;
-            if (playerAnimator != null) playerAnimator.Play("Gathering", -1, 0f);
+            if (!(target is AnimalMovement))
+            {
+                if (playerAnimator != null) playerAnimator.Play("Gathering", -1, 0f);
+            }
             target.Interact();
         }
 

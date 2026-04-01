@@ -175,19 +175,38 @@ public class FishingZone : MonoBehaviour, IInteractable
             successCount++;
             UpdateTierUI();
 
-            // THẮNG -> CỘNG 1 NÚT (Tối đa 6), GIẢM 0.5s (Tối thiểu 1.5s) từ mức HIỆN TẠI
-            currentSequenceLength = Mathf.Clamp(currentSequenceLength + 1, 3, 6);
-            currentTimeLimit = Mathf.Clamp(currentTimeLimit - 0.5f, 1.5f, 5f);
-            Debug.Log($"[THẮNG] Độ khó tăng -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
+            // [LOGIC MỚI - KHI THẮNG]: 
+            // Ưu tiên tăng nút lên tối đa 5 trước. Đạt 5 nút rồi thì mới bắt đầu rút thời gian.
+            if (currentSequenceLength < 5)
+            {
+                currentSequenceLength++; // Tăng thêm 1 nút
+                // Thời gian giữ nguyên
+            }
+            else
+            {
+                // Đã đạt max 5 nút -> Bắt đầu ép thời gian (tối thiểu 1.5s)
+                currentTimeLimit = Mathf.Clamp(currentTimeLimit - 0.5f, 1.5f, 5f);
+            }
+
+            Debug.Log($"[THẮNG] Cân bằng -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
         }
         else
         {
-            // THUA -> TRỪ 1 NÚT (Tối thiểu 3), CỘNG 1s (Tối đa 5s) từ mức HIỆN TẠI
-            currentSequenceLength = Mathf.Clamp(currentSequenceLength - 1, 3, 6);
-            currentTimeLimit = Mathf.Clamp(currentTimeLimit + 1f, 1.5f, 5f);
-            Debug.Log($"[THUA] Độ khó giảm -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
-        }
+            // [LOGIC MỚI - KHI THUA]: 
+            // Nhả dần độ khó ra. Ưu tiên trả lại thời gian trước, nếu thời gian đã ở mức gốc rồi thì mới trừ bớt nút.
+            if (currentTimeLimit < baseTimeLimit)
+            {
+                // Trả lại 0.5s thời gian (tối đa bằng mức gốc)
+                currentTimeLimit = Mathf.Clamp(currentTimeLimit + 0.5f, 1.5f, baseTimeLimit);
+            }
+            else
+            {
+                // Trừ đi 1 nút (tối thiểu là 3 nút cho dễ)
+                currentSequenceLength = Mathf.Clamp(currentSequenceLength - 1, 3, 5);
+            }
 
+            Debug.Log($"[THUA] Cân bằng -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
+        }
         if (currentRound >= maxRounds)
         {
             EndFishing();
@@ -311,7 +330,10 @@ public class FishingZone : MonoBehaviour, IInteractable
             {
                 FishItemData caughtFish = possibleFish[Random.Range(0, possibleFish.Count)];
                 InventoryManager.Instance.AddItem(caughtFish, 1);
-                Debug.Log($"[THÀNH CÔNG] Đã nhét [{caughtFish.displayName}] vào túi đồ!");
+                if (NotificationManager.Instance != null)
+                {
+                    NotificationManager.Instance.ShowNotification($"+1 {caughtFish.displayName}");
+                }
             }
             else
             {

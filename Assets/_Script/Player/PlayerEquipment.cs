@@ -2,6 +2,8 @@
 
 public class PlayerEquipment : MonoBehaviour
 {
+    public static PlayerEquipment Instance;
+
     [Header("Vị trí cầm đồ")]
     public Transform rightHandSocket;
 
@@ -9,6 +11,13 @@ public class PlayerEquipment : MonoBehaviour
     public ToolItemData currentToolData { get; private set; }
 
     private Animator anim;
+
+    private void Awake()
+    {
+        // Khởi tạo Singleton
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     private void Start()
     {
@@ -21,7 +30,10 @@ public class PlayerEquipment : MonoBehaviour
             SyncHotbarEquipment();
         }
     }
-
+    public bool IsHandEmpty()
+    {
+        return currentEquippedModel == null && currentToolData == null;
+    }
     private void OnDestroy()
     {
         if (InventoryManager.Instance != null)

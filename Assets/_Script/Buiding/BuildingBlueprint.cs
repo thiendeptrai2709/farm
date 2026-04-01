@@ -10,14 +10,17 @@ public struct ItemRequirement
 public enum BlueprintType
 {
     Building,       // Xây nhà (Chuồng gà, bò...)
-    FarmExpansion   // Mở rộng diện tích vườn
+    FarmExpansion,
+    SmallProp
 }
+
 [CreateAssetMenu(fileName = "New Blueprint", menuName = "Farm/Building Blueprint")]
 public class BuildingBlueprint : ScriptableObject
 {
     public string buildingName;
     public Sprite icon;
     public string description;
+    public GameObject prefabToBuild;
 
     public BlueprintType blueprintType = BlueprintType.Building;
     public Vector3 expandSize;

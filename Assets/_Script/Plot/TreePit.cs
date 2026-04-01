@@ -43,8 +43,28 @@ public class TreePit : MonoBehaviour, IInteractable
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) playerTransform = playerObj.transform;
 
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.OnWeatherChanged += HandleWeatherChange;
+            HandleWeatherChange(WeatherManager.Instance.currentWeather);
+        }
+
         UpdateVisuals();
     }
+    private void HandleWeatherChange(WeatherState newWeather)
+    {
+        if (newWeather == WeatherState.Raining)
+        {
+            // Cây to cần tưới cả lúc mới trồng VÀ lúc chờ ra quả lứa sau
+            if ((currentState == PitState.Planted || currentState == PitState.Grown_Empty) && !isWatered)
+            {
+                isWatered = true;
+                UpdateVisuals();
+                growTimer += GetBaseTime() * 0.25f;
+            }
+        }
+    }
+
     public void SetTargeted(bool targeted)
     {
         isTargeted = targeted;
@@ -107,6 +127,9 @@ public class TreePit : MonoBehaviour, IInteractable
     }
     public bool CanBeWatered()
     {
+        if (WeatherManager.Instance != null && WeatherManager.Instance.currentWeather == WeatherState.Raining)
+            return false;
+
         return !isWatered && HasPersonalItem(wateringCanItem);
     }
 
@@ -123,6 +146,12 @@ public class TreePit : MonoBehaviour, IInteractable
 
         isWatered = false;
         isFertilized = false;
+
+        if (WeatherManager.Instance != null && WeatherManager.Instance.currentWeather == WeatherState.Raining)
+        {
+            isWatered = true;
+            growTimer += GetBaseTime() * 0.25f;
+        }
 
         UpdateVisuals();
     }

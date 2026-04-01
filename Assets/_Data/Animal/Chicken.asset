@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7a7d88aa2f22a64a917f0bbd3284419, type: 3}
+  m_Name: Chicken
+  m_EditorClassIdentifier: Assembly-CSharp::AnimalData
+  animalName: Chiken
+  icon: {fileID: 21300000, guid: 4824e84ac31b98e4bb60593af81f2237, type: 3}
+  spawnTime: 10
+  animalPrefab: {fileID: 8240478364608380899, guid: 096676b7b9feb6b4a8d86d7b1b48a2db, type: 3}
