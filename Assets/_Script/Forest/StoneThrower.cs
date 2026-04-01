@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Unity.Cinemachine;
 
 public class StoneThrower : MonoBehaviour
 {
@@ -24,6 +25,10 @@ public class StoneThrower : MonoBehaviour
     private Animator playerAnim;
     private bool pendingThrowResult = false;
 
+    public bool IsBusy { get; private set; }
+    public float cameraBlendTime = 1.0f;
+
+    private GameObject currentStoneInHand;
     private void Awake()
     {
         Instance = this;
@@ -34,10 +39,22 @@ public class StoneThrower : MonoBehaviour
     {
         IsAiming = true;
         currentTarget = target;
+        IsBusy = true;
 
         // Bật Cam & Animator
         if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleThrowCamera(true);
         if (playerAnim != null) playerAnim.SetBool(idleBool, true);
+
+        if (stonePrefab != null && throwPoint != null)
+        {
+            currentStoneInHand = Instantiate(stonePrefab, throwPoint.position, throwPoint.rotation, throwPoint);
+
+            // Tắt vật lý để đá không rớt/lỗi va chạm lúc đang ngắm
+            Rigidbody rb = currentStoneInHand.GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = true;
+            Collider col = currentStoneInHand.GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+        }
 
         // Bật UI để chơi ngay
         if (ThrowMinigameUI.Instance != null)
@@ -61,6 +78,10 @@ public class StoneThrower : MonoBehaviour
         if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.SetCursorState(true);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (currentStoneInHand != null) Destroy(currentStoneInHand);
+
+        IsBusy = false;
     }
 
     // [HÀM NÀY CHỈ ĐƯỢC GỌI KHI MINIGAME KẾT THÚC CẢ 3 LƯỢT]
@@ -88,7 +109,7 @@ public class StoneThrower : MonoBehaviour
         // [KHÓA AN TOÀN 1]
         if (currentTarget == null || throwPoint == null || stonePrefab == null)
         {
-            Debug.LogWarning("[HỆ THỐNG NÉM] Hủy ném do chưa ngắm hoặc thiếu tham chiếu!");
+            IsBusy = false;
             return;
         }
 
@@ -97,20 +118,20 @@ public class StoneThrower : MonoBehaviour
         {
             if (InventoryManager.Instance.GetPersonalItemCount(stoneData) <= 0)
             {
-                Debug.LogWarning("[HỆ THỐNG NÉM] Hết đá rồi, tay không vung gió à?");
+                IsBusy = false;
                 return;
             }
             // Trừ đá
             InventoryManager.Instance.ConsumePersonalItems(stoneData, 1);
         }
 
-        // Truyền kết quả vào đường bay
-        StartCoroutine(FlyingRoutine(pendingThrowResult));
+        currentStoneInHand.transform.SetParent(null);
+        StartCoroutine(FlyingRoutine(pendingThrowResult, currentStoneInHand));
+        currentStoneInHand = null;
     }
 
-    private IEnumerator FlyingRoutine(bool isSuccess)
+    private IEnumerator FlyingRoutine(bool isSuccess, GameObject stone)
     {
-        GameObject stone = Instantiate(stonePrefab, throwPoint.position, Quaternion.identity);
         float elapsed = 0f;
         Vector3 start = throwPoint.position;
         Vector3 end = currentTarget.position;
@@ -150,6 +171,19 @@ public class StoneThrower : MonoBehaviour
             Debug.Log("<color=red>[HỆ THỐNG] Ném xịt cmnr (Chưa đủ 3 hit)! Viên đá đập vào vách rồi rơi xuống suối.</color>");
         }
 
-        if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleThrowCamera(false);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.ToggleThrowCamera(false);
+        }
+        yield return new WaitForSeconds(cameraBlendTime + 0.1f);
+
+        if (PlayerMovement.Instance != null)
+        {
+            PlayerMovement.Instance.isActionLocked = false;
+        }
+        // ==========================================
+        // MỞ KHÓA TỔNG! Xong xuôi hết rồi, giờ mới cho phép bấm E tiếp
+        // ==========================================
+        IsBusy = false;
     }
 }

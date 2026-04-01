@@ -6,7 +6,7 @@ public class LandslideController : MonoBehaviour
     public static LandslideController Instance;
 
     [Header("Thành phần Vách Đá")]
-    [Tooltip("Vách đá nguyên vẹn ban đầu (Sẽ bị tắt đi)")]
+    [Tooltip("Vách đá nguyên vẹn ban đầu (Nếu ông không dùng thì để trống ô này cũng được)")]
     public GameObject intactRockWall;
     [Tooltip("Cái Trigger (WeakPointTarget) để ngắm ném")]
     public GameObject weakPointTrigger;
@@ -27,20 +27,29 @@ public class LandslideController : MonoBehaviour
     [Tooltip("Bức tường tàng hình cản đường lúc đầu (nếu có)")]
     public GameObject invisibleBlocker;
 
+    // ==========================================
+    // [ĐÃ THÊM]: THÀNH PHẦN KIỂM SOÁT DÒNG CHẢY
+    // ==========================================
+    [Header("Dòng chảy của suối")]
+    [Tooltip("Kéo cái cục nước có chứa script WaterCurrent vào đây")]
+    public WaterCurrent waterCurrentScript;
+
     private void Awake()
     {
         Instance = this;
 
-        // Vừa vào game là phải giấu đám đá vụn và cầu đá đi
         if (rockBridge != null) rockBridge.SetActive(false);
 
+        // Đóng băng trọng lực của đống đá vụn
         foreach (var rock in fallingRocks)
         {
-            if (rock != null) rock.gameObject.SetActive(false);
+            if (rock != null)
+            {
+                rock.isKinematic = true;
+            }
         }
     }
 
-    // Hàm này được gọi từ file StoneThrower khi ném trúng 3/3
     public void TriggerLandslide()
     {
         StartCoroutine(LandslideRoutine());
@@ -48,42 +57,50 @@ public class LandslideController : MonoBehaviour
 
     private IEnumerator LandslideRoutine()
     {
-        // 1. Tắt vách đá cũ, tắt luôn chức năng ném (WeakPoint)
+        // 1. Tắt vách đá cũ và chỗ đứng ném
         if (intactRockWall != null) intactRockWall.SetActive(false);
         if (weakPointTrigger != null) weakPointTrigger.SetActive(false);
 
-        // 2. Bật bụi mù mịt
+        // 2. Xịt bụi
         if (dustParticles != null) dustParticles.Play();
 
-        // 3. HIỆU ỨNG DOMINO: Cho đá rơi từ Trái sang Phải
+        // 3. Rã băng cho đá vụn rớt lộc cộc từ trái sang phải
         foreach (var rock in fallingRocks)
         {
             if (rock != null)
             {
-                rock.gameObject.SetActive(true);
-                // Đẩy tảng đá bay lộc cộc sang phải
+                rock.isKinematic = false;
                 rock.AddForce(pushForce, ForceMode.Impulse);
-
-                // Random thêm lực xoay cho đá lăn lộn tự nhiên
                 rock.AddTorque(new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f)), ForceMode.Impulse);
             }
-            // Đợi một nhịp rồi mới rụng cục tiếp theo
             yield return new WaitForSeconds(delayBetweenRocks);
         }
 
-        // 4. Chờ đá rụng hết và khói bụi lắng xuống (khoảng 2 giây)
+        // 4. Chờ 2 giây cho khói bụi và đá rớt cho xong
         yield return new WaitForSeconds(2f);
 
-        // 5. Xóa/Tắt mấy tảng đá vụn vật lý đi cho đỡ nặng máy
-        foreach (var rock in fallingRocks)
-        {
-            if (rock != null) rock.gameObject.SetActive(false);
-        }
-
-        // 6. Bật cái cầu đá tĩnh lên để đi qua, tắt tường cản
+        // 5. Hiện đống đá tĩnh làm cầu, tắt tường cản
         if (rockBridge != null) rockBridge.SetActive(true);
         if (invisibleBlocker != null) invisibleBlocker.SetActive(false);
 
-        Debug.Log("<color=orange>[SẠT LỞ] Đã sạt lở từ trái sang phải, đường đi mở mở!</color>");
+        // ==========================================
+        // [ĐÃ THÊM]: TẮT DÒNG CHẢY SAU KHI LẤP SUỐI
+        // ==========================================
+        if (waterCurrentScript != null)
+        {
+            waterCurrentScript.gameObject.SetActive(false);
+            Debug.Log("<color=cyan>[SẠT LỞ] Nước đã bị chặn, người chơi có thể lội qua an toàn!</color>");
+        }
+
+        // 6. Dọn dẹp đá vụn vật lý cho nhẹ máy (Xóa chúng đi)
+        foreach (var rock in fallingRocks)
+        {
+            if (rock != null)
+            {
+                Destroy(rock.gameObject);
+            }
+        }
+
+        Debug.Log("<color=orange>[SẠT LỞ] Đã sạt lở xong, cầu đá hiện ra!</color>");
     }
 }

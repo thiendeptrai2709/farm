@@ -16,11 +16,20 @@ public class WeakPointTarget : MonoBehaviour
     private bool isPlayerInZone = false;
     private PlayerInputHandler playerInput;
 
+    public GameObject warningTextUI;
+
     private void Start()
     {
         if (aimDotUI != null) aimDotUI.SetActive(false);
-    }
+        if (warningTextUI != null) warningTextUI.SetActive(false);
 
+    }
+    private void OnDisable()
+    {
+        if (aimDotUI != null) aimDotUI.SetActive(false);
+        if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+        if (warningTextUI != null) warningTextUI.SetActive(false);
+    }
     // Player bước vào thảm -> Bắt đầu quét
     private void OnTriggerEnter(Collider other)
     {
@@ -42,6 +51,7 @@ public class WeakPointTarget : MonoBehaviour
 
             // Tắt chữ UI của ông
             if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+            if (warningTextUI != null) warningTextUI.SetActive(false);
         }
     }
 
@@ -50,11 +60,12 @@ public class WeakPointTarget : MonoBehaviour
         // Phải đứng trong vùng mới chạy code
         if (!isPlayerInZone || myMainCamera == null || highRockTarget == null) return;
         bool isPlaying = ThrowMinigameUI.Instance != null && ThrowMinigameUI.Instance.IsMinigameActive();
-
-        if (isPlaying)
+        bool isThrowerBusy = StoneThrower.Instance != null && StoneThrower.Instance.IsBusy;
+        if (isPlaying || isThrowerBusy)
         {
             if (aimDotUI != null && aimDotUI.activeSelf) aimDotUI.SetActive(false);
             if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+            if (warningTextUI != null) warningTextUI.SetActive(false);
             return;
         }
 
@@ -82,6 +93,8 @@ public class WeakPointTarget : MonoBehaviour
 
             if (stoneCount > 0)
             {
+                if (warningTextUI != null && warningTextUI.activeSelf) warningTextUI.SetActive(false);
+
                 // Ép Interaction UI của ông hiện chữ ngay trên đỉnh cục đá (Kèm thanh Slider ẩn)
                 if (InteractionUI.Instance != null)
                 {
@@ -112,8 +125,14 @@ public class WeakPointTarget : MonoBehaviour
             }
             else
             {
+
                 // Nhìn trúng nhưng hết đá -> Ẩn chữ đi (chỉ để lại chấm tròn)
                 if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+
+                if (warningTextUI != null && !warningTextUI.activeSelf)
+                {
+                    warningTextUI.SetActive(true);
+                }
             }
         }
         else
@@ -121,6 +140,7 @@ public class WeakPointTarget : MonoBehaviour
             // Ngoảnh mặt đi chỗ khác -> Tắt ráo
             if (aimDotUI != null) aimDotUI.SetActive(false);
             if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+            if (warningTextUI != null) warningTextUI.SetActive(false);
         }
     }
 }

@@ -386,7 +386,7 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (Time.time - lastInteractTime < 0.5f) return;
+        if (Time.time - lastInteractTime < 1f) return;
         lastInteractTime = Time.time;
 
         if (InventoryManager.Instance == null || InventoryManager.Instance.selectedHotbarIndex == -1) return;
@@ -398,7 +398,8 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         if (currentState == FishingState.NotFishing)
         {
-            // [ĐÃ SỬA]: RESET MỌI CHỈ SỐ VỀ BASE MỖI KHI QUĂNG CẦN MỚI
+            if (playerAnim != null) playerAnim.ResetTrigger("CancelFishing");
+            
             currentSequenceLength = baseSequenceLength;
             currentTimeLimit = baseTimeLimit;
 
@@ -415,13 +416,18 @@ public class FishingZone : MonoBehaviour, IInteractable
             if (playerAnim != null) playerAnim.SetTrigger("StartFishing");
             if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(true);
         }
-        else if (currentState == FishingState.WaitingForBite || currentState == FishingState.WaitingNextRound || currentState == FishingState.PlayingMiniGame)
+        else if (currentState == FishingState.WaitingForBite)
         {
-            currentState = FishingState.Pulling;
-            if (auditionPanel != null) auditionPanel.SetActive(false);
+            if (playerAnim != null) playerAnim.ResetTrigger("StartFishing");
+
+            StopAllCoroutines();
             if (tierPanel != null) tierPanel.SetActive(false);
-            if (timerSlider != null) timerSlider.gameObject.SetActive(false);
             if (playerAnim != null) playerAnim.SetTrigger("CancelFishing");
+
+            currentState = FishingState.NotFishing;
+
+            if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = false;
+            if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(false);
         }
     }
 }
