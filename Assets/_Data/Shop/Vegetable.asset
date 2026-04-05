@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Vegetable
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  npcName: "Th\u01B0\u01A1ng nh\xE2n"
+  npcName: "S\u1EA1p Rau"
   merchantMoney: 2510
   maxShopSlots: 12
   itemsForSale:
   - item: {fileID: 11400000, guid: ca089d8d06da571418f6bc0608e58481, type: 2}
-    currentQuantity: 1
+    currentQuantity: 5
   - item: {fileID: 11400000, guid: 52ac07c4800aca043b3e0398d8f5de50, type: 2}
-    currentQuantity: 9
+    currentQuantity: 12
   - item: {fileID: 11400000, guid: 2b6f74bdbac13704bb2e62e8d1d17a07, type: 2}
-    currentQuantity: 7
+    currentQuantity: 14
   - item: {fileID: 11400000, guid: c86d4c1095319a94ca2021a8bfa34b18, type: 2}
-    currentQuantity: 7
+    currentQuantity: 11
   - item: {fileID: 11400000, guid: 4c359654c2a6f23418b7830a2d11c636, type: 2}
-    currentQuantity: 3
+    currentQuantity: 8
   - item: {fileID: 11400000, guid: f8c3fe6f7d1a9c946810156233ac65ba, type: 2}
-    currentQuantity: 2
+    currentQuantity: 9
   possibleItemsToSell:
   - {fileID: 11400000, guid: ca089d8d06da571418f6bc0608e58481, type: 2}
   - {fileID: 11400000, guid: 52ac07c4800aca043b3e0398d8f5de50, type: 2}

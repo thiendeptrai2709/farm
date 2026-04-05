@@ -1933,6 +1933,8 @@ GameObject:
   - component: {fileID: 7133610395217541177}
   - component: {fileID: 7884687737174150600}
   - component: {fileID: 4945580228865125342}
+  - component: {fileID: 5178259363866654835}
+  - component: {fileID: 4213489492682038267}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -2088,7 +2090,10 @@ MonoBehaviour:
   cameraObject: {fileID: 0}
   cursorTexture: {fileID: 2800000, guid: 311c2d5a384d93e49b14d80905a024fc, type: 3}
   cursorHotspot: {x: 0, y: 0}
+  aimCrosshairTexture: {fileID: 2800000, guid: 9aa4c85eb1abe0b49a9c3cba7497dc6e, type: 3}
+  crosshairHotspot: {x: 16, y: 16}
   fishingCamera: {fileID: 0}
+  throwCamera: {fileID: 0}
 --- !u!114 &6807969629773487275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2187,6 +2192,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPickupManager
   holdPoint: {fileID: 6964653380801613693}
   holdingAnimParam: IsHolding
+--- !u!114 &5178259363866654835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5918614063636315846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ee44bc412693242ae4a12ce98daa94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoneThrower
+  stonePrefab: {fileID: 507751699192655883, guid: 1922353ae4c982b4db53460da4168b7b, type: 3}
+  throwPoint: {fileID: 4939727931930374738}
+  stoneData: {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}
+  throwDuration: 1
+  arcHeight: 3
+  idleBool: IsThrowIdle
+  throwTrigger: Throw
+  cameraBlendTime: 1
+--- !u!114 &4213489492682038267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5918614063636315846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3cfd90478fa164ca6147b89e090881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
+  walkStepInterval: 0.5
+  runStepInterval: 0.3
+  crouchStepInterval: 0.65
 --- !u!1 &5971773184100433735
 GameObject:
   m_ObjectHideFlags: 0

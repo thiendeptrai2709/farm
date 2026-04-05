@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2692436336503843449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7041470660971288174}
+  - component: {fileID: 950395136706289962}
+  - component: {fileID: 4907362118700333331}
+  - component: {fileID: 3689370779652692496}
+  m_Layer: 0
+  m_Name: DayNightSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7041470660971288174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2692436336503843449}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 145.47945, y: 3.23253, z: 150.15854}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &950395136706289962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2692436336503843449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3865e4420c839b04ca45a9d4f1cccc34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeSystem
+  dayDurationInMinutes: 24
+  hour: 8
+--- !u!114 &4907362118700333331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2692436336503843449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886a62e348535274eb35d903e5eedeea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayNightSystem
+  sunLight: {fileID: 0}
+  timeUI: {fileID: 0}
+  skyboxPhases:
+  - name: 
+    hour: 0
+    skyboxMat: {fileID: 2100000, guid: a8d5499b65be19740b2acf6aa475d1fa, type: 2}
+    targetBlend: 1
+  - name: 
+    hour: 5
+    skyboxMat: {fileID: 2100000, guid: a8d5499b65be19740b2acf6aa475d1fa, type: 2}
+    targetBlend: 0
+  - name: 
+    hour: 10
+    skyboxMat: {fileID: 2100000, guid: a8d5499b65be19740b2acf6aa475d1fa, type: 2}
+    targetBlend: 0
+  - name: 
+    hour: 17
+    skyboxMat: {fileID: 2100000, guid: a8d5499b65be19740b2acf6aa475d1fa, type: 2}
+    targetBlend: 1
+  transitionSpeed: 0.5
+  sunnyIntensity: 1
+  rainyIntensity: 0.3
+  lightChangeSpeed: 0.5
+  sunnyFogDensity: 0.002
+  rainyFogDensity: 0.03
+  rainyFogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!114 &3689370779652692496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2692436336503843449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5aad4633346de9478d5766205bc465d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
+  daysInGame: 1
+  dayUI: {fileID: 0}

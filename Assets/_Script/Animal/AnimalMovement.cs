@@ -50,6 +50,19 @@ public class AnimalMovement : MonoBehaviour, IInteractable
 
     private Rigidbody[] boneRigidbodies;
     private Collider[] boneColliders;
+
+    [Header("Cài đặt Âm Thanh 3D (Cho từng loài)")]
+    public AudioClip animalCryClip; // [ĐÃ SỬA]: Kéo thẳng file mp3 vào đây, ko xài chữ nữa
+
+    [Tooltip("Ít nhất bao nhiêu giây thì kêu 1 lần?")]
+    public float minSoundInterval = 3f;
+    [Tooltip("Nhiều nhất bao nhiêu giây thì kêu 1 lần?")]
+    public float maxSoundInterval = 8f;
+
+    // Đồng hồ random để lâu lâu kêu 1 tiếng
+    private float randomSoundTimer;
+    private AudioSource localAudioSource;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -67,12 +80,26 @@ public class AnimalMovement : MonoBehaviour, IInteractable
         starveTimer = starveTimeLimit;
         produceTimer = produceInterval;
 
+        localAudioSource = gameObject.AddComponent<AudioSource>();
+        localAudioSource.spatialBlend = 1f; // [QUAN TRỌNG NHẤT]: 1 là chuẩn 3D, 0 là chuẩn 2D
+        localAudioSource.minDistance = 2f;  // Đứng cách 2 mét là nghe to nhất
+        localAudioSource.maxDistance = 15f; // Đi xa quá 15 mét là tịt, không nghe thấy gà kêu nữa
+        localAudioSource.rolloffMode = AudioRolloffMode.Linear;
+
+        ResetRandomSoundTimer();
         SetNewDestination();
     }
 
     void Update()
     {
-        if (currentState == AnimalState.Held || currentState == AnimalState.Dead) return;
+        if (currentState == AnimalState.Dead) return;
+
+        // 2. [ĐÃ CHUYỂN LÊN ĐÂY]: Cho phép đếm giờ kêu cục tác ngay cả khi ĐANG BỊ BẾ
+        HandleRandomSound();
+
+        // 3. Nếu đang bị bế thì thoát luôn, không chạy đi lại, đói bụng hay đẻ trứng nữa
+        if (currentState == AnimalState.Held) return;
+
 
         if (animator != null && agent.enabled)
         {
@@ -96,6 +123,29 @@ public class AnimalMovement : MonoBehaviour, IInteractable
                 HandleJumpingState();
                 break;
         }
+    }
+    private void HandleRandomSound()
+    {
+        randomSoundTimer -= Time.deltaTime;
+        if (randomSoundTimer <= 0f)
+        {
+            // Bật loa 3D trên cổ con gà kêu 1 tiếng
+            if (animalCryClip != null && localAudioSource != null)
+            {
+                if (currentState == AnimalState.Wander || currentState == AnimalState.FindFood || currentState == AnimalState.Held)
+                {
+                    // Phát âm thanh trực tiếp từ vị trí của con gà
+                    localAudioSource.PlayOneShot(animalCryClip);
+                }
+            }
+            ResetRandomSoundTimer();
+        }
+    }
+
+    private void ResetRandomSoundTimer()
+    {
+        // Lấy thời gian m cài ngoài Inspector để đếm ngược
+        randomSoundTimer = Random.Range(minSoundInterval, maxSoundInterval);
     }
     private void HandleProduction()
     {

@@ -285,7 +285,7 @@ public class PlayerInteraction : MonoBehaviour
         else
         {
             autoActionTarget = null;
-            if (!(target is AnimalMovement))
+            if (!(target is AnimalMovement) && !(target is NPCMerchant))
             {
                 if (playerAnimator != null) playerAnimator.Play("Gathering", -1, 0f);
             }

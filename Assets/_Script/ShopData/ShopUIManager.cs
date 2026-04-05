@@ -97,7 +97,8 @@ public class ShopUIManager : MonoBehaviour
         if (shopPanel != null) shopPanel.SetActive(true);
 
         _isOpeningShop = true;
-        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceOpen();
+        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceOpen(false);
+        
         _isOpeningShop = false;
 
         OnShopUIToggled?.Invoke(true);
@@ -125,7 +126,7 @@ public class ShopUIManager : MonoBehaviour
         if (buyPopupPanel != null) buyPopupPanel.SetActive(false);
 
         // Tell Inventory to close (This will trigger Camera/Cursor to lock again)
-        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose();
+        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose(false);
 
         OnShopUIToggled?.Invoke(false);
     }
@@ -141,6 +142,9 @@ public class ShopUIManager : MonoBehaviour
 
     public void SwitchToBuyTab()
     {
+        if (!buyTabContent.gameObject.activeSelf && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("Item_Pickup");
+
         buyTabContent.gameObject.SetActive(true);
         sellTabContent.gameObject.SetActive(false);
         RefreshBuySlots();
@@ -148,6 +152,9 @@ public class ShopUIManager : MonoBehaviour
 
     public void SwitchToSellTab()
     {
+        if (!sellTabContent.gameObject.activeSelf && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("Item_Pickup");
+
         buyTabContent.gameObject.SetActive(false);
         sellTabContent.gameObject.SetActive(true);
     }
@@ -217,6 +224,8 @@ public class ShopUIManager : MonoBehaviour
         amountSlider.maxValue = sItem.currentQuantity;
         amountSlider.value = 1;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Click");
+
         UpdatePopupUI();
     }
 
@@ -239,13 +248,21 @@ public class ShopUIManager : MonoBehaviour
 
         if (success)
         {
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Coin_Trade");
+
             buyPopupPanel.SetActive(false);
             RefreshUI();
+        }
+        else
+        {
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error"); // Không đủ tiền / Balo đầy
         }
     }
 
     public void CancelBuy()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Click");
+
         buyPopupPanel.SetActive(false);
     }
 
@@ -275,7 +292,7 @@ public class ShopUIManager : MonoBehaviour
             return;
         }
 
-        bool coinsAdded = InventoryManager.Instance.AddItem(MarketManager.Instance.coinItem, totalProfit);
+        bool coinsAdded = InventoryManager.Instance.AddItem(MarketManager.Instance.coinItem, totalProfit, false);
         if (!coinsAdded)
         {
             Debug.LogWarning("Inventory is full, cannot receive Coins!");
@@ -291,6 +308,9 @@ public class ShopUIManager : MonoBehaviour
 
         UpdateTotalSellValue();
         RefreshUI();
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Coin_Trade");
+
         Debug.Log($"Sold successfully! Earned {totalProfit}G");
     }
     public bool TryAddTradeItemFromShiftClick(ItemData item, int amount, out int originalAmountLeft)
@@ -322,7 +342,10 @@ public class ShopUIManager : MonoBehaviour
                 slot.UpdateVisuals(); // Make sure UpdateVisuals() in TradingSlotUI is PUBLIC
                 UpdateTotalSellValue();
 
-                originalAmountLeft = 0; // Đã chuyển hết
+                originalAmountLeft = 0;
+
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+                
                 return true;
             }
         }
@@ -338,7 +361,10 @@ public class ShopUIManager : MonoBehaviour
                 slot.UpdateVisuals(); // Make sure UpdateVisuals() in TradingSlotUI is PUBLIC
                 UpdateTotalSellValue();
 
-                originalAmountLeft = 0; // Đã chuyển hết
+                originalAmountLeft = 0;
+
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+
                 return true;
             }
         }

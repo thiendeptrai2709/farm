@@ -310,6 +310,11 @@ public class FarmingZone : MonoBehaviour, IInteractable
             {
                 InventoryManager.Instance.DeductEquippedToolDurability(1f); // Mỗi nhát cuốc đất tụt 1 máu
             }
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX("Hoe_Hit"); // Tên âm thanh cuốc đất
+            }
+
             UpdateTargetGrid();
         }
     }
@@ -346,7 +351,12 @@ public class FarmingZone : MonoBehaviour, IInteractable
                     if (!activePlots.ContainsKey(lockCoord)) activePlots.Add(lockCoord, newTree);
                 }
             }
-            
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX("Plant_Seed"); // Tiếng sột soạt lấp đất non
+            }
+
             UpdateTargetGrid();
             Debug.Log("Trồng cây to chiếm 4 ô thành công!");
         }

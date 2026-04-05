@@ -55,6 +55,8 @@ public class SiteConstructionUIManager : MonoBehaviour
 
         buildingNameText.text = $"Thi Công: {site.myBlueprint.buildingName}";
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
+
         foreach (var slot in depositSlots) slot.ClearSlot();
 
         // 2. Quét qua bản vẽ, cần món gì thì lôi từng đĩa ra giao nhiệm vụ
@@ -74,7 +76,7 @@ public class SiteConstructionUIManager : MonoBehaviour
         RefreshUI();
     }
 
-    public void CloseUI()
+    public void CloseUI(bool playSound = true)
     {
         depositPanel.SetActive(false);
         OnSiteConstructionUIToggled?.Invoke(false); // Khóa chuột
@@ -84,6 +86,8 @@ public class SiteConstructionUIManager : MonoBehaviour
 
         currentSite = null;
         if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose();
+
+        if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
     }
 
     public void RefreshUI()
@@ -110,6 +114,8 @@ public class SiteConstructionUIManager : MonoBehaviour
     {
         if (currentSite == null) return;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Build_Success"); 
+
         foreach (var slot in depositSlots)
         {
             slot.ClearSlot();
@@ -125,7 +131,7 @@ public class SiteConstructionUIManager : MonoBehaviour
         {
             currentSite.FinishBuilding(); // Sơ cua lỡ không tìm thấy player
         }
-        CloseUI();
+        CloseUI(false);
     }
 
     private int CountItemInDepositList(ItemData targetItem)
@@ -182,6 +188,8 @@ public class SiteConstructionUIManager : MonoBehaviour
                     // [QUAN TRỌNG]: Update lại cái Text "Đã nộp / Yêu cầu" trên cái ô UI đó
                     // Ông gọi hàm cập nhật giao diện của file DepositSlotUI ở đây
                     targetSlot.UpdateVisuals();
+
+                    if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
 
                     // Trừ số lượng trên tay người chơi
                     leftover -= amountToDeposit;

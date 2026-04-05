@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 
 // [ĐÃ THÊM]: IBeginDragHandler, IDragHandler, IEndDragHandler
-public class UITroughDropSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class UITroughDropSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     [Header("Vị trí của ô này trong máng (0 -> 4)")]
     public int troughSlotIndex;
@@ -15,7 +15,7 @@ public class UITroughDropSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, 
 
     private static GameObject ghostIcon;
     private Canvas parentCanvas;
-
+    private bool isDraggingThisSlot = false;
     private void Awake()
     {
         parentCanvas = GetComponentInParent<Canvas>();
@@ -38,7 +38,20 @@ public class UITroughDropSlot : MonoBehaviour, IDropHandler, IBeginDragHandler, 
             }
         }
     }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Nếu người chơi đang "kéo" chứ không phải "bấm", thì chặn lệnh này lại
+        if (isDraggingThisSlot) return;
 
+        // Chỉ xử lý nếu bấm Chuột Trái (hoặc bấm phím tương đương)
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            if (FoodTroughUIManager.Instance != null)
+            {
+                FoodTroughUIManager.Instance.HandleItemTakenBackWithClick(troughSlotIndex);
+            }
+        }
+    }
     // ===============================================
     // LOGIC KÉO ĐỒ TỪ MÁNG (THÊM MỚI)
     // ===============================================

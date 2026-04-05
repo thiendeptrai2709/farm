@@ -76,6 +76,87 @@ public class FoodTroughUIManager : MonoBehaviour
         }
     }
 
+    public bool TryAddFoodFromShiftClick(ItemData item, int amountToMove, out int amountLeft)
+    {
+        amountLeft = amountToMove;
+        if (currentTrough == null) return false;
+
+        // 1. Kiểm tra bộ lọc
+        if (!currentTrough.validFoodItem.Contains(item))
+        {
+            Debug.LogWarning("Món này không phải đồ ăn hợp lệ cho máng!");
+            return false;
+        }
+
+        // 2. Tìm ô Máng đang chứa cùng loại để nhét thêm vào
+        for (int i = 0; i < currentTrough.slots.Length; i++)
+        {
+            TroughSlot slot = currentTrough.slots[i];
+            if (slot.item == item)
+            {
+                slot.amount += amountLeft;
+                amountLeft = 0;
+
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+                RefreshUI();
+                return true; // Bỏ đồ thành công
+            }
+        }
+
+        // 3. Nếu không có ô cùng loại, tìm ô Trống đầu tiên
+        for (int i = 0; i < currentTrough.slots.Length; i++)
+        {
+            TroughSlot slot = currentTrough.slots[i];
+            if (slot.item == null || slot.amount <= 0)
+            {
+                slot.item = item;
+                slot.amount = amountLeft;
+                amountLeft = 0;
+
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+                RefreshUI();
+                return true;
+            }
+        }
+
+        // 4. Nếu máng đầy
+        Debug.LogWarning("Máng đã đầy, không thể ném thêm!");
+        return false;
+    }
+
+    // ===============================================
+    // LOGIC LẤY ĐỒ NHANH BẰNG CHUỘT TRÁI (THÊM MỚI)
+    // ===============================================
+    public void HandleItemTakenBackWithClick(int troughSlotIndex)
+    {
+        if (currentTrough == null) return;
+
+        TroughSlot troughSlot = currentTrough.slots[troughSlotIndex];
+        if (troughSlot.item == null || troughSlot.amount <= 0) return; // Ô máng rỗng
+
+        int originalAmount = troughSlot.amount;
+
+        // Ép InventoryManager nạp đồ này vào Balo
+        bool success = InventoryManager.Instance.AddItem(troughSlot.item, troughSlot.amount, false);
+
+        if (success)
+        {
+            // Trả đồ thành công -> Xóa đồ ở máng
+            troughSlot.item = null;
+            troughSlot.amount = 0;
+
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+
+            RefreshUI();
+            InventoryManager.Instance.RefreshInventoryUI();
+            Debug.Log("Đã lôi thành công đồ ăn từ Máng về Balo bằng Click!");
+        }
+        else
+        {
+            Debug.LogWarning("Balo đã đầy, không thể lôi đồ từ máng ra được!");
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error");
+        }
+    }
     // ===============================================
     // ĐÃ FIX TOÀN BỘ LOGIC TẠI HÀM NÀY
     // ===============================================

@@ -81,7 +81,7 @@ public class MarketManager : MonoBehaviour
         }
 
         // Thử nhét đồ vào Balo (với số lượng tương ứng)
-        bool addedSuccessfully = InventoryManager.Instance.AddItem(shopItem.item, amountToBuy);
+        bool addedSuccessfully = InventoryManager.Instance.AddItem(shopItem.item, amountToBuy, false);
         if (!addedSuccessfully)
         {
             Debug.LogWarning("Balo không đủ chỗ trống!");
@@ -106,7 +106,7 @@ public class MarketManager : MonoBehaviour
             return false;
         }
 
-        bool coinsAdded = InventoryManager.Instance.AddItem(coinItem, price);
+        bool coinsAdded = InventoryManager.Instance.AddItem(coinItem, price, false);
         if (!coinsAdded)
         {
             Debug.LogWarning("Balo không còn chỗ chứa Tiền vàng!");

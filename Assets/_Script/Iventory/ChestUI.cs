@@ -30,6 +30,14 @@ public class ChestUI : MonoBehaviour
     {
         chestPanel.SetActive(isOpen);
 
+        if (AudioManager.Instance != null)
+        {
+            if (isOpen)
+                AudioManager.Instance.PlaySFX("Chest_Open");
+            else
+                AudioManager.Instance.PlaySFX("Chest_Close");
+        }
+
         if (isOpen)
         {
             InitializeUI();

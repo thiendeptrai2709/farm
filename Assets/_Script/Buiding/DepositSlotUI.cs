@@ -49,13 +49,14 @@ public class DepositSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler
 
                 UpdateVisuals();
                 if (SiteConstructionUIManager.Instance != null) SiteConstructionUIManager.Instance.RefreshUI();
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
             }
         }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right && currentAmount > 0)
+        if (eventData.button == PointerEventData.InputButton.Left && currentAmount > 0)
         {
             ReturnToInventory();
         }
@@ -65,12 +66,19 @@ public class DepositSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler
     {
         if (currentAmount <= 0) return; // Không có đồ thì thôi
 
-        bool success = InventoryManager.Instance.AddItem(currentItem, currentAmount);
+        bool success = InventoryManager.Instance.AddItem(currentItem, currentAmount, false);
+
         if (success)
         {
             currentAmount = 0; // Trả xong thì về 0 (nhưng vẫn giữ hình yêu cầu)
             UpdateVisuals();
             if (SiteConstructionUIManager.Instance != null) SiteConstructionUIManager.Instance.RefreshUI();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+        }
+        else
+        {
+            // Balo đầy, không nhét lại được thì báo lỗi
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error");
         }
     }
 

@@ -85,6 +85,9 @@ public class PlayerGravityAndJump : MonoBehaviour
             jumpBufferCounter = 0f; 
             JustJumped = true;
             jumpCooldownTimer = jumpCooldown;
+
+            GetComponentInChildren<PlayerAudio>().PlayJump();
+
         }
 
         velocity.y += gravity * Time.deltaTime;

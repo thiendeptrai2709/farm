@@ -48,8 +48,11 @@ public class WaterWell : MonoBehaviour, IInteractable
                 {
                     refillSplashEffect.Play();
                 }
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlaySFX("Water_Pour");
+                }
             }
         }
     }
-
 }

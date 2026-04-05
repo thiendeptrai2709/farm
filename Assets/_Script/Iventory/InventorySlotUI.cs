@@ -145,18 +145,53 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (icon.sprite == null) return;
 
+        // 1. CHUỘT PHẢI: Ăn / Dùng đồ
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             InventoryManager.Instance.ConsumeItem(storageType, slotIndex);
             return;
         }
 
+        // 2. CHUỘT TRÁI
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             PlayerInputHandler playerInput = FindAnyObjectByType<PlayerInputHandler>();
 
-            if (playerInput != null && playerInput.IsRunning)
+            // Check phím Shift
+            bool isShiftPressed = (playerInput != null && playerInput.IsRunning) ||
+                                  (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.shiftKey.isPressed);
+
+            if (isShiftPressed)
             {
+                // --- ƯU TIÊN 1: NẾU ĐANG MỞ MÁNG ĂN VÀ ĐANG BẤM VÀO BALO ---
+                if (FoodTroughUIManager.Instance != null && FoodTroughUIManager.Instance.troughUIPanel.activeSelf &&
+                    (storageType == StorageType.Inventory || storageType == StorageType.Hotbar))
+                {
+                    InventorySlot slotData = null;
+                    if (storageType == StorageType.Inventory) slotData = InventoryManager.Instance.inventorySlots[slotIndex];
+                    else if (storageType == StorageType.Hotbar) slotData = InventoryManager.Instance.hotbarSlots[slotIndex];
+
+                    if (slotData != null && slotData.item != null && slotData.amount > 0)
+                    {
+                        int remainingAmount = slotData.amount;
+                        bool itemMoved = FoodTroughUIManager.Instance.TryAddFoodFromShiftClick(slotData.item, slotData.amount, out remainingAmount);
+
+                        if (itemMoved)
+                        {
+                            slotData.amount = remainingAmount;
+                            if (slotData.amount <= 0)
+                            {
+                                slotData.item = null;
+                                slotData.currentDurability = -1f;
+                            }
+                            InventoryManager.Instance.RefreshInventoryUI();
+                            return; // Dừng lại tại đây, ĐÃ CHUYỂN VÀO MÁNG XONG!
+                        }
+                    }
+                }
+
+                // --- ƯU TIÊN 2: TRẢ LẠI QUYỀN CHO CODE GỐC CỦA M ---
+                // (Chuyển Rương -> Balo, Balo -> Rương, Balo -> Mua Bán...)
                 InventoryManager.Instance.ShiftClickItem(storageType, slotIndex);
             }
         }

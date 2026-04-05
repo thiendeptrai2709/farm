@@ -63,7 +63,12 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
             invSlot.UpdateSlot(slotData); // Cập nhật lại hình ảnh Balo thành rỗng
 
             UpdateVisuals();
-            ShopUIManager.Instance.UpdateTotalSellValue(); // Báo Manager tính tổng tiền
+            ShopUIManager.Instance.UpdateTotalSellValue();
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX("Item_Drop");
+            }
         }
     }
 
@@ -83,7 +88,7 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         if (currentItem == null) return;
 
         // Trả lại Balo
-        bool added = InventoryManager.Instance.AddItem(currentItem, currentAmount);
+        bool added = InventoryManager.Instance.AddItem(currentItem, currentAmount, false);
         if (added)
         {
             ClearSlot();
@@ -92,6 +97,15 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         else
         {
             Debug.LogWarning("Balo đầy, không thể cất lại đồ!"); // Thường ít xảy ra vì lúc nãy rút đồ ra đã tạo ô trống rồi
+        }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Item_Drop"); // Dùng lại tiếng thả đồ cho đồng bộ
+        }
+        else
+        {
+            Debug.LogWarning("Balo đầy, không thể cất lại đồ!");
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error");
         }
     }
 

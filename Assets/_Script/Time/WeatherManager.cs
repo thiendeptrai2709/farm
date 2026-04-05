@@ -36,12 +36,22 @@ public class WeatherManager : MonoBehaviour
     [Header("Hiệu ứng hình ảnh")]
     public GameObject rainParticleSystem;
 
+    public AudioClip rainSound;
+    private AudioSource rainAudioSource;
+
     public event Action<WeatherState> OnWeatherChanged;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        rainAudioSource = gameObject.AddComponent<AudioSource>();
+        rainAudioSource.clip = rainSound;
+        rainAudioSource.loop = true;       // Mưa kêu liên tục
+        rainAudioSource.spatialBlend = 0f; // Chuẩn 2D: Đứng đâu trong map cũng nghe thấy
+        rainAudioSource.playOnAwake = false;
+
     }
 
     private void Start()
@@ -131,5 +141,18 @@ public class WeatherManager : MonoBehaviour
         {
             rainParticleSystem.SetActive(currentWeather == WeatherState.Raining);
         }
+
+        if (rainAudioSource != null && rainSound != null)
+        {
+            if (currentWeather == WeatherState.Raining && !rainAudioSource.isPlaying)
+            {
+                rainAudioSource.Play();
+            }
+            else if (currentWeather == WeatherState.Sunny && rainAudioSource.isPlaying)
+            {
+                rainAudioSource.Stop();
+            }
+        }
     }
 }
+

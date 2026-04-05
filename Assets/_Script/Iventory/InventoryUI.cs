@@ -33,20 +33,38 @@ public class InventoryUI : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnInventoryChanged += UpdateUI;
-            InventoryManager.Instance.OnChestToggled += TogglePanel;
+
+            InventoryManager.Instance.OnChestToggled += TogglePanelFromChest;
         }
 
        
         inventoryPanel.SetActive(false);
     }
-
-    public void TogglePanel(bool isOpen)
+    public void TogglePanelFromChest(bool isOpen)
     {
         if (inventoryPanel.activeSelf == isOpen) return;
 
         inventoryPanel.SetActive(isOpen);
         if (isOpen) UpdateUI();
 
+        // Lược bỏ hoàn toàn lệnh gọi AudioManager ở đây
+
+        // Vẫn phải giữ dòng này để báo cho Camera biết mà nhả chuột ra
+        OnInventoryUIToggled?.Invoke(isOpen);
+    }
+    public void TogglePanel(bool isOpen)
+    {
+        if (inventoryPanel.activeSelf == isOpen) return;
+
+        inventoryPanel.SetActive(isOpen);
+
+        if (isOpen) UpdateUI();
+
+        if (AudioManager.Instance != null)
+        {
+            if (isOpen) AudioManager.Instance.PlaySFX("Bag_Open");
+            else AudioManager.Instance.PlaySFX("Bag_Close");
+        }
         // 2. PHÁT LOA: Thông báo cho toàn Server biết Balo vừa Đóng hay Mở
         OnInventoryUIToggled?.Invoke(isOpen);
     }
@@ -99,15 +117,24 @@ public class InventoryUI : MonoBehaviour
             }
         }
     }
-    public void ForceOpen()
+    public void ForceOpen(bool playSound = true)
     {
+        // Chỉ kêu tiếng mở túi nếu playSound = true
+        if (!inventoryPanel.activeSelf && playSound && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("Bag_Open");
+
         inventoryPanel.SetActive(true);
         UpdateUI();
         // KHÔNG fire OnInventoryUIToggled ở đây
     }
 
-    public void ForceClose()
+    // ĐÃ SỬA: Thêm công tắc playSound
+    public void ForceClose(bool playSound = true)
     {
+        // Chỉ kêu tiếng đóng túi nếu playSound = true
+        if (inventoryPanel.activeSelf && playSound && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("Bag_Close");
+
         inventoryPanel.SetActive(false);
         // KHÔNG fire OnInventoryUIToggled ở đây
     }

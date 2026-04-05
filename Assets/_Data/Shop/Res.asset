@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
+  m_Name: Res
+  m_EditorClassIdentifier: Assembly-CSharp::ShopData
+  npcName: "S\u1EA1p T\xE0i Nguy\xEAn"
+  merchantMoney: 1984
+  maxShopSlots: 12
+  itemsForSale:
+  - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
+    currentQuantity: 0
+  - item: {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}
+    currentQuantity: 0
+  possibleItemsToSell:
+  - {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
+  - {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}
+  minQuantity: 1
+  maxQuantity: 10
+  acceptedItemTypesToBuy: 03000000

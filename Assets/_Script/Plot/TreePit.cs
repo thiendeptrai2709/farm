@@ -240,7 +240,10 @@ public class TreePit : MonoBehaviour, IInteractable
         {
             InventoryManager.Instance.DeductEquippedToolDurability(1f); // Mỗi nhát chém tụt 1 máu
         }
-
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Axe_Hit"); // Tiếng rìu phập vào gỗ
+        }
         if (treeHealth <= 0)
         {
             if (currentState != PitState.Planted && plantedTree.woodItem != null)
@@ -309,6 +312,10 @@ public class TreePit : MonoBehaviour, IInteractable
         if (InventoryManager.Instance != null && wateringCanItem != null)
         {
             InventoryManager.Instance.DeductPersonalToolDurability(wateringCanItem, 1f);
+        }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Water_Pour");
         }
     }
 

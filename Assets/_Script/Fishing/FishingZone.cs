@@ -75,6 +75,10 @@ public class FishingZone : MonoBehaviour, IInteractable
                 Animator playerAnim = FindAnyObjectByType<PlayerInteraction>().playerAnimator;
                 if (playerAnim != null) playerAnim.SetTrigger("StruggleFish");
 
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Bite");
+
+                if (AudioManager.Instance != null) AudioManager.Instance.PlayLoopSFX("Reel_Struggle");
+
                 StartRound();
             }
         }
@@ -154,7 +158,7 @@ public class FishingZone : MonoBehaviour, IInteractable
                 arrowSlots[currentInputIndex].color = successColor;
 
             currentInputIndex++;
-
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Click");
             if (currentInputIndex >= currentSequenceLength)
             {
                 RoundFinished(true);
@@ -162,6 +166,7 @@ public class FishingZone : MonoBehaviour, IInteractable
         }
         else
         {
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error");
             Debug.Log($"Hiệp {currentRound}: Bấm sai nút! Tạch!");
             RoundFinished(false);
         }
@@ -169,7 +174,7 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     private void RoundFinished(bool wonRound)
     {
-        // [ĐÃ SỬA]: LOGIC TIẾN/LÙI ĐỘ KHÓ SIÊU MƯỢT
+        
         if (wonRound)
         {
             successCount++;
@@ -275,9 +280,12 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         // 4. Bay tới tay người chơi thì tự biến mất
         if (fish != null) Destroy(fish);
+
     }
     private void EndFishing()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.StopLoopSFX();
+
         if (auditionPanel != null) auditionPanel.SetActive(false);
         if (timerSlider != null) timerSlider.gameObject.SetActive(false);
 
@@ -289,6 +297,8 @@ public class FishingZone : MonoBehaviour, IInteractable
         {
             Debug.Log("NẤC 0: Tạch toàn tập. Chuyển sang Anim Trượt!");
             if (playerAnim != null) playerAnim.SetTrigger("MissFish");
+
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Fail");
         }
         else
         {
@@ -298,6 +308,10 @@ public class FishingZone : MonoBehaviour, IInteractable
             ProcessCatch(caughtTier);
             StartCoroutine(SpawnAndFlyFishRoutine());
             if (playerAnim != null) playerAnim.SetTrigger("CatchFish");
+
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Catch");
+
+
         }
     }
 
@@ -415,6 +429,8 @@ public class FishingZone : MonoBehaviour, IInteractable
             if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = true;
             if (playerAnim != null) playerAnim.SetTrigger("StartFishing");
             if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(true);
+
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Cast");
         }
         else if (currentState == FishingState.WaitingForBite)
         {

@@ -45,17 +45,21 @@ public class HammerUIManager : MonoBehaviour
     {
         hammerPanel.SetActive(true);
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
+
         // 1. Phát loa: "Tao đang mở UI đây, nhả chuột ra và khóa chân lại!"
         OnHammerUIToggled?.Invoke(true);
 
         PopulateList(availableProps);
     }
 
-    public void CloseUI()
+    public void CloseUI(bool playSound = true)
     {
         hammerPanel.SetActive(false);
 
-        // 2. Phát loa: "Tao đóng UI rồi, cất chuột đi và thả chân ra!"
+        // --- THÊM SOUND ĐÓNG BẢNG ---
+        if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
+
         OnHammerUIToggled?.Invoke(false);
     }
 
@@ -79,11 +83,11 @@ public class HammerUIManager : MonoBehaviour
         if (propListContainer.childCount > 0)
         {
             BlueprintSlotUI firstSlot = propListContainer.GetChild(0).GetComponent<BlueprintSlotUI>();
-            SelectProp(props[0], firstSlot);
+            SelectProp(props[0], firstSlot, false);
         }
     }
 
-    public void SelectProp(BuildingBlueprint prop, BlueprintSlotUI slotUI)
+    public void SelectProp(BuildingBlueprint prop, BlueprintSlotUI slotUI, bool playSound = true)
     {
         currentSelectedProp = prop;
 
@@ -95,6 +99,9 @@ public class HammerUIManager : MonoBehaviour
         detailDescText.text = prop.description;
 
         RefreshRequirements();
+
+        if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Click");
+
     }
 
     private void RefreshRequirements()

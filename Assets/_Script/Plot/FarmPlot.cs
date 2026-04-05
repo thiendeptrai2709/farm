@@ -230,6 +230,11 @@ public class FarmPlot : MonoBehaviour, IInteractable
         {
             InventoryManager.Instance.DeductPersonalToolDurability(wateringCanItem, 1f);
         }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Water_Pour");
+        }
+
     }
 
     private void FertilizePlant()

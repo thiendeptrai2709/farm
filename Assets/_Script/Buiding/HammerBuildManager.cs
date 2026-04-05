@@ -71,6 +71,11 @@ public class HammerBuildManager : MonoBehaviour
 
                         HammerUIManager.Instance.OpenUI(smallPropBlueprints);
                     }
+                    else
+                    {
+                        // 2. Đang bật -> Tắt đi
+                        HammerUIManager.Instance.CloseUI();
+                    }
                 }
                 else if (isPlacing && currentHologram != null)
                 {
@@ -178,6 +183,10 @@ public class HammerBuildManager : MonoBehaviour
             // [QUAN TRỌNG]: Đổi "SwingHammer" thành đúng tên Trigger đập búa trong Animator của ông nhé!
             // Ví dụ: "UseTool", "Build", "Hit"...
             playerInteract.playerAnimator.SetTrigger("SwingHammer");
+        }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Build_Success");
         }
         // =====================================
 

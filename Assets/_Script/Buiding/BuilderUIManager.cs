@@ -51,10 +51,14 @@ public class BuilderUIManager : MonoBehaviour
     // Gọi hàm này khi tương tác với cái Bàn/Nhà Chính, truyền vào list các bản vẽ có thể mua
     public void OpenUI(List<BuildingBlueprint> availableBlueprints, Transform tableTransform)
     {
+
+
         currentAvailableBlueprints = availableBlueprints;
         currentTableTransform = tableTransform;
         currentTableCollider = tableTransform.GetComponent<Collider>();
         builderPanel.SetActive(true);
+
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
 
         OnBuilderUIToggled?.Invoke(true);
 
@@ -67,10 +71,16 @@ public class BuilderUIManager : MonoBehaviour
     {
         return currentTableCollider;
     }
-    public void CloseUI()
+    public void CloseUI(bool playSound = true)
     {
         builderPanel.SetActive(false);
         OnBuilderUIToggled?.Invoke(false);
+
+        // Chỉ kêu tiếng đóng bảng nếu công tắc đang bật
+        if (playSound && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Bag_Open");
+        }
     }
     public bool IsOpen()
     {
@@ -106,11 +116,11 @@ public class BuilderUIManager : MonoBehaviour
         if (blueprints.Count > 0 && blueprintListContainer.childCount > 0)
         {
             BlueprintSlotUI firstSlotUI = blueprintListContainer.GetChild(0).GetComponent<BlueprintSlotUI>();
-            SelectBlueprint(blueprints[0], firstSlotUI);
+            SelectBlueprint(blueprints[0], firstSlotUI, false);
         }
     }
 
-    public void SelectBlueprint(BuildingBlueprint blueprint, BlueprintSlotUI slotUI = null)
+    public void SelectBlueprint(BuildingBlueprint blueprint, BlueprintSlotUI slotUI = null, bool playSound = true)
     {
         currentSelectedBlueprint = blueprint;
 
@@ -131,6 +141,11 @@ public class BuilderUIManager : MonoBehaviour
 
         UpdatePriceDisplay();
         RefreshRequirements();
+
+        if (playSound && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("UI_Click");
+        }
     }
     private void UpdatePriceDisplay()
     {
@@ -187,6 +202,8 @@ public class BuilderUIManager : MonoBehaviour
     {
         if (!canAffordCurrentBlueprint || currentSelectedBlueprint == null) return;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Build_Success");
+
         int currentGoldCost = currentSelectedBlueprint.GetCurrentUnlockPrice();
 
         if (coinItem != null && currentGoldCost > 0)
@@ -223,7 +240,7 @@ public class BuilderUIManager : MonoBehaviour
             {
                 // Nếu chưa max -> Làm mới lại giao diện để hiển thị cấp tiếp theo (nút vẫn giữ nguyên)
                 detailDescText.text = currentSelectedBlueprint.description + $" (Cấp {currentSelectedBlueprint.currentLevel}/{currentSelectedBlueprint.maxLevel})";
-                SelectBlueprint(currentSelectedBlueprint, currentSelectedSlotUI);
+                SelectBlueprint(currentSelectedBlueprint, currentSelectedSlotUI, false);
             }
         }
         else
@@ -235,7 +252,7 @@ public class BuilderUIManager : MonoBehaviour
 
         RefreshMoneyUI();
 
-        CloseUI();
+        CloseUI(false);
     }
     private void RemoveBlueprintFromUI()
     {

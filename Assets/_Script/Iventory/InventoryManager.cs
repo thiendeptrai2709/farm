@@ -82,17 +82,28 @@ public class InventoryManager : MonoBehaviour
     // ==========================================
     // LOGIC NHẶT ĐỒ (THÔNG MINH)
     // ==========================================
-    public bool AddItem(ItemData itemToAdd, int amountToAdd)
+    public bool AddItem(ItemData itemToAdd, int amountToAdd, bool playSound = true)
     {
-        // 1. Ưu tiên cộng dồn vào Hotbar (nếu Hotbar ĐÃ CÓ sẵn món đó)
+        int initialAmount = amountToAdd;
+
         if (itemToAdd.isStackable)
         {
             amountToAdd = AddToExistingStacksOnly(hotbarSlots, itemToAdd, amountToAdd);
-            if (amountToAdd <= 0) return true;
+            if (amountToAdd <= 0)
+            {
+                // Chỉ phát âm thanh nếu công tắc đang BẬT
+                if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
+                return true;
+            }
         }
 
         // 2. Chỗ thừa còn lại (hoặc đồ nhặt lần đầu) ném tất cả vào Balo
         amountToAdd = AddToList(inventorySlots, itemToAdd, amountToAdd, -1);
+
+        if (amountToAdd < initialAmount)
+        {
+            if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
+        }
 
         if (amountToAdd > 0)
         {
@@ -216,6 +227,10 @@ public class InventoryManager : MonoBehaviour
             slotB.item = tempItem; slotB.amount = tempAmount; slotB.currentDurability = tempDur;
         }
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Item_Drop");
+        }
         OnInventoryChanged?.Invoke();
     }
 
@@ -388,7 +403,10 @@ public class InventoryManager : MonoBehaviour
         {
             slotToMove.amount = leftover;
         }
-
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Item_Drop");
+        }
         OnInventoryChanged?.Invoke();
     }
 
@@ -566,6 +584,12 @@ public class InventoryManager : MonoBehaviour
         emptySlot.amount = amountToMove;
         emptySlot.currentDurability = list[index].currentDurability; // Cứ gán đại, dù vũ khí ko stack được
         Debug.Log($"[Chia Đồ] Thành công! Đã tách {amountToMove} món sang ô rỗng.");
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Item_Drop");
+        }
+
         OnInventoryChanged?.Invoke();
     }
     public void RegisterChest(Chest chest)
