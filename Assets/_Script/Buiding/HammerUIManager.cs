@@ -51,6 +51,11 @@ public class HammerUIManager : MonoBehaviour
         OnHammerUIToggled?.Invoke(true);
 
         PopulateList(availableProps);
+
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetHammerOpenState(true); // Truyền false khi đóng
+        }
     }
 
     public void CloseUI(bool playSound = true)
@@ -61,6 +66,11 @@ public class HammerUIManager : MonoBehaviour
         if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
 
         OnHammerUIToggled?.Invoke(false);
+
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetHammerOpenState(false); // Truyền false khi đóng
+        }
     }
 
     private void PopulateList(List<BuildingBlueprint> props)

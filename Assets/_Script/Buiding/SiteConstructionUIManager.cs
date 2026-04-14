@@ -74,6 +74,10 @@ public class SiteConstructionUIManager : MonoBehaviour
         if (InventoryUI.Instance != null) InventoryUI.Instance.ForceOpen();
 
         RefreshUI();
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetSiteUIOpenState(true); // Truyền false khi đóng
+        }
     }
 
     public void CloseUI(bool playSound = true)
@@ -88,6 +92,11 @@ public class SiteConstructionUIManager : MonoBehaviour
         if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose();
 
         if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
+
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetSiteUIOpenState(false); // Truyền false khi đóng
+        }
     }
 
     public void RefreshUI()

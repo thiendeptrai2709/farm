@@ -18,6 +18,7 @@ public class PlayerCameraManager : MonoBehaviour
     private bool isHammerOpen = false;
     private bool isAnimalUIOpen = false;
     private bool isFoodTroughOpen = false;
+    private bool isBusUIOpen = false;
 
     public Behaviour cameraInputProvider;
     public GameObject cameraObject;
@@ -61,75 +62,65 @@ public class PlayerCameraManager : MonoBehaviour
                 Debug.LogError("Cảnh báo: Không tìm thấy CinemachineInputAxisController trên Camera!");
             }
         }
-        if (InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.OnChestToggled += (isOpen) => {
-                isChestOpen = isOpen;
-                UpdateCursorState();
-            };
-        }
-        if (FarmPlotUIManager.Instance != null)
-        {
-            FarmPlotUIManager.Instance.OnPlotUIToggled += (isOpen) => {
-                isPlotUIOpen = isOpen;
+    }
+    public void SetBusUIOpenState(bool isOpen)
+    {
+        isBusUIOpen = isOpen;
+        UpdateCursorState();
+    }
+    public void SetShopOpenState(bool isOpen)
+    {
+        isShopOpen = isOpen;
+        isInventoryOpen = isOpen;
+        UpdateCursorState();
+    }
+    public void SetChestOpenState(bool isOpen)
+    {
+        isChestOpen = isOpen;
+        UpdateCursorState();
+    }
 
-                // Đồng bộ biến isInventoryOpen vì khi mở Plot UI, cái Balo cũng bị ép mở theo
-                isInventoryOpen = isOpen;
+    public void SetPlotUIOpenState(bool isOpen)
+    {
+        isPlotUIOpen = isOpen;
+        isInventoryOpen = isOpen; // Đồng bộ với Balo
+        UpdateCursorState();
+    }
 
-                UpdateCursorState();
-            };
-        }
-        if (ShopUIManager.Instance != null)
-        {
-            ShopUIManager.Instance.OnShopUIToggled += (isOpen) => {
-                isShopOpen = isOpen;
+    public void SetBuilderOpenState(bool isOpen)
+    {
+        isBuilderOpen = isOpen;
+        UpdateCursorState();
+    }
 
-                // Đồng bộ biến isInventoryOpen vì khi mở Shop, Balo cũng mở theo
-                isInventoryOpen = isOpen;
-                UpdateCursorState();
-            };
-        }
-        if (BuilderUIManager.Instance != null)
-        {
-            BuilderUIManager.Instance.OnBuilderUIToggled += (isOpen) => {
-                isBuilderOpen = isOpen;
-                UpdateCursorState();
-            };
-        }
-        if (SiteConstructionUIManager.Instance != null)
-        {
-            SiteConstructionUIManager.Instance.OnSiteConstructionUIToggled += (isOpen) => {
-                isSiteUIOpen = isOpen;
-                isInventoryOpen = isOpen;
+    public void SetSiteUIOpenState(bool isOpen)
+    {
+        isSiteUIOpen = isOpen;
+        isInventoryOpen = isOpen; // Đồng bộ với Balo
+        UpdateCursorState();
+    }
 
-                UpdateCursorState();
-            };
-        }
-        if (HammerUIManager.Instance != null)
-        {
-            HammerUIManager.Instance.OnHammerUIToggled += (isOpen) => {
-                isHammerOpen = isOpen;
-                UpdateCursorState();
-            };
-        }
-        if (AnimalPenUIManager.Instance != null)
-        {
-            AnimalPenUIManager.Instance.OnAnimalUIToggled += (isOpen) => {
-                isAnimalUIOpen = isOpen;
-                UpdateCursorState();
-            };
-        }
-        if (FoodTroughUIManager.Instance != null)
-        {
-            FoodTroughUIManager.Instance.OnTroughUIToggled += (isOpen) => {
-                isFoodTroughOpen = isOpen;
-                isInventoryOpen = isOpen;
-                if (InventoryUI.Instance != null)
-                    InventoryUI.Instance.TogglePanel(isOpen);
+    public void SetHammerOpenState(bool isOpen)
+    {
+        isHammerOpen = isOpen;
+        UpdateCursorState();
+    }
 
-                UpdateCursorState();
-            };
+    public void SetAnimalUIOpenState(bool isOpen)
+    {
+        isAnimalUIOpen = isOpen;
+        UpdateCursorState();
+    }
+
+    public void SetFoodTroughOpenState(bool isOpen)
+    {
+        isFoodTroughOpen = isOpen;
+        isInventoryOpen = isOpen; // Đồng bộ với Balo
+        if (InventoryUI.Instance != null)
+        {
+            InventoryUI.Instance.TogglePanel(isOpen);
         }
+        UpdateCursorState();
     }
     private void Update()
     {
@@ -161,6 +152,16 @@ public class PlayerCameraManager : MonoBehaviour
                 if (FoodTroughUIManager.Instance != null) FoodTroughUIManager.Instance.CloseTroughUI();
                 return; // Thoát luôn, chặn không cho Balo tự tắt/mở lung tung
             }
+            if (isShopOpen)
+            {
+                if (ShopUIManager.Instance != null) ShopUIManager.Instance.CloseShop();
+                return;
+            }
+            if (isBusUIOpen)
+            {
+                if (BusUI.Instance != null) BusUI.Instance.CloseUI();
+                return;
+            }
             isInventoryOpen = !isInventoryOpen;
 
             if (InventoryUI.Instance != null)
@@ -169,7 +170,7 @@ public class PlayerCameraManager : MonoBehaviour
             UpdateCursorState();
         }
         // 3. Chuột TRÁI: Nếu đang mở UI mà click ra ngoài viền thì khóa chuột lại
-        if (inputHandler.ClickTriggered && !isCursorLocked && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen)
+        if (inputHandler.ClickTriggered && !isCursorLocked && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen && !isBusUIOpen)
         {
             SetCursorState(true);
         }
@@ -178,7 +179,7 @@ public class PlayerCameraManager : MonoBehaviour
     // Hàm tổng hợp: Chỉ khóa chuột khi TẤT CẢ các bảng UI đều đang tắt
     private void UpdateCursorState()
     {
-        if (isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen)
+        if (isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen)
         {
             SetCursorState(false); // Nhả chuột ra để kéo thả UI
 

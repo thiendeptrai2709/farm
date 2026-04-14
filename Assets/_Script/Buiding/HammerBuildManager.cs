@@ -191,8 +191,20 @@ public class HammerBuildManager : MonoBehaviour
         // =====================================
 
         // 2. Đẻ ra đồ thật
-        Instantiate(blueprintToPlace.prefabToBuild, pos, rot);
-        Debug.Log($"[Thành công] Đã xây {blueprintToPlace.buildingName} theo lưới chuẩn!");
+        Chest isBuildingChest = blueprintToPlace.prefabToBuild.GetComponent<Chest>();
+
+        if (isBuildingChest != null && ChestManager.Instance != null)
+        {
+            // Nếu là Rương -> Gọi Manager chuyên trách để đẻ rương và làm thẻ Căn cước
+            ChestManager.Instance.BuildNewChest(pos, rot, blueprintToPlace.prefabToBuild);
+            Debug.Log($"[Thành công] Đã đóng một cái Rương tự chế!");
+        }
+        else
+        {
+            // Nếu là Hàng rào, Lò rèn... -> Đẻ bình thường
+            Instantiate(blueprintToPlace.prefabToBuild, pos, rot);
+            Debug.Log($"[Thành công] Đã xây {blueprintToPlace.buildingName} theo lưới chuẩn!");
+        }
 
         if (HasEnoughMaterials(blueprintToPlace))
         {

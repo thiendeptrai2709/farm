@@ -65,6 +65,10 @@ public class BuilderUIManager : MonoBehaviour
         RefreshMoneyUI();
 
         PopulateBlueprintList(availableBlueprints);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetBuilderOpenState(true); // Truyền false khi đóng
+        }
 
     }
     public Collider GetCurrentTableCollider()
@@ -80,6 +84,11 @@ public class BuilderUIManager : MonoBehaviour
         if (playSound && AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySFX("Bag_Open");
+        }
+
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetBuilderOpenState(false); // Truyền false khi đóng
         }
     }
     public bool IsOpen()

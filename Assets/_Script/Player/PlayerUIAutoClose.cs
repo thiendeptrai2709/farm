@@ -83,5 +83,23 @@ public class PlayerUIAutoClose : MonoBehaviour
                 if (distanceToSite > closeRadius) SiteConstructionUIManager.Instance.CloseUI();
             }
         }
+        if (BusUI.Instance != null && BusUI.Instance.IsOpen())
+        {
+            Transform busTransform = BusUI.Instance.currentBusStop;
+
+            if (busTransform != null)
+            {
+                Collider busCollider = busTransform.GetComponent<Collider>();
+
+                float distanceToBus = busCollider != null
+                    ? Vector3.Distance(checkPosition, busCollider.ClosestPoint(checkPosition))
+                    : Vector3.Distance(checkPosition, busTransform.position);
+
+                if (distanceToBus > closeRadius)
+                {
+                    BusUI.Instance.CloseUI();
+                }
+            }
+        }
     }
 }

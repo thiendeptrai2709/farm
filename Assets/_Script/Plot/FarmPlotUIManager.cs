@@ -63,6 +63,10 @@ public class FarmPlotUIManager : MonoBehaviour
         if (InventoryUI.Instance != null) InventoryUI.Instance.TogglePanel(true);
 
         OnPlotUIToggled?.Invoke(true);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetPlotUIOpenState(true); // Truyền false khi đóng
+        }
     }
     public void ClearSelectedSeed()
     {
@@ -92,6 +96,10 @@ public class FarmPlotUIManager : MonoBehaviour
         if (InventoryUI.Instance != null) InventoryUI.Instance.TogglePanel(false);
 
         OnPlotUIToggled?.Invoke(false);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetPlotUIOpenState(false); // Truyền false khi đóng
+        }
     }
 
     // --- HÀM NÀY ĐƯỢC GỌI BỞI CÁI SEED_DROP_SLOT Ở BƯỚC 1 ---

@@ -120,6 +120,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Chest
   chestSize: 8
   chestSlots: []
+  startingItems: []
   lidTransform: {fileID: 2863652495879296438}
   openAngle: -90
   animationDuration: 0.4
+  chestID: 
+  isBuiltByPlayer: 0
+  prefabID: ChestMedium

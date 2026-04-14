@@ -142,4 +142,18 @@ public class InventoryUI : MonoBehaviour
     {
         return inventoryPanel != null && inventoryPanel.activeSelf;
     }
+    public void ToggleInGameUI(bool isActive)
+    {
+        // Bật/tắt cái thanh Hotbar dưới đáy màn hình
+        if (hotbarContainer != null)
+        {
+            hotbarContainer.gameObject.SetActive(isActive);
+        }
+
+        // Đảm bảo Balo luôn đóng khi ở ngoài Menu
+        if (!isActive && inventoryPanel != null)
+        {
+            inventoryPanel.SetActive(false);
+        }
+    }
 }

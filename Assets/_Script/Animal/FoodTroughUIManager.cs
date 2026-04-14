@@ -17,12 +17,23 @@ public class FoodTroughUIManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // [ĐÃ SỬA]: Chuẩn Singleton Local
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
 
         if (troughUIPanel != null) troughUIPanel.SetActive(false);
     }
-
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
     private void Start()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -54,6 +65,10 @@ public class FoodTroughUIManager : MonoBehaviour
 
         OnTroughUIToggled?.Invoke(true);
         RefreshUI();
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetFoodTroughOpenState(true); // Truyền false khi đóng
+        }
     }
 
     public void CloseTroughUI()
@@ -61,6 +76,10 @@ public class FoodTroughUIManager : MonoBehaviour
         troughUIPanel.SetActive(false);
         currentTrough = null;
         OnTroughUIToggled?.Invoke(false);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetFoodTroughOpenState(false); // Truyền false khi đóng
+        }
     }
 
     public void RefreshUI()

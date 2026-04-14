@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
@@ -14,30 +15,38 @@ public class Chest : MonoBehaviour, IInteractable
     public float animationDuration = 0.4f; // Mở trong 0.4 giây cho chân thực
 
     private bool isOpen = false;
+    public string chestID;
+    public bool isBuiltByPlayer = false;
+    public string prefabID;
+
     private Coroutine animationCoroutine;
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
     private void Start()
     {
-        // LÀM SẠCH VÀ NẠP ĐỒ TỪ LÚC KHỞI CHẠY
+
         chestSlots.Clear();
 
-        for (int i = 0; i < chestSize; i++)
+        if (GameDataManager.Instance != null && GameDataManager.Instance.chestDataDict.ContainsKey(chestID))
         {
-            // SỬA Ở ĐÂY: Truyền thẳng biến vào trong ngoặc tròn ()
-            if (i < startingItems.Count && startingItems[i].item != null)
+            chestSlots = new List<InventorySlot>(GameDataManager.Instance.chestDataDict[chestID].slots);
+        }
+        else
+        {
+            for (int i = 0; i < chestSize; i++)
             {
-                chestSlots.Add(new InventorySlot(startingItems[i].item, startingItems[i].amount));
-            }
-            else
-            {
-                // SỬA Ở ĐÂY: Truyền null và 0 cho các ô trống
-                chestSlots.Add(new InventorySlot(null, 0));
+                if (i < startingItems.Count && startingItems[i].item != null)
+                {
+                    chestSlots.Add(new InventorySlot(startingItems[i].item, startingItems[i].amount));
+                }
+                else
+                {
+                    chestSlots.Add(new InventorySlot(null, 0));
+                }
             }
         }
 
-        // Lưu lại góc ban đầu của nắp
         if (lidTransform != null)
         {
             closedRotation = lidTransform.localRotation;
@@ -50,11 +59,11 @@ public class Chest : MonoBehaviour, IInteractable
     }
     private void OnDestroy()
     {
-        // Xóa tên khỏi sổ đăng ký để Manager không bị lỗi Null khi tìm đồ
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.UnregisterChest(this);
         }
+        ForceSaveToManager();
     }
     public string GetInteractText()
     {
@@ -100,5 +109,34 @@ public class Chest : MonoBehaviour, IInteractable
             yield return null; // Chờ frame tiếp theo
         }
         lidTransform.localRotation = targetRotation; // Ép vào góc chuẩn cuối cùng
+    }
+    [ContextMenu("Tự động tạo ID cho Rương")]
+    private void AutoGenerateID()
+    {
+        // Tạo một chuỗi ngẫu nhiên không bao giờ trùng
+        chestID = "MapChest_" + System.Guid.NewGuid().ToString().Substring(0, 8);
+    }
+    public void ForceSaveToManager()
+    {
+        if (chestSlots.Count == 0)
+        {
+            for (int i = 0; i < chestSize; i++)
+            {
+                chestSlots.Add(new InventorySlot(null, 0));
+            }
+        }
+
+        if (GameDataManager.Instance != null && !string.IsNullOrEmpty(chestID))
+        {
+            ChestData data = new ChestData();
+            data.id = chestID;
+            data.prefabID = this.prefabID;
+            data.position = transform.position;
+            data.rotation = transform.rotation;
+            data.isBuiltByPlayer = this.isBuiltByPlayer;
+            data.slots = new List<InventorySlot>(chestSlots);
+
+            GameDataManager.Instance.chestDataDict[chestID] = data;
+        }
     }
 }

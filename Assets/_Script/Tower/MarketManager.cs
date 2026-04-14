@@ -26,7 +26,27 @@ public class MarketManager : MonoBehaviour
     private void Start()
     {
         if (TimeManager.Instance != null) TimeManager.Instance.OnNewDay += GenerateNewDailyPrices;
-        GenerateNewDailyPrices();
+
+        // KIỂM TRA SỔ CÁI: Hôm nay đã khởi tạo thị trường chưa?
+        if (GameDataManager.Instance != null)
+        {
+            if (!GameDataManager.Instance.isMarketInitialized)
+            {
+                // Nếu chưa (Mới bật game) -> Tạo giá mới và nạp hàng cho NPC
+                GenerateNewDailyPrices();
+                GameDataManager.Instance.isMarketInitialized = true;
+            }
+            else
+            {
+                // Nếu rồi (Do đi xe Bus qua lại) -> Phục hồi lại giá từ Sổ Cái, TUYỆT ĐỐI KHÔNG nạp lại hàng NPC
+                dailyPriceMultipliers = new Dictionary<ItemData, float>(GameDataManager.Instance.savedDailyPrices);
+                Debug.Log("Đã tải lại giá cả từ Sổ Cái, giữ nguyên tình trạng quầy hàng của NPC!");
+            }
+        }
+        else
+        {
+            GenerateNewDailyPrices();
+        }
     }
 
     private void OnDestroy()
@@ -43,7 +63,12 @@ public class MarketManager : MonoBehaviour
             dailyPriceMultipliers.Add(item, randomMultiplier);
         }
 
-        // [ĐÃ THÊM]: Bắt tất cả các NPC random lại hàng hóa lên quầy
+        // [QUAN TRỌNG]: Lưu lại một bản sao của bảng giá vào Sổ Cái để mang đi Scene khác
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.savedDailyPrices = new Dictionary<ItemData, float>(dailyPriceMultipliers);
+        }
+
         foreach (ShopData shop in allShopsInGame)
         {
             if (shop != null) shop.GenerateDailyInventory();

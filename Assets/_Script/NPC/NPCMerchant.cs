@@ -27,7 +27,35 @@ public class NPCMerchant : MonoBehaviour, IInteractable
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+    private void Start()
+    {
+        // --- LOGIC XỬ LÝ LÚC VỪA LOAD SCENE ---
+        // Bắt Thương gia phải lập tức có mặt ở đúng vị trí theo giờ giấc hiện tại
+        TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
+        if (timeSys != null && agent != null)
+        {
+            float currentTime = timeSys.hour;
+            bool shouldBeAtWork = currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime;
 
+            if (shouldBeAtWork)
+            {
+                // Nếu là giờ hành chính -> Dịch chuyển nó cắm rễ luôn ở sạp hàng
+                agent.Warp(workPoint.position);
+                transform.rotation = workPoint.rotation; // Xoay mặt nhìn ra quầy
+                isAtWork = true;
+                isInsideHouse = false;
+                isGoingHome = false;
+                SetNPCVisibility(true);
+            }
+            else
+            {
+                // Nếu là buổi tối -> Ép nó tàng hình nằm sẵn trong nhà
+                agent.Warp(homePoint.position);
+                isAtWork = false;
+                EnterHouse();
+            }
+        }
+    }
     private void Update()
     {
         // --- [ĐÃ SỬA]: KIỂM TRA XEM CÓ ĐANG GIAO DỊCH VỚI PLAYER KHÔNG ---

@@ -37,7 +37,10 @@ public class ChestUI : MonoBehaviour
             else
                 AudioManager.Instance.PlaySFX("Chest_Close");
         }
-
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetChestOpenState(isOpen);
+        }
         if (isOpen)
         {
             InitializeUI();

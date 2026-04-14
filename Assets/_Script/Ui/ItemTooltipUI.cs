@@ -64,7 +64,7 @@ public class ItemTooltipUI : MonoBehaviour
     private void ShowPanel()
     {
         tooltipPanel.SetActive(true);
-
+        transform.SetAsLastSibling();
         // 1. CHUNG: Tên vật phẩm và Phân loại
         nameText.text = currentItem.displayName;
         typeText.text = currentItem.itemType.ToString();

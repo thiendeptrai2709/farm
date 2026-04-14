@@ -17,9 +17,9 @@ public class FarmingZone : MonoBehaviour, IInteractable
     public GameObject treePitPrefab;    // Hố cây 2x2 (Prefab chứa script TreePit)
     public GameObject highlightModel;
 
-    [Header("Player")]
-    public Transform player;
-    public PlayerInteraction playerRadar;
+    [Header("Player (Tự động tìm, không cần kéo thả)")]
+    [HideInInspector] public Transform player;
+    [HideInInspector] public PlayerInteraction playerRadar;
 
     private Dictionary<Vector3Int, GameObject> activePlots = new Dictionary<Vector3Int, GameObject>();
     private BoxCollider cursorCollider;
@@ -53,17 +53,64 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+            playerRadar = playerObj.GetComponent<PlayerInteraction>();
+        }
+        else
+        {
+            Debug.LogError("FarmingZone không tìm thấy Player! Hãy chắc chắn Player có tag là 'Player'.");
+        }
+
         cursorCollider = GetComponent<BoxCollider>();
         if (boundaryLine != null)
         {
             lineMaterial = boundaryLine.material;
-            boundaryLine.positionCount = 4; // Cần 4 điểm cho 4 góc
-            boundaryLine.loop = true;       // Nối điểm cuối vòng lại điểm đầu thành hình khép kín
+            boundaryLine.positionCount = 4;
+            boundaryLine.loop = true;
             boundaryLine.gameObject.SetActive(false);
 
-            UpdateBoundaryLine(); // Gọi hàm vẽ viền lần đầu tiên
+            UpdateBoundaryLine();
         }
         RefreshFarmTerrain();
+
+        // -----------------------------------------------------
+        // KẾT NỐI SỔ CÁI: Đọc dữ liệu và đẻ lại toàn bộ luống đất cũ
+        // -----------------------------------------------------
+        if (GameDataManager.Instance != null && tilledDirtPrefab != null)
+        {
+            // 1. Tính toán xem bạn đã đi vắng bao nhiêu giây thực tế (Kể cả tắt game)
+            float offlineSeconds = 0f;
+            if (GameDataManager.Instance.lastFarmExitTimeTicks != 0)
+            {
+                System.TimeSpan timeSpan = System.DateTime.Now - new System.DateTime(GameDataManager.Instance.lastFarmExitTimeTicks);
+                offlineSeconds = (float)timeSpan.TotalSeconds;
+                Debug.Log($"Bạn đã rời Farm {offlineSeconds} giây. Đang tua nhanh sự phát triển của cây...");
+            }
+
+            // 2. Đẻ lại luống đất và nhồi thời gian đi vắng vào cây
+            foreach (var kvp in GameDataManager.Instance.farmPlotDataDict)
+            {
+                FarmPlotData data = kvp.Value;
+                Vector3Int coords = GetGridCoords(data.position);
+
+                if (!activePlots.ContainsKey(coords))
+                {
+                    // QUAN TRỌNG NHẤT: Cộng dồn thời gian đi vắng vào tuổi của cái cây
+                    // (Nếu cây là Planted thì nó sẽ tự động tính xem với số giây này nó đã biến thành Grown chưa)
+                    if (data.state == PlotState.Planted)
+                    {
+                        data.growTimer += offlineSeconds;
+                    }
+
+                    GameObject restoredPlot = Instantiate(tilledDirtPrefab, data.position, Quaternion.identity);
+                    restoredPlot.GetComponent<FarmPlot>().plotID = data.id;
+                    activePlots.Add(coords, restoredPlot);
+                }
+            }
+        }
     }
 
     private void Update()
@@ -304,15 +351,20 @@ public class FarmingZone : MonoBehaviour, IInteractable
         Vector3Int coords = GetGridCoords(transform.position);
         if (!activePlots.ContainsKey(coords) && tilledDirtPrefab != null)
         {
+            // Tạo ID ngẫu nhiên không trùng lặp cho luống đất mới
+            string newID = "Plot_" + System.Guid.NewGuid().ToString();
+
             GameObject newPlot = Instantiate(tilledDirtPrefab, transform.position, Quaternion.identity);
+            newPlot.GetComponent<FarmPlot>().plotID = newID; // Cấp Căn cước công dân
+
             activePlots.Add(coords, newPlot);
             if (InventoryManager.Instance != null)
             {
-                InventoryManager.Instance.DeductEquippedToolDurability(1f); // Mỗi nhát cuốc đất tụt 1 máu
+                InventoryManager.Instance.DeductEquippedToolDurability(1f);
             }
             if (AudioManager.Instance != null)
             {
-                AudioManager.Instance.PlaySFX("Hoe_Hit"); // Tên âm thanh cuốc đất
+                AudioManager.Instance.PlaySFX("Hoe_Hit");
             }
 
             UpdateTargetGrid();
@@ -411,6 +463,13 @@ public class FarmingZone : MonoBehaviour, IInteractable
         for (float z = bounds.min.z; z <= bounds.max.z; z += gridSize)
         {
             Gizmos.DrawLine(new Vector3(bounds.min.x, transform.position.y, z), new Vector3(bounds.max.x, transform.position.y, z));
+        }
+    }
+    private void OnDestroy()
+    {
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
         }
     }
 }

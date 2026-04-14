@@ -44,11 +44,23 @@ public class ShopUIManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
 
         if (shopPanel != null) shopPanel.SetActive(false);
         if (buyPopupPanel != null) buyPopupPanel.SetActive(false);
+    }
+    private void OnDestroy()
+    {
+        // Khi scene Tower bị unload, xóa tham chiếu để lần sau quay lại tạo cái mới không bị lỗi
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     private void Start()
@@ -102,6 +114,10 @@ public class ShopUIManager : MonoBehaviour
         _isOpeningShop = false;
 
         OnShopUIToggled?.Invoke(true);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetShopOpenState(true); // Nhớ đổi thành false ở hàm CloseShop
+        }
     }
 
     public void CloseShop()
@@ -129,6 +145,10 @@ public class ShopUIManager : MonoBehaviour
         if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose(false);
 
         OnShopUIToggled?.Invoke(false);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetShopOpenState(false);
+        }
     }
 
     public bool IsOpen()
@@ -173,6 +193,7 @@ public class ShopUIManager : MonoBehaviour
     {
         if (currentShop == null) return;
 
+        buySlotsList.RemoveAll(slot => slot == null);
         // Lấy số slot từ NPC thay vì fix cứng 16
         int targetSlotsCount = currentShop.maxShopSlots;
         int itemsCount = Mathf.Min(currentShop.itemsForSale.Count, targetSlotsCount);

@@ -40,6 +40,10 @@ public class AnimalPenUIManager : MonoBehaviour
         OnAnimalUIToggled?.Invoke(true);
 
         PopulateAnimalList();
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetAnimalUIOpenState(true); // Truyền false khi đóng
+        }
     }
 
     public void CloseUI()
@@ -49,6 +53,10 @@ public class AnimalPenUIManager : MonoBehaviour
 
         // Phát loa báo thả Camera, giấu Chuột
         OnAnimalUIToggled?.Invoke(false);
+        if (PlayerCameraManager.Instance != null)
+        {
+            PlayerCameraManager.Instance.SetAnimalUIOpenState(false); // Truyền false khi đóng
+        }
     }
 
     private void PopulateAnimalList()

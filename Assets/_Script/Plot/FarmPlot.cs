@@ -14,6 +14,8 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
     public ItemData wateringCanItem;
     public ItemData fertilizerItem;
+    public string plotID;
+
     // BỘ NHỚ CỦA Ô ĐẤT
     private SeedItemData plantedSeed;
     private float growTimer = 0f;
@@ -35,14 +37,54 @@ public class FarmPlot : MonoBehaviour, IInteractable
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) playerTransform = playerObj.transform;
 
+        if (GameDataManager.Instance != null && GameDataManager.Instance.farmPlotDataDict.ContainsKey(plotID))
+        {
+            FarmPlotData data = GameDataManager.Instance.farmPlotDataDict[plotID];
+            currentState = data.state;
+            plantedSeed = data.seed;
+            growTimer = data.growTimer;
+            currentHarvestCount = data.harvestCount;
+            isWatered = data.watered;
+            isFertilized = data.fertilized;
+
+            if (currentState == PlotState.Grown && plantedSeed != null && plantedSeed.cropPrefab != null)
+            {
+                if (seedSprout) seedSprout.SetActive(false);
+                Vector3 spawnPos = transform.position + new Vector3(0, 0.2f, 0);
+                matureCropObject = Instantiate(plantedSeed.cropPrefab, spawnPos, Quaternion.identity, transform);
+            }
+        }
+
         if (WeatherManager.Instance != null)
         {
             WeatherManager.Instance.OnWeatherChanged += HandleWeatherChange;
-            // Ép xử lý ngay lúc vừa spawn ra lỡ đang mưa sẵn
             HandleWeatherChange(WeatherManager.Instance.currentWeather);
         }
 
         UpdateVisuals();
+    }
+    private void OnDestroy()
+    {
+        if (WeatherManager.Instance != null)
+        {
+            WeatherManager.Instance.OnWeatherChanged -= HandleWeatherChange;
+        }
+
+        if (GameDataManager.Instance != null && !string.IsNullOrEmpty(plotID))
+        {
+            FarmPlotData data = new FarmPlotData
+            {
+                id = plotID, // Bổ sung ID
+                position = transform.position, // LƯU VỊ TRÍ LUỐNG ĐẤT
+                state = currentState,
+                seed = plantedSeed,
+                growTimer = growTimer,
+                harvestCount = currentHarvestCount,
+                watered = isWatered,
+                fertilized = isFertilized
+            };
+            GameDataManager.Instance.farmPlotDataDict[plotID] = data;
+        }
     }
     private void HandleWeatherChange(WeatherState newWeather)
     {
@@ -305,6 +347,13 @@ public class FarmPlot : MonoBehaviour, IInteractable
                 {
                     Debug.Log("Cây đã cạn kiệt dinh dưỡng, tự động phá hủy luống đất!");
                 }
+            }
+
+            // Chức năng: Xóa dữ liệu luống đất khỏi bộ nhớ trung tâm trước khi phá hủy object để tránh lỗi sinh ra "bóng ma" khi load lại scene
+            if (GameDataManager.Instance != null && !string.IsNullOrEmpty(plotID))
+            {
+                GameDataManager.Instance.farmPlotDataDict.Remove(plotID);
+                plotID = ""; // Ngăn hàm OnDestroy chạy lệnh lưu đè
             }
             Destroy(gameObject);
         }

@@ -45,6 +45,10 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
 
+        if (mainCamera == null && Camera.main != null)
+        {
+            mainCamera = Camera.main.transform;
+        }
         originalHeight = controller.height;
         originalCenter = controller.center;
     }

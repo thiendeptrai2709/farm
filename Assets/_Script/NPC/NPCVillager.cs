@@ -33,7 +33,33 @@ public class NPCVillager : MonoBehaviour, IInteractable
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+    private void Start()
+    {
+        // --- LOGIC XỬ LÝ LÚC VỪA LOAD SCENE ---
+        // Bắt thằng NPC phải lập tức có mặt ở đúng vị trí theo giờ giấc hiện tại
+        TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
+        if (timeSys != null && agent != null)
+        {
+            float currentTime = timeSys.hour;
+            bool isDayTime = currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime;
 
+            if (isDayTime)
+            {
+                // Nếu là ban ngày -> Dịch chuyển nó ra giữa chỗ đi dạo
+                // Lưu ý: Với NavMeshAgent, BẮT BUỘC phải dùng lệnh Warp() để dịch chuyển, dùng transform.position sẽ bị lỗi AI
+                agent.Warp(wanderCenter.position);
+                isSleeping = false;
+                isGoingHome = false;
+                SetNPCVisibility(true);
+            }
+            else
+            {
+                // Nếu là ban đêm -> Cho nó cút thẳng vào nhà ngủ, tàng hình luôn
+                agent.Warp(homePoint.position);
+                EnterHouse();
+            }
+        }
+    }
     private void Update()
     {
         UpdateRoutine();
