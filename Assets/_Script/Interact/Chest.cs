@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 public class Chest : MonoBehaviour, IInteractable
 {
@@ -23,17 +24,16 @@ public class Chest : MonoBehaviour, IInteractable
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
+    public LocalizedString interactText;
+
+    private bool isLoadedFromSave = false;
+
     private void Start()
     {
-
-        chestSlots.Clear();
-
-        if (GameDataManager.Instance != null && GameDataManager.Instance.chestDataDict.ContainsKey(chestID))
+        // Chỉ nhồi đồ mặc định nếu ChestManager CHƯA nạp dữ liệu đè lên
+        if (!isLoadedFromSave)
         {
-            chestSlots = new List<InventorySlot>(GameDataManager.Instance.chestDataDict[chestID].slots);
-        }
-        else
-        {
+            chestSlots.Clear();
             for (int i = 0; i < chestSize; i++)
             {
                 if (i < startingItems.Count && startingItems[i].item != null)
@@ -57,20 +57,70 @@ public class Chest : MonoBehaviour, IInteractable
             InventoryManager.Instance.RegisterChest(this);
         }
     }
+    private void OnEnable()
+    {
+        LoadingManager.OnPlayerReady += RegisterToInventorySafe;
+    }
+
+    private void OnDisable()
+    {
+        LoadingManager.OnPlayerReady -= RegisterToInventorySafe;
+    }
+
+    private void RegisterToInventorySafe()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.RegisterChest(this);
+        }
+    }
     private void OnDestroy()
     {
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.UnregisterChest(this);
         }
-        ForceSaveToManager();
-    }
-    public string GetInteractText()
-    {
-        // Đang mở rồi thì giấu chữ [E] đi cho đỡ rối mắt
-        return isOpen ? "" : "[E] Open Chest";
     }
 
+    public string GetInteractText()
+    {
+        return isOpen ? "" : interactText.GetLocalizedString();
+    }
+    public void LoadSlotsFromSave(List<SavedSlotData> savedData)
+    {
+        isLoadedFromSave = true;
+        chestSlots.Clear();
+
+        // 1. Nạp những đồ đang có trong file Save JSON (nếu có)
+        if (savedData != null)
+        {
+            foreach (var slotData in savedData)
+            {
+                ItemData loadedItem = string.IsNullOrEmpty(slotData.itemID) ? null : InventoryManager.Instance.itemDatabase.GetItemByName(slotData.itemID);
+                chestSlots.Add(new InventorySlot(loadedItem, slotData.amount, slotData.currentDurability));
+            }
+        }
+
+        // 2. [LỚP BẢO VỆ CHỐNG LỖI INDEX]
+        // Nếu file save bị rỗng, hoặc chứa ít hơn số lượng cho phép của rương,
+        // thì tự động độn thêm các ô trống (null) vào cho đến khi danh sách đủ số lượng chestSize (VD: 16 ô).
+        while (chestSlots.Count < chestSize)
+        {
+            chestSlots.Add(new InventorySlot(null, 0));
+        }
+    }
+
+    // [ĐĐÃ THÊM] Hàm chuyển từ ItemData thành chữ để gói đưa cho JSON
+    public List<SavedSlotData> GetSavedSlots()
+    {
+        List<SavedSlotData> list = new List<SavedSlotData>();
+        foreach (var slot in chestSlots)
+        {
+            string id = slot.item != null ? slot.item.name : "";
+            list.Add(new SavedSlotData { itemID = id, amount = slot.amount, currentDurability = slot.currentDurability });
+        }
+        return list;
+    }
     public void Interact()
     {
         if (isOpen) return; // Nếu đang mở rồi thì không làm gì cả
@@ -124,19 +174,6 @@ public class Chest : MonoBehaviour, IInteractable
             {
                 chestSlots.Add(new InventorySlot(null, 0));
             }
-        }
-
-        if (GameDataManager.Instance != null && !string.IsNullOrEmpty(chestID))
-        {
-            ChestData data = new ChestData();
-            data.id = chestID;
-            data.prefabID = this.prefabID;
-            data.position = transform.position;
-            data.rotation = transform.rotation;
-            data.isBuiltByPlayer = this.isBuiltByPlayer;
-            data.slots = new List<InventorySlot>(chestSlots);
-
-            GameDataManager.Instance.chestDataDict[chestID] = data;
         }
     }
 }

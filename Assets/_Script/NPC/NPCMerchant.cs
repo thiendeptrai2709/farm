@@ -1,36 +1,63 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))] // Tự động yêu cầu NPC phải có NavMeshAgent
+[RequireComponent(typeof(NavMeshAgent))]
 public class NPCMerchant : MonoBehaviour, IInteractable
 {
     [Header("Shop Data")]
     public ShopData myShopData;
     public string greetingSound = "Merchant_Hello";
 
+    [Header("Hội thoại Mặc định")]
+    [Tooltip("Gõ các câu chào vào đây. Gõ \\n để xuống dòng.")]
+    [TextArea(2, 4)]
+    public string[] defaultDialogues = new string[]
+    {
+        "Xin chào! Cậu đến mua hàng hả?",
+        "Hôm nay tớ có mấy món hàng mới về xịn lắm đấy."
+    };
+
+    [Header("Chuỗi Nhiệm vụ (Tùy chọn)")]
+    public QuestData[] questLine;
+    public QuestData secretStoryQuest; // [THÊM]: Hoàn thành ngầm cốt truyện
+
     [Header("Lịch trình & Vị trí")]
-    public NPCSchedule schedule;       // Gọi cái gói dữ liệu Lịch trình ở file kia sang
-    public Transform workPoint;        // Cục Empty đặt ở sạp hàng
-    public Transform homePoint;        // Cục Empty đặt trước cửa nhà
+    public NPCSchedule schedule;
+    public Transform workPoint;
+    public Transform homePoint;
 
     [Header("Thành phần AI")]
     public Animator npcAnimator;
     private NavMeshAgent agent;
 
-    // Trạng thái hiện tại
-    private bool isAtWork = false;     // Đang đứng mở sạp
-    private bool isGoingHome = false;  // Đang trên đường đi bộ về
-    private bool isInsideHouse = false;// Đã tàng hình vào trong nhà
+    private bool isAtWork = false;
+    private bool isGoingHome = false;
+    private bool isInsideHouse = false;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+
+    private QuestData GetCurrentQuest()
+    {
+        if (questLine == null || questLine.Length == 0) return null;
+
+        foreach (QuestData q in questLine)
+        {
+            if (QuestManager.Instance.GetQuestStatus(q) == QuestStatus.Completed) continue;
+
+            // Dùng hàm check chuẩn của QuestManager
+            if (!QuestManager.Instance.IsQuestLogicReady(q)) continue;
+
+            return q;
+        }
+        return null;
+    }
+
     private void Start()
     {
-        // --- LOGIC XỬ LÝ LÚC VỪA LOAD SCENE ---
-        // Bắt Thương gia phải lập tức có mặt ở đúng vị trí theo giờ giấc hiện tại
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys != null && agent != null)
         {
@@ -39,9 +66,8 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 
             if (shouldBeAtWork)
             {
-                // Nếu là giờ hành chính -> Dịch chuyển nó cắm rễ luôn ở sạp hàng
                 agent.Warp(workPoint.position);
-                transform.rotation = workPoint.rotation; // Xoay mặt nhìn ra quầy
+                transform.rotation = workPoint.rotation;
                 isAtWork = true;
                 isInsideHouse = false;
                 isGoingHome = false;
@@ -49,38 +75,34 @@ public class NPCMerchant : MonoBehaviour, IInteractable
             }
             else
             {
-                // Nếu là buổi tối -> Ép nó tàng hình nằm sẵn trong nhà
                 agent.Warp(homePoint.position);
                 isAtWork = false;
                 EnterHouse();
             }
         }
     }
+
     private void Update()
     {
-        // --- [ĐÃ SỬA]: KIỂM TRA XEM CÓ ĐANG GIAO DỊCH VỚI PLAYER KHÔNG ---
-        bool isTalkingToPlayer = ShopUIManager.Instance != null &&
-                                 ShopUIManager.Instance.IsOpen() &&
-                                 ShopUIManager.Instance.currentShop == myShopData;
+        bool isTalkingToPlayer =
+            (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen() && ShopUIManager.Instance.currentShop == myShopData) ||
+            (DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentMerchant == this);
 
         if (isTalkingToPlayer)
         {
-            // 1. Đang có khách: Khóa chân lại không cho bỏ đi về giữa chừng
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
 
-            // 2. Liên tục xoay mặt mượt mà nhìn theo Player
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null)
             {
                 Vector3 lookPos = player.transform.position;
-                lookPos.y = transform.position.y; // Khóa trục Y để không bị nghển cổ
+                lookPos.y = transform.position.y;
                 Quaternion targetRot = Quaternion.LookRotation(lookPos - transform.position);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
             }
         }
         else
         {
-            // Hết khách: Mở khóa chân và tiếp tục chạy Lịch trình hàng ngày
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
             UpdateRoutine();
         }
@@ -94,37 +116,31 @@ public class NPCMerchant : MonoBehaviour, IInteractable
         if (timeSys == null || agent == null) return;
 
         float currentTime = timeSys.hour;
-
-        // Kiểm tra xem giờ này có đang trong ca làm việc không
         bool shouldBeAtWork = currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime;
 
         if (shouldBeAtWork)
         {
-            // --- SÁNG ĐI LÀM ---
             if (isInsideHouse)
             {
-                SetNPCVisibility(true); // Hiện hình lại
+                SetNPCVisibility(true);
                 isInsideHouse = false;
             }
 
             GoToPoint(workPoint);
             isGoingHome = false;
 
-            // Kiểm tra xem đã tới sạp hàng chưa (Khoảng cách < 0.5m)
             if (Vector3.Distance(transform.position, workPoint.position) < 0.5f)
             {
                 isAtWork = true;
-                // Từ từ xoay mặt giống hướng của cái WorkPoint
                 transform.rotation = Quaternion.Slerp(transform.rotation, workPoint.rotation, Time.deltaTime * 5f);
             }
             else
             {
-                isAtWork = false; // Đang đi trên đường thì chưa bán hàng
+                isAtWork = false;
             }
         }
         else
         {
-            // --- CHIỀU VỀ NHÀ ---
             isAtWork = false;
 
             if (!isInsideHouse)
@@ -132,10 +148,9 @@ public class NPCMerchant : MonoBehaviour, IInteractable
                 GoToPoint(homePoint);
                 isGoingHome = true;
 
-                // Kiểm tra xem đã đi tới cửa nhà chưa
                 if (Vector3.Distance(transform.position, homePoint.position) < 0.5f)
                 {
-                    EnterHouse(); // Chui tọt vào nhà
+                    EnterHouse();
                 }
             }
         }
@@ -153,69 +168,90 @@ public class NPCMerchant : MonoBehaviour, IInteractable
     {
         isGoingHome = false;
         isInsideHouse = true;
-        SetNPCVisibility(false); // Tắt hình ảnh và va chạm
+        SetNPCVisibility(false);
     }
 
     private void SetNPCVisibility(bool isVisible)
     {
-        // Ẩn/Hiện hình nhân vật
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers) r.enabled = isVisible;
 
-        // Tắt/Bật va chạm để người chơi không bị kẹt vào NPC vô hình
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = isVisible;
 
-        // Tắt/Bật AI đi đường
         agent.enabled = isVisible;
     }
 
     private void UpdateAnimation()
     {
-        // Kiểm tra xem NPC có Animator và Agent có đang hoạt động không
         if (npcAnimator != null && agent.enabled)
         {
-            // Lấy độ lớn vận tốc thực tế của Agent (0 là đứng yên, >0 là đang đi)
             float currentSpeed = agent.velocity.magnitude;
-
-            // Đẩy giá trị này vào tham số "Speed" trong Animator
-            // Dùng Mathf.Lerp hoặc m để im giá trị gốc cũng được
             npcAnimator.SetFloat("Speed", currentSpeed);
         }
         else if (npcAnimator != null && !agent.enabled)
         {
-            // Nếu Agent bị tắt (đang ở trong nhà), ép về Idle cho chắc
             npcAnimator.SetFloat("Speed", 0f);
         }
     }
 
-    // --- LOGIC TƯƠNG TÁC ---
     public string GetInteractText()
     {
-        // Nếu không ở sạp (đang ngủ, hoặc lếch thếch trên đường) -> Tịt luôn không cho tương tác
         if (!isAtWork || isInsideHouse) return "";
 
-        if (myShopData != null) return $"[E] Giao dịch với {myShopData.npcName}";
-        return "[E] Nói chuyện";
+        string shopName = myShopData != null ? myShopData.npcName : "Cửa hàng";
+
+        QuestData activeQuest = GetCurrentQuest();
+        if (activeQuest != null)
+        {
+            return $"[E] <color=yellow>!</color> Giao dịch với {shopName}";
+        }
+
+        return $"[E] Giao dịch với {shopName}";
     }
 
     public void Interact()
     {
-        // Chốt chặn cuối: Gọi hàm Interact cũng vô dụng nếu chưa tới sạp
         if (!isAtWork || isInsideHouse) return;
+
+        // 1. Âm thầm hoàn thành cột mốc cốt truyện
+        if (secretStoryQuest != null && QuestManager.Instance != null)
+        {
+            if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
+            {
+                QuestManager.Instance.completedQuests.Add(secretStoryQuest.questID);
+            }
+        }
 
         if (myShopData != null)
         {
-            // Phát tiếng chào
             if (AudioManager.Instance != null && !string.IsNullOrEmpty(greetingSound))
-            {
                 AudioManager.Instance.PlaySFX(greetingSound);
-            }
 
-            // Mở Shop
-            if (ShopUIManager.Instance != null)
+            if (DialogueUIManager.Instance != null)
             {
-                ShopUIManager.Instance.OpenShop(myShopData, this.transform);
+                QuestData activeQuest = GetCurrentQuest();
+                string[] linesToSay = defaultDialogues;
+                bool isStoryDialogue = false;
+
+                // [MỚI]: Logic phân loại nhiệm vụ cốt truyện giống hệt NPCVillager
+                if (activeQuest != null)
+                {
+                    bool isHiddenStoryQuest = (activeQuest.requiredPreviousQuest != null || activeQuest.requiredDay > 0);
+
+                    if (isHiddenStoryQuest)
+                    {
+                        QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
+                        if (status == QuestStatus.Available) linesToSay = activeQuest.offerLines;
+                        else if (status == QuestStatus.InProgress) linesToSay = activeQuest.inProgressLines;
+                        else if (status == QuestStatus.ReadyToTurnIn) linesToSay = activeQuest.completeLines;
+
+                        isStoryDialogue = true;
+                    }
+                }
+
+                // Gọi hộp thoại với chế độ có thể mở bảng Quest trực tiếp
+                DialogueUIManager.Instance.OpenDialogueForMerchant(this, linesToSay, activeQuest, isStoryDialogue);
             }
         }
     }

@@ -64,4 +64,39 @@ public class TimeSystem : MonoBehaviour
         foreach (TreePit tree in allTrees) tree.FastForwardTime(realSecondsToFastForward);
         Debug.Log($"Đã ngủ dậy! Trôi qua {inGameHoursSkipped} giờ in-game. Ép cây trồng cộng thêm {realSecondsToFastForward} giây thật.");
     }
+    public void AddBusTravelTime(float hoursToAdd = 1f)
+    {
+        // 1. Lưu lại giờ cũ để kiểm tra xem có đi xuyên đêm không
+        float previousHour = hour;
+        hour += hoursToAdd;
+
+        // 2. Xử lý nếu đi xe bus xong mà quá nửa đêm
+        if (hour >= 24f)
+        {
+            hour -= 24f;
+            // Nếu đi xuyên đêm thì kích hoạt ngày mới
+            if (TimeManager.Instance != null) TimeManager.Instance.TriggerNextDay();
+        }
+
+        // 3. TÍNH TOÁN TĂNG TRƯỞNG CHO CÂY TRỒNG
+        // Chuyển 1 giờ game sang giây thực để các script cây trồng hiểu được
+        float realSecondsPerHour = (dayDurationInMinutes * 60f) / 24f;
+        float realSecondsToFastForward = hoursToAdd * realSecondsPerHour;
+
+        // Tìm và "bơm" thời gian cho ruộng lúa
+        FarmPlot[] allPlots = FindObjectsByType<FarmPlot>(FindObjectsSortMode.None);
+        foreach (FarmPlot plot in allPlots)
+        {
+            plot.FastForwardTime(realSecondsToFastForward);
+        }
+
+        // Tìm và "bơm" thời gian cho cây ăn quả
+        TreePit[] allTrees = FindObjectsByType<TreePit>(FindObjectsSortMode.None);
+        foreach (TreePit tree in allTrees)
+        {
+            tree.FastForwardTime(realSecondsToFastForward);
+        }
+
+        Debug.Log($"Đi xe bus mất {hoursToAdd} giờ game. Cây trồng được cộng thêm {realSecondsToFastForward} giây tăng trưởng.");
+    }
 }

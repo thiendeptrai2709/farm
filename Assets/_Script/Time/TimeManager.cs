@@ -32,7 +32,11 @@ public class TimeManager : MonoBehaviour
         // THÊM DÒNG NÀY: Khi nhảy ngày mới, bấm còi phát tín hiệu cho các script khác!
         OnNewDay?.Invoke();
     }
-
+    public void LoadSavedDay(int savedDay)
+    {
+        daysInGame = savedDay;
+        UpdateDayUI();
+    }
     private void UpdateDayUI()
     {
         if (dayUI != null) dayUI.text = "Day: " + daysInGame;

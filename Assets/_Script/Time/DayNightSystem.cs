@@ -42,9 +42,6 @@ public class DayNightSystem : MonoBehaviour
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared; // Kiểu sương mù đẹp và chân thực nhất
         RenderSettings.fogColor = rainyFogColor;
-
-
-
     }
 
     private void Update()

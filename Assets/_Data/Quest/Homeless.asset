@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a0ba6983696b44789e1c1f915a5709, type: 3}
+  m_Name: Homeless
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questID: homeless
+  questName: homeless
+  description: "Ng\u01B0\u1EDDi \u0111\xE0n \xF4ng b\xED \u1EA9n  "
+  requiredPreviousQuest: {fileID: 11400000, guid: 2eef9e650cc77984287cff9f65f31c19, type: 2}
+  requiredDay: 0
+  questType: 0
+  requiredItem: {fileID: 0}
+  requiredAmount: 0
+  coinReward: 0
+  itemReward: {fileID: 0}
+  itemRewardAmount: 0
+  requiredAction: 
+  actionDescription: 
+  offerLines:
+  - "C\u1EADu \u0111\xE3 \u0111\u1EBFn khu r\u1EEBng \u0111\xF3 ?"
+  - "Hay t\xECm cho t\xF4i \u0111\xE1 c\u1EA9m th\u1EA1ch"
+  inProgressLines:
+  - "V\u1EABn chua t\xECm \u0111\u01B0\u1EE3c sao ?"
+  completeLines:
+  - "L\xE0m t\u1ED1t l\u1EAFm "

@@ -8,21 +8,33 @@ public class NPCVillager : MonoBehaviour, IInteractable
     public string npcName = "Dân Làng";
     public string greetingSound = "Villager_Hello";
 
+    [Header("Hội thoại Mặc định")]
+    [Tooltip("Gõ các câu chào vào đây. Gõ \\n để xuống dòng.")]
+    [TextArea(2, 4)]
+    public string[] defaultDialogues = new string[]
+    {
+        "Chào buổi sáng! Dạo này trang trại của cậu phát triển tốt chứ?",
+        "Thôi tớ đi dạo tiếp đây, gặp lại sau nhé!"
+    };
+
+    [Header("Chuỗi Nhiệm vụ (Tùy chọn)")]
+    public QuestData[] questLine; // Khai báo dạng mảng (Nhiều nhiệm vụ)
+    public QuestData secretStoryQuest;
+
     [Header("Lịch trình & Địa điểm")]
-    public NPCSchedule schedule;       // Tái sử dụng file Lịch trình cũ
-    public Transform homePoint;        // Cửa nhà để đi ngủ
-    public Transform wanderCenter;     // Tâm điểm của khu vực nó hay đi dạo (VD: Giữa quảng trường)
-    public float wanderRadius = 10f;   // Bán kính đi dạo (Đi loanh quanh tâm điểm bao xa)
+    public NPCSchedule schedule;
+    public Transform homePoint;
+    public Transform wanderCenter;
+    public float wanderRadius = 10f;
 
     [Header("Cài đặt Hành vi")]
-    public float minWaitTime = 2f;     // Đứng im tối thiểu bao nhiêu giây rồi đi tiếp
-    public float maxWaitTime = 5f;     // Đứng im tối đa bao nhiêu giây
+    public float minWaitTime = 2f;
+    public float maxWaitTime = 5f;
 
     [Header("Thành phần AI")]
     public Animator npcAnimator;
     private NavMeshAgent agent;
 
-    // Các biến đếm và trạng thái
     private bool isSleeping = false;
     private bool isGoingHome = false;
     private float waitTimer = 0f;
@@ -33,10 +45,26 @@ public class NPCVillager : MonoBehaviour, IInteractable
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+
+    // [CHUẨN HÓA]: Lấy nhiệm vụ hiện tại đang làm
+    private QuestData GetCurrentQuest()
+    {
+        if (questLine == null || questLine.Length == 0) return null;
+
+        foreach (QuestData q in questLine)
+        {
+            if (QuestManager.Instance.GetQuestStatus(q) == QuestStatus.Completed) continue;
+
+            // Kiểm tra xem Quest này đã đủ điều kiện thời gian/cốt truyện chưa
+            if (!QuestManager.Instance.IsQuestLogicReady(q)) continue;
+
+            return q;
+        }
+        return null;
+    }
+
     private void Start()
     {
-        // --- LOGIC XỬ LÝ LÚC VỪA LOAD SCENE ---
-        // Bắt thằng NPC phải lập tức có mặt ở đúng vị trí theo giờ giấc hiện tại
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys != null && agent != null)
         {
@@ -45,8 +73,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
             if (isDayTime)
             {
-                // Nếu là ban ngày -> Dịch chuyển nó ra giữa chỗ đi dạo
-                // Lưu ý: Với NavMeshAgent, BẮT BUỘC phải dùng lệnh Warp() để dịch chuyển, dùng transform.position sẽ bị lỗi AI
                 agent.Warp(wanderCenter.position);
                 isSleeping = false;
                 isGoingHome = false;
@@ -54,15 +80,35 @@ public class NPCVillager : MonoBehaviour, IInteractable
             }
             else
             {
-                // Nếu là ban đêm -> Cho nó cút thẳng vào nhà ngủ, tàng hình luôn
                 agent.Warp(homePoint.position);
                 EnterHouse();
             }
         }
     }
+
     private void Update()
     {
-        UpdateRoutine();
+        bool isTalkingToPlayer = DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentVillager == this;
+
+        if (isTalkingToPlayer)
+        {
+            if (agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
+
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                Vector3 lookPos = player.transform.position;
+                lookPos.y = transform.position.y;
+                Quaternion targetRot = Quaternion.LookRotation(lookPos - transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            }
+        }
+        else
+        {
+            if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
+            UpdateRoutine();
+        }
+
         UpdateAnimation();
     }
 
@@ -76,21 +122,17 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
         if (isDayTime)
         {
-            // --- SÁNG THỨC DẬY VÀ ĐI LANG THANG ---
             if (isSleeping)
             {
                 SetNPCVisibility(true);
                 isSleeping = false;
                 isGoingHome = false;
-                PickNewWanderPoint(); // Ngủ dậy thì chọn 1 điểm để đi dạo luôn
+                PickNewWanderPoint();
             }
-
-            // Xử lý đi lang thang
             HandleWandering();
         }
         else
         {
-            // --- CHIỀU TỐI LẾCH THẾCH VỀ NHÀ ---
             if (!isSleeping)
             {
                 if (!isGoingHome)
@@ -99,7 +141,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
                     isGoingHome = true;
                 }
 
-                // Nếu đã đi bộ đến tận cửa nhà
                 if (Vector3.Distance(transform.position, homePoint.position) < 0.5f)
                 {
                     EnterHouse();
@@ -110,23 +151,19 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
     private void HandleWandering()
     {
-        // 1. Nếu đang trên đường đi (chưa tới đích) thì thôi không làm gì cả
         if (agent.pathPending || agent.remainingDistance > 0.5f) return;
 
-        // 2. Tới đích rồi -> Chuyển sang trạng thái Đứng chờ (Ngắm cảnh)
         if (!isWaiting)
         {
             isWaiting = true;
-            waitTimer = Random.Range(minWaitTime, maxWaitTime); // Random thời gian đứng chơi
+            waitTimer = Random.Range(minWaitTime, maxWaitTime);
         }
 
-        // 3. Đếm ngược thời gian đứng chơi
         if (isWaiting)
         {
             waitTimer -= Time.deltaTime;
             if (waitTimer <= 0)
             {
-                // Hết giờ ngắm cảnh -> Chốt điểm đến mới và đi tiếp!
                 isWaiting = false;
                 PickNewWanderPoint();
             }
@@ -137,13 +174,10 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (wanderCenter == null) return;
 
-        // Bốc đại 1 tọa độ ngẫu nhiên trong vòng tròn bán kính wanderRadius
         Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
-        randomDirection += wanderCenter.position; // Lấy tâm điểm làm gốc
+        randomDirection += wanderCenter.position;
 
         NavMeshHit hit;
-        // Kiểm tra xem cái điểm vừa bốc có nằm trên đường đi được (NavMesh) không
-        // Bán kính dò tìm là 5f. Nếu thấy điểm hợp lệ thì lưu vào 'hit'
         if (NavMesh.SamplePosition(randomDirection, out hit, 5f, NavMesh.AllAreas))
         {
             GoToPoint(hit.position);
@@ -185,10 +219,17 @@ public class NPCVillager : MonoBehaviour, IInteractable
         }
     }
 
-    // --- LOGIC TƯƠNG TÁC CHÀO HỎI ---
     public string GetInteractText()
     {
         if (isSleeping) return "";
+
+        // [ĐÃ SỬA]: Dùng hàm GetCurrentQuest() thay vì myQuest
+        QuestData activeQuest = GetCurrentQuest();
+        if (activeQuest != null && QuestManager.Instance.GetQuestStatus(activeQuest) != QuestStatus.Completed)
+        {
+            return $"[E] <color=yellow>!</color> Trò chuyện với {npcName}";
+        }
+
         return $"[E] Trò chuyện với {npcName}";
     }
 
@@ -196,27 +237,44 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (isSleeping) return;
 
-        // Đứng lại nhìn Player
-        if (agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
-
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        // Âm thầm hoàn thành cột mốc cốt truyện
+        if (secretStoryQuest != null && QuestManager.Instance != null)
         {
-            Vector3 lookPos = player.transform.position;
-            lookPos.y = transform.position.y;
-            transform.LookAt(lookPos);
+            if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
+            {
+                QuestManager.Instance.completedQuests.Add(secretStoryQuest.questID);
+            }
         }
 
-        // Phát tiếng chào
         if (AudioManager.Instance != null && !string.IsNullOrEmpty(greetingSound))
         {
             AudioManager.Instance.PlaySFX(greetingSound);
         }
 
-        // --- CODE MỞ BẢNG HỘI THOẠI CỦA M Ở ĐÂY ---
-        Debug.Log($"[{npcName}]: Chào buổi sáng! Hôm nay trời đẹp quá ha!");
+        if (DialogueUIManager.Instance != null)
+        {
+            QuestData activeQuest = GetCurrentQuest();
+            string[] linesToSay = defaultDialogues;
+            bool isStoryDialogue = false;
 
-        // Chào xong thì cho nó đi tiếp (Hoặc m có thể đợi tắt UI hội thoại rồi mới cho đi)
-        if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
+            if (activeQuest != null)
+            {
+                // [ĐIỂM QUAN TRỌNG]: Tự động phân biệt Nhiệm vụ bình thường và Nhiệm vụ Cốt truyện
+                bool isHiddenStoryQuest = (activeQuest.requiredPreviousQuest != null || activeQuest.requiredDay > 0);
+
+                if (isHiddenStoryQuest)
+                {
+                    // Nếu là cốt truyện: Đọc luôn thoại khóc lóc, bỏ qua câu chào
+                    QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
+                    if (status == QuestStatus.Available) linesToSay = activeQuest.offerLines;
+                    else if (status == QuestStatus.InProgress) linesToSay = activeQuest.inProgressLines;
+                    else if (status == QuestStatus.ReadyToTurnIn) linesToSay = activeQuest.completeLines;
+
+                    isStoryDialogue = true; // Báo cho UI biết đây là chuyện gấp!
+                }
+            }
+
+            DialogueUIManager.Instance.OpenDialogueForVillager(this, linesToSay, activeQuest, isStoryDialogue);
+        }
     }
 }

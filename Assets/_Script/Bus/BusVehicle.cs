@@ -123,6 +123,11 @@ public class BusVehicle : MonoBehaviour, IInteractable
     {
         if (currentState == BusState.AtStop && !string.IsNullOrEmpty(targetScene))
         {
+            TimeSystem timeSys = FindFirstObjectByType<TimeSystem>();
+            if (timeSys != null)
+            {
+                timeSys.AddBusTravelTime(1f); // Mất 1 tiếng
+            }
             // Bấm lên xe -> Load map
             LoadingManager.Instance.LoadScene(targetScene, targetSpawnID);
 

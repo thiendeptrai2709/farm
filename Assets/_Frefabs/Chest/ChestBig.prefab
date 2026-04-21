@@ -122,6 +122,18 @@ MonoBehaviour:
   chestID: 
   isBuiltByPlayer: 0
   prefabID: ChestBig
+  interactText:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 15925362221056
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!4 &3135316553143783790 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3213424219989698925, guid: 299f0ebd1625d694f8b6de2826f9c989, type: 3}

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a0ba6983696b44789e1c1f915a5709, type: 3}
+  m_Name: PlantSeed
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questID: 1
+  questName: Plant Seed
+  description: "Ng\u01B0\u1EDDi gieo h\u1EA1t "
+  questType: 1
+  requiredItem: {fileID: 11400000, guid: 4c359654c2a6f23418b7830a2d11c636, type: 2}
+  requiredAmount: 5
+  coinReward: 0
+  itemReward: {fileID: 11400000, guid: 17ed0a15d584e5548916c4478c1468de, type: 2}
+  itemRewardAmount: 100
+  requiredAction: TrongCay_cornflourSeed
+  actionDescription: Plant Cornflour
+  offerLines:
+  - "Tr\u1ED3ng 5 h\u1EA1t gi\u1ED1ng l\xFAa m\xEC  "
+  inProgressLines:
+  - "Ch\u01B0a tr\u1ED3ng \u0111\u1EE7 \xE0"
+  completeLines:
+  - "L\xE0m t\u1ED1t l\u1EAFm"

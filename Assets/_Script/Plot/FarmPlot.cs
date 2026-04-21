@@ -255,6 +255,8 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
         UpdateVisuals();
         Debug.Log($"Đã trồng: {seedPlanted.displayName}. Cần {seedPlanted.growTime} giây để lớn.");
+        if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay", 1);
+        if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay_" + seedPlanted.name, 1);
     }
 
     private void WaterPlant()

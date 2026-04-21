@@ -20,6 +20,9 @@ public class PlayerInputHandler : MonoBehaviour
     public bool ArrowLeftTriggered { get; private set; }
     public bool ArrowRightTriggered { get; private set; }
     public bool BuildMenuTriggered { get; private set; }
+    public bool JournalTriggered { get; private set; }
+    public bool EscTriggered { get; private set; }
+
     public event Action OnSplitActionTriggered;
     private void Awake()
     {
@@ -48,6 +51,8 @@ public class PlayerInputHandler : MonoBehaviour
         InteractTriggered = controls.Player.Interact.WasPressedThisFrame(); 
         InventoryTriggered = controls.Player.Inventory.WasPressedThisFrame();
         BuildMenuTriggered = controls.Player.BuildMenu.WasPressedThisFrame();
+        EscTriggered = controls.Player.Esc.WasPressedThisFrame();
+        JournalTriggered = controls.Player.Journal.WasPressedThisFrame();
 
         ScrollValue = controls.Player.HotbarScroll.ReadValue<Vector2>().y;
 

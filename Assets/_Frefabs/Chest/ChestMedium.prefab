@@ -100,7 +100,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -127,3 +127,15 @@ MonoBehaviour:
   chestID: 
   isBuiltByPlayer: 0
   prefabID: ChestMedium
+  interactText:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 15925362221056
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

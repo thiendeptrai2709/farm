@@ -101,5 +101,21 @@ public class PlayerUIAutoClose : MonoBehaviour
                 }
             }
         }
+        if (DialogueUIManager.Instance != null && DialogueUIManager.Instance.IsOpen())
+        {
+            Transform npcTransform = DialogueUIManager.Instance.currentNPCTransform;
+            if (npcTransform != null)
+            {
+                Collider npcCollider = npcTransform.GetComponent<Collider>();
+                float distanceToNPC = npcCollider != null
+                    ? Vector3.Distance(checkPosition, npcCollider.ClosestPoint(checkPosition))
+                    : Vector3.Distance(checkPosition, npcTransform.position);
+
+                if (distanceToNPC > closeRadius)
+                {
+                    DialogueUIManager.Instance.CloseDialogue();
+                }
+            }
+        }
     }
 }

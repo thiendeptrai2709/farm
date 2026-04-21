@@ -19,6 +19,7 @@ public class PlayerCameraManager : MonoBehaviour
     private bool isAnimalUIOpen = false;
     private bool isFoodTroughOpen = false;
     private bool isBusUIOpen = false;
+    private bool isPauseMenuOpen = false;
 
     public Behaviour cameraInputProvider;
     public GameObject cameraObject;
@@ -111,7 +112,11 @@ public class PlayerCameraManager : MonoBehaviour
         isAnimalUIOpen = isOpen;
         UpdateCursorState();
     }
-
+    public void SetPauseMenuOpenState(bool isOpen)
+    {
+        isPauseMenuOpen = isOpen;
+        UpdateCursorState();
+    }
     public void SetFoodTroughOpenState(bool isOpen)
     {
         isFoodTroughOpen = isOpen;
@@ -170,7 +175,7 @@ public class PlayerCameraManager : MonoBehaviour
             UpdateCursorState();
         }
         // 3. Chuột TRÁI: Nếu đang mở UI mà click ra ngoài viền thì khóa chuột lại
-        if (inputHandler.ClickTriggered && !isCursorLocked && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen && !isBusUIOpen)
+        if (inputHandler.ClickTriggered && !isCursorLocked && !isPauseMenuOpen && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen && !isBusUIOpen)
         {
             SetCursorState(true);
         }
@@ -179,7 +184,7 @@ public class PlayerCameraManager : MonoBehaviour
     // Hàm tổng hợp: Chỉ khóa chuột khi TẤT CẢ các bảng UI đều đang tắt
     private void UpdateCursorState()
     {
-        if (isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen)
+        if (isPauseMenuOpen || isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen)
         {
             SetCursorState(false); // Nhả chuột ra để kéo thả UI
 

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a0ba6983696b44789e1c1f915a5709, type: 3}
+  m_Name: Mom
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questID: mom
+  questName: Mom
+  description: "Th\u1EB1ng b\xE9 \u0111\xE3 \u0111i \u0111\xE2u ?"
+  requiredPreviousQuest: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
+  requiredDay: 2
+  questType: 0
+  requiredItem: {fileID: 0}
+  requiredAmount: 0
+  coinReward: 0
+  itemReward: {fileID: 0}
+  itemRewardAmount: 0
+  requiredAction: 
+  actionDescription: 
+  offerLines:
+  - "Th\u1EB1ng con t\xF4i n\xF3 \u0111i l\u1EA1c \u0111\xE2u m\u1EA5t r\u1ED3i ?"
+  - "H\xF4m qua n\xF3 \u0111\xE3 n\xF3i \u0111\xE3 \u0111i v\xE0o khu r\u1EEBng v\xE0
+    ch\u01B0a th\u1EA5y tr\u1EDF v\u1EC1"
+  inProgressLines:
+  - "T\xF4i bu\u1ED3n qu\xE1"
+  completeLines:
+  - "Th\u1EADt tuy\u1EC7t v\u1EDDi  !"
+  - "T\xF4i v\xF4 c\xF9ng bi\u1EBFt \u01A1n b\u1EA1n "

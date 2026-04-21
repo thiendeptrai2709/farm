@@ -199,6 +199,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Journal"",
+                    ""type"": ""Button"",
+                    ""id"": ""d00ba82b-53d4-4aa3-8780-1939c02dbae9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Esc"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a05794e-46a1-45f0-ab51-c596a84a4fa7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -377,6 +395,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""BuildMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9ce22a00-6783-4151-9275-e84b80c4c429"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Journal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""32b6cf24-ee36-4248-93ec-2370f75d16e6"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Esc"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -397,6 +437,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Split = m_Player.FindAction("Split", throwIfNotFound: true);
         m_Player_BuildMenu = m_Player.FindAction("BuildMenu", throwIfNotFound: true);
+        m_Player_Journal = m_Player.FindAction("Journal", throwIfNotFound: true);
+        m_Player_Esc = m_Player.FindAction("Esc", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -489,6 +531,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Split;
     private readonly InputAction m_Player_BuildMenu;
+    private readonly InputAction m_Player_Journal;
+    private readonly InputAction m_Player_Esc;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -548,6 +592,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/BuildMenu".
         /// </summary>
         public InputAction @BuildMenu => m_Wrapper.m_Player_BuildMenu;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Journal".
+        /// </summary>
+        public InputAction @Journal => m_Wrapper.m_Player_Journal;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Esc".
+        /// </summary>
+        public InputAction @Esc => m_Wrapper.m_Player_Esc;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -610,6 +662,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @BuildMenu.started += instance.OnBuildMenu;
             @BuildMenu.performed += instance.OnBuildMenu;
             @BuildMenu.canceled += instance.OnBuildMenu;
+            @Journal.started += instance.OnJournal;
+            @Journal.performed += instance.OnJournal;
+            @Journal.canceled += instance.OnJournal;
+            @Esc.started += instance.OnEsc;
+            @Esc.performed += instance.OnEsc;
+            @Esc.canceled += instance.OnEsc;
         }
 
         /// <summary>
@@ -657,6 +715,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @BuildMenu.started -= instance.OnBuildMenu;
             @BuildMenu.performed -= instance.OnBuildMenu;
             @BuildMenu.canceled -= instance.OnBuildMenu;
+            @Journal.started -= instance.OnJournal;
+            @Journal.performed -= instance.OnJournal;
+            @Journal.canceled -= instance.OnJournal;
+            @Esc.started -= instance.OnEsc;
+            @Esc.performed -= instance.OnEsc;
+            @Esc.canceled -= instance.OnEsc;
         }
 
         /// <summary>
@@ -781,5 +845,19 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBuildMenu(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Journal" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnJournal(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Esc" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEsc(InputAction.CallbackContext context);
     }
 }

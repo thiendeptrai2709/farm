@@ -53,18 +53,8 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
     private void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            player = playerObj.transform;
-            playerRadar = playerObj.GetComponent<PlayerInteraction>();
-        }
-        else
-        {
-            Debug.LogError("FarmingZone không tìm thấy Player! Hãy chắc chắn Player có tag là 'Player'.");
-        }
-
-        cursorCollider = GetComponent<BoxCollider>();
+        // Start giờ chỉ lo setup các thứ linh tinh của Nông trại, KHÔNG tìm Player ở đây nữa
+        cursorCollider = GetComponent<BoxCollider>();
         if (boundaryLine != null)
         {
             lineMaterial = boundaryLine.material;
@@ -75,13 +65,38 @@ public class FarmingZone : MonoBehaviour, IInteractable
             UpdateBoundaryLine();
         }
         RefreshFarmTerrain();
+    }
+    private void OnEnable()
+    {
+        LoadingManager.OnPlayerReady += SetupPlayerAndData;
+    }
+
+    // [ĐÃ THÊM] Hủy đăng ký khi Scene bị tắt/xóa
+    private void OnDisable()
+    {
+        LoadingManager.OnPlayerReady -= SetupPlayerAndData;
+    }
+
+    // [ĐÃ THÊM] Hàm này chỉ chạy KHI VÀ CHỈ KHI LoadingManager báo tin Player đã xuất hiện
+    private void SetupPlayerAndData()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+            playerRadar = playerObj.GetComponent<PlayerInteraction>();
+        }
+        else
+        {
+            Debug.LogError("FarmingZone: Loa đã báo xong nhưng vẫn không thấy Player!");
+            return;
+        }
 
         // -----------------------------------------------------
         // KẾT NỐI SỔ CÁI: Đọc dữ liệu và đẻ lại toàn bộ luống đất cũ
         // -----------------------------------------------------
         if (GameDataManager.Instance != null && tilledDirtPrefab != null)
         {
-            // 1. Tính toán xem bạn đã đi vắng bao nhiêu giây thực tế (Kể cả tắt game)
             float offlineSeconds = 0f;
             if (GameDataManager.Instance.lastFarmExitTimeTicks != 0)
             {
@@ -90,7 +105,6 @@ public class FarmingZone : MonoBehaviour, IInteractable
                 Debug.Log($"Bạn đã rời Farm {offlineSeconds} giây. Đang tua nhanh sự phát triển của cây...");
             }
 
-            // 2. Đẻ lại luống đất và nhồi thời gian đi vắng vào cây
             foreach (var kvp in GameDataManager.Instance.farmPlotDataDict)
             {
                 FarmPlotData data = kvp.Value;
@@ -98,8 +112,6 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
                 if (!activePlots.ContainsKey(coords))
                 {
-                    // QUAN TRỌNG NHẤT: Cộng dồn thời gian đi vắng vào tuổi của cái cây
-                    // (Nếu cây là Planted thì nó sẽ tự động tính xem với số giây này nó đã biến thành Grown chưa)
                     if (data.state == PlotState.Planted)
                     {
                         data.growTimer += offlineSeconds;
@@ -366,7 +378,7 @@ public class FarmingZone : MonoBehaviour, IInteractable
             {
                 AudioManager.Instance.PlaySFX("Hoe_Hit");
             }
-
+            if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("DaoDat", 1);
             UpdateTargetGrid();
         }
     }
@@ -408,6 +420,8 @@ public class FarmingZone : MonoBehaviour, IInteractable
             {
                 AudioManager.Instance.PlaySFX("Plant_Seed"); // Tiếng sột soạt lấp đất non
             }
+            if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay", 1);
+            if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay_" + holdingBigTreeSeed.name, 1);
 
             UpdateTargetGrid();
             Debug.Log("Trồng cây to chiếm 4 ô thành công!");
@@ -472,4 +486,5 @@ public class FarmingZone : MonoBehaviour, IInteractable
             GameDataManager.Instance.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
         }
     }
+
 }

@@ -23,6 +23,7 @@ public class InventorySlot
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
+    public ItemDatabase itemDatabase;
 
     [Header("Cài đặt Hotbar (Dưới đáy)")]
     public int maxHotbarSlots = 8;
@@ -790,5 +791,64 @@ public class InventoryManager : MonoBehaviour
         amountNeeded = DeductFromList(inventorySlots, targetItem, amountNeeded);
 
         OnInventoryChanged?.Invoke();
+    }
+    public void SaveInventoryData(GameData data)
+    {
+        data.hotbarData.Clear();
+        foreach (var slot in hotbarSlots)
+        {
+            string id = slot.item != null ? slot.item.name : ""; // Lấy tên file của ItemData làm ID
+            data.hotbarData.Add(new SavedSlotData { itemID = id, amount = slot.amount, currentDurability = slot.currentDurability });
+        }
+
+        data.inventoryData.Clear();
+        foreach (var slot in inventorySlots)
+        {
+            string id = slot.item != null ? slot.item.name : "";
+            data.inventoryData.Add(new SavedSlotData { itemID = id, amount = slot.amount, currentDurability = slot.currentDurability });
+        }
+        Debug.Log("[InventoryManager] Đã đóng gói dữ liệu Balo gửi cho SaveManager.");
+    }
+
+    public void LoadInventoryData(GameData data)
+    {
+        if (data == null) return;
+
+        if (itemDatabase == null)
+        {
+            Debug.LogError("Chưa gán ItemDatabase vào InventoryManager!");
+            return;
+        }
+
+        // 1. Load Hotbar
+        if (data.hotbarData != null && data.hotbarData.Count == maxHotbarSlots)
+        {
+            for (int i = 0; i < maxHotbarSlots; i++)
+            {
+                SavedSlotData savedSlot = data.hotbarData[i];
+                ItemData loadedItem = string.IsNullOrEmpty(savedSlot.itemID) ? null : itemDatabase.GetItemByName(savedSlot.itemID);
+
+                hotbarSlots[i].item = loadedItem;
+                hotbarSlots[i].amount = savedSlot.amount;
+                hotbarSlots[i].currentDurability = savedSlot.currentDurability;
+            }
+        }
+
+        // 2. Load Balo chính
+        if (data.inventoryData != null && data.inventoryData.Count == maxInventorySlots)
+        {
+            for (int i = 0; i < maxInventorySlots; i++)
+            {
+                SavedSlotData savedSlot = data.inventoryData[i];
+                ItemData loadedItem = string.IsNullOrEmpty(savedSlot.itemID) ? null : itemDatabase.GetItemByName(savedSlot.itemID);
+
+                inventorySlots[i].item = loadedItem;
+                inventorySlots[i].amount = savedSlot.amount;
+                inventorySlots[i].currentDurability = savedSlot.currentDurability;
+            }
+        }
+
+        OnInventoryChanged?.Invoke();
+        Debug.Log("[InventoryManager] Đã tải xong dữ liệu Balo từ file Save.");
     }
 }

@@ -206,8 +206,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3470641}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15086423, y: 0.000000003431647, z: -5.2370674e-10, w: 0.9885545}
-  m_LocalPosition: {x: 1172.8846, y: 2.817, z: -742.9678}
+  m_LocalRotation: {x: -0.0016774931, y: 0.9969785, z: 0.07432874, w: 0.022500375}
+  m_LocalPosition: {x: 1452.2517, y: 1.1616852, z: 121.41662}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -804,6 +804,7 @@ Transform:
   - {fileID: 2560340885848812391}
   - {fileID: 728505723}
   - {fileID: 3470644}
+  - {fileID: 1505959249}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &834294562
@@ -1036,6 +1037,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 112}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1505959248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1505959249}
+  - component: {fileID: 1505959250}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1505959249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505959248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 834294561}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1505959250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505959248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b7148a8cb9352748a012c309c3f13b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
 --- !u!1 &1882198313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1266,6 +1311,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6f3ce31b1abbfe24f854e30af81f7c33, type: 2}
   - {fileID: 11400000, guid: df44f150639bb034b934b0cb3ce0a6b1, type: 2}
   - {fileID: 11400000, guid: e1b7e0de638d5f54493c2904a1dcd07c, type: 2}
+  - {fileID: 11400000, guid: cec4d8a76217d144e9b06403e4e21c86, type: 2}
 --- !u!1 &5725265883979989335
 GameObject:
   m_ObjectHideFlags: 0

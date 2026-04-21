@@ -5,18 +5,23 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [Header("Danh sách âm thanh SFX")]
     public AudioData[] sfxData;
 
     private Dictionary<string, AudioData> sfxDictionary;
     private AudioSource sfxSource;
     private AudioSource loopSource;
+    private AudioSource musicSource;
+
+    private float musicVolume = 1f;
+    private float sfxVolume = 1f;
+    private bool isMuted = false;
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Giữ nguyên khi chuyển Scene
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -24,13 +29,13 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // Tự động thêm một loa phát (AudioSource) vào AudioManager
         sfxSource = gameObject.AddComponent<AudioSource>();
-
         loopSource = gameObject.AddComponent<AudioSource>();
         loopSource.loop = true;
 
-        // Chuyển mảng dữ liệu vào Từ điển (Dictionary) để gọi tên cho nhanh
+        musicSource = gameObject.AddComponent<AudioSource>();
+        musicSource.loop = true;
+
         sfxDictionary = new Dictionary<string, AudioData>();
         foreach (var audio in sfxData)
         {
@@ -38,34 +43,59 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // Hàm công khai để các file khác gọi đến
-    public void PlaySFX(string name)
+    public void PlayMusic(string name)
     {
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
-            // Thay đổi cao độ một chút xíu để tiếng bước chân không bị lặp lại nhàm chán
-            sfxSource.pitch = data.pitch * Random.Range(0.9f, 1.1f);
-            sfxSource.PlayOneShot(data.clip, data.volume);
-        }
-        else
-        {
-            Debug.LogWarning("AudioManager: Không tìm thấy âm thanh có tên -> " + name);
+            musicSource.clip = data.clip;
+            musicSource.volume = isMuted ? 0 : data.volume * musicVolume;
+            musicSource.Play();
         }
     }
+
+    public void PlaySFX(string name)
+    {
+        if (isMuted) return;
+        if (sfxDictionary.TryGetValue(name, out AudioData data))
+        {
+            sfxSource.pitch = data.pitch * Random.Range(0.9f, 1.1f);
+            sfxSource.PlayOneShot(data.clip, data.volume * sfxVolume);
+        }
+    }
+
     public void PlayLoopSFX(string name)
     {
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
             loopSource.clip = data.clip;
-            loopSource.volume = data.volume;
+            loopSource.volume = isMuted ? 0 : data.volume * sfxVolume;
             loopSource.pitch = data.pitch;
             loopSource.Play();
         }
     }
 
-    // [THÊM MỚI] Hàm Tắt tiếng lặp
     public void StopLoopSFX()
     {
         if (loopSource.isPlaying) loopSource.Stop();
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        musicVolume = volume;
+        if (!isMuted) musicSource.volume = musicVolume;
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = volume;
+        if (!isMuted) loopSource.volume = sfxVolume;
+    }
+
+    public void ToggleMute(bool mute)
+    {
+        isMuted = mute;
+        musicSource.mute = isMuted;
+        sfxSource.mute = isMuted;
+        loopSource.mute = isMuted;
     }
 }
