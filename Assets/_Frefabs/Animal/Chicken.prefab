@@ -1115,7 +1115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimalMovement
   currentState: 0
-  maxHunger: 50
+  maxHunger: 100
   currentHunger: 0
   hungerDrainRate: 1
   starveTimeLimit: 5
@@ -1124,9 +1124,11 @@ MonoBehaviour:
   maxWaitTime: 5
   jumpHeight: 2
   jumpSpeed: 1
-  productPrefab: {fileID: 4742420753738883992, guid: 55f99bf476bf7604bbcf1386e51bf338, type: 3}
+  productPrefab: {fileID: 2556864973062412590, guid: 86a439c96241924459380d1fb1c1da4e, type: 3}
   produceInterval: 10
-  smokeEffectPrefab: {fileID: 0}
+  animalCryClip: {fileID: 8300000, guid: 148a521fb880d2a478175add088b089a, type: 3}
+  minSoundInterval: 0
+  maxSoundInterval: 15
 --- !u!65 &7960611247488278344
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -34,14 +34,46 @@ public class LoadingManager : MonoBehaviour
         // [ĐÃ THÊM]: Ép Scene hiện tại phải nộp lại dữ liệu lưu tạm vào RAM trước khi nó bị xóa sổ
         if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
         {
+            GameData currentData = SaveManager.Instance.GetCurrentData();
+
             ChestManager currentMapChestManager = UnityEngine.Object.FindFirstObjectByType<ChestManager>();
             if (currentMapChestManager != null)
             {
-                currentMapChestManager.SaveAllChestsToData(SaveManager.Instance.GetCurrentData());
+                currentMapChestManager.SaveAllChestsToData(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Rương vào RAM trước khi chuyển Map!");
             }
-        }
 
+            AnimalPen[] allPens = UnityEngine.Object.FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
+            foreach (var pen in allPens)
+            {
+                pen.SaveAnimalData(currentData);
+            }
+
+            DroppedItemManager currentMapItemManager = UnityEngine.Object.FindFirstObjectByType<DroppedItemManager>();
+            if (currentMapItemManager != null)
+            {
+                currentMapItemManager.SaveDroppedItemsToData(currentData);
+            }
+
+            PlacedPropManager currentPropManager = UnityEngine.Object.FindFirstObjectByType<PlacedPropManager>();
+            if (currentPropManager != null)
+            {
+                currentPropManager.SavePropsToData(currentData);
+            }
+
+            // [ĐÂY LÀ ĐOẠN BÁC QUÊN NHÉT VÀO NÀY!!!]
+            // Ép Nông trại lưu lại số lượng cây hiện tại vào RAM trước khi sang Town
+            if (FarmingZone.Instance != null)
+            {
+                FarmingZone.Instance.SaveAllPlots(currentData);
+                Debug.Log("[LoadingManager] Đã đồng bộ Cây Trồng vào RAM trước khi chuyển Map!");
+            }
+            FoodTrough[] allTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
+            foreach (var trough in allTroughs)
+            {
+                trough.SaveTroughData(currentData);
+            }
+        }
         // Truyền thẳng cái prefab xuống cho Giai đoạn 2 để nó đẻ Player
         StartCoroutine(LoadAsynchronously(sceneName, prefab));
     }
@@ -92,7 +124,39 @@ public class LoadingManager : MonoBehaviour
             // Nếu đã có sẵn (Di chuyển giữa Farm <-> Tower)
             coreInstance = playerObj.transform.root.gameObject;
         }
+        if (SaveManager.Instance != null)
+        {
+            GameData currentData = SaveManager.Instance.GetCurrentData();
 
+            // [ĐÃ THÊM]: Phục hồi Nông Trại nếu Scene mới load có FarmingZone
+            if (currentData != null && FarmingZone.Instance != null)
+            {
+                FarmingZone.Instance.LoadAllPlots(currentData);
+            }
+            if (currentData != null)
+            {
+                AnimalPen[] allPens = UnityEngine.Object.FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
+                foreach (var pen in allPens)
+                {
+                    pen.LoadAnimalData(currentData);
+                }
+                DroppedItemManager newMapItemManager = UnityEngine.Object.FindFirstObjectByType<DroppedItemManager>();
+                if (newMapItemManager != null)
+                {
+                    newMapItemManager.LoadDroppedItemsFromData(currentData);
+                }
+                PlacedPropManager newPropManager = UnityEngine.Object.FindFirstObjectByType<PlacedPropManager>();
+                if (newPropManager != null)
+                {
+                    newPropManager.LoadPropsFromData(currentData);
+                }
+                FoodTrough[] newTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
+                foreach (var trough in newTroughs)
+                {
+                    trough.LoadTroughData(currentData);
+                }
+            }
+        }
         if (playerObj != null)
         {
             // [ĐÃ THÊM LOGIC ĐỌC SAVE]

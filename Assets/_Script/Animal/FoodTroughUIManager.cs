@@ -15,6 +15,11 @@ public class FoodTroughUIManager : MonoBehaviour
 
     public event System.Action<bool> OnTroughUIToggled;
 
+    public bool IsOpen()
+    {
+        return troughUIPanel != null && troughUIPanel.activeSelf;
+    }
+
     private void Awake()
     {
         // [ĐÃ SỬA]: Chuẩn Singleton Local

@@ -51,9 +51,32 @@ public class BuilderUIManager : MonoBehaviour
     // Gọi hàm này khi tương tác với cái Bàn/Nhà Chính, truyền vào list các bản vẽ có thể mua
     public void OpenUI(List<BuildingBlueprint> availableBlueprints, Transform tableTransform)
     {
-
-
-        currentAvailableBlueprints = availableBlueprints;
+        currentAvailableBlueprints = new List<BuildingBlueprint>();
+        if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+        {
+            GameData data = SaveManager.Instance.GetCurrentData();
+            foreach (var bp in availableBlueprints)
+            {
+                if (bp.blueprintType == BlueprintType.FarmExpansion)
+                {
+                    bp.currentLevel = data.farmExpansionLevel;
+                    // Nếu vườn đã max cấp rồi thì ẩn luôn, không cho hiện lên bảng nữa
+                    if (bp.currentLevel >= bp.maxLevel) continue;
+                }
+                else if (bp.blueprintType == BlueprintType.PenCapacityUpgrade)
+                {
+                    bp.currentLevel = data.penCapacityLevel;
+                    if (bp.currentLevel >= bp.maxLevel) continue;
+                }
+                if (!data.unlockedBlueprintIDs.Contains(bp.name))
+                    currentAvailableBlueprints.Add(bp);
+            }
+        }
+        else
+        {
+            currentAvailableBlueprints = new List<BuildingBlueprint>(availableBlueprints);
+        }
+        PopulateBlueprintList(currentAvailableBlueprints);
         currentTableTransform = tableTransform;
         currentTableCollider = tableTransform.GetComponent<Collider>();
         builderPanel.SetActive(true);
@@ -64,7 +87,6 @@ public class BuilderUIManager : MonoBehaviour
 
         RefreshMoneyUI();
 
-        PopulateBlueprintList(availableBlueprints);
         if (PlayerCameraManager.Instance != null)
         {
             PlayerCameraManager.Instance.SetBuilderOpenState(true); // Truyền false khi đóng
@@ -239,15 +261,37 @@ public class BuilderUIManager : MonoBehaviour
             // 2. Tăng cấp độ mở rộng
             currentSelectedBlueprint.currentLevel++;
 
+            if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+            {
+                SaveManager.Instance.GetCurrentData().farmExpansionLevel = currentSelectedBlueprint.currentLevel;
+            }
             // 3. Kiểm tra xem đã đạt max cấp chưa
             if (currentSelectedBlueprint.currentLevel >= currentSelectedBlueprint.maxLevel)
             {
-                // Nếu max rồi mới xóa khỏi UI
                 RemoveBlueprintFromUI();
             }
             else
             {
-                // Nếu chưa max -> Làm mới lại giao diện để hiển thị cấp tiếp theo (nút vẫn giữ nguyên)
+                detailDescText.text = currentSelectedBlueprint.description + $" (Cấp {currentSelectedBlueprint.currentLevel}/{currentSelectedBlueprint.maxLevel})";
+                SelectBlueprint(currentSelectedBlueprint, currentSelectedSlotUI, false);
+            }
+        }
+        else if (currentSelectedBlueprint.blueprintType == BlueprintType.PenCapacityUpgrade)
+        {
+            // Xử lý riêng cho nâng cấp chuồng
+            currentSelectedBlueprint.currentLevel++;
+
+            if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+            {
+                SaveManager.Instance.GetCurrentData().penCapacityLevel = currentSelectedBlueprint.currentLevel;
+            }
+
+            if (currentSelectedBlueprint.currentLevel >= currentSelectedBlueprint.maxLevel)
+            {
+                RemoveBlueprintFromUI();
+            }
+            else
+            {
                 detailDescText.text = currentSelectedBlueprint.description + $" (Cấp {currentSelectedBlueprint.currentLevel}/{currentSelectedBlueprint.maxLevel})";
                 SelectBlueprint(currentSelectedBlueprint, currentSelectedSlotUI, false);
             }
@@ -257,8 +301,15 @@ public class BuilderUIManager : MonoBehaviour
             // Nếu là xây nhà (Building) -> Phát sự kiện và XÓA LUÔN KHỎI UI NHƯ CŨ
             OnBlueprintUnlocked?.Invoke(currentSelectedBlueprint);
             RemoveBlueprintFromUI();
+            if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+            {
+                GameData data = SaveManager.Instance.GetCurrentData();
+                if (!data.unlockedBlueprintIDs.Contains(currentSelectedBlueprint.name))
+                {
+                    data.unlockedBlueprintIDs.Add(currentSelectedBlueprint.name);
+                }
+            }
         }
-
         RefreshMoneyUI();
 
         CloseUI(false);

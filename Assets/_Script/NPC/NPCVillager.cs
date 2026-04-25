@@ -28,6 +28,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
     public float wanderRadius = 10f;
 
     [Header("Cài đặt Hành vi")]
+    public bool canWander = true;
     public float minWaitTime = 2f;
     public float maxWaitTime = 5f;
 
@@ -39,14 +40,22 @@ public class NPCVillager : MonoBehaviour, IInteractable
     private bool isGoingHome = false;
     private float waitTimer = 0f;
     private bool isWaiting = false;
+    private bool isInitialized = false;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+    private void OnEnable()
+    {
+        LoadingManager.OnPlayerReady += InitPosition;
+    }
 
-    // [CHUẨN HÓA]: Lấy nhiệm vụ hiện tại đang làm
+    private void OnDisable()
+    {
+        LoadingManager.OnPlayerReady -= InitPosition;
+    }
     private QuestData GetCurrentQuest()
     {
         if (questLine == null || questLine.Length == 0) return null;
@@ -65,6 +74,25 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        Invoke("InitPosition", 0.2f);
+    }
+    private void InitPosition()
+    {
+        if (isInitialized) return;
+        if (wanderCenter == null)
+        {
+            GameObject tempCenter = new GameObject(npcName + "_TempWanderCenter");
+            tempCenter.transform.position = transform.position;
+            wanderCenter = tempCenter.transform;
+        }
+
+        // Vẫn phải bắt buộc có nhà để về ngủ
+        if (homePoint == null)
+        {
+            Debug.LogError($"[NPC] Cảnh báo: {npcName} chưa được gắn vị trí nhà (homePoint) trên Inspector!");
+            isInitialized = true;
+            return;
+        }
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys != null && agent != null)
         {
@@ -84,10 +112,11 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 EnterHouse();
             }
         }
+        isInitialized = true; // Mở khóa
     }
-
     private void Update()
     {
+        if (!isInitialized) return;
         bool isTalkingToPlayer = DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentVillager == this;
 
         if (isTalkingToPlayer)
@@ -127,7 +156,8 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 SetNPCVisibility(true);
                 isSleeping = false;
                 isGoingHome = false;
-                PickNewWanderPoint();
+                if (!canWander) GoToPoint(wanderCenter.position);
+                else PickNewWanderPoint();
             }
             HandleWandering();
         }
@@ -151,6 +181,8 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
     private void HandleWandering()
     {
+        if (!canWander) return;
+
         if (agent.pathPending || agent.remainingDistance > 0.5f) return;
 
         if (!isWaiting)

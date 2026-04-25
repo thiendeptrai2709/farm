@@ -85,6 +85,12 @@ public class InventoryManager : MonoBehaviour
     // ==========================================
     public bool AddItem(ItemData itemToAdd, int amountToAdd, bool playSound = true)
     {
+        if (!HasSpaceFor(itemToAdd, amountToAdd))
+        {
+            Debug.LogWarning("Balo đã đầy hoặc không đủ chỗ cho toàn bộ số lượng này!");
+            return false; // Trả về false ngay lập tức, KHÔNG cộng thêm bất kỳ cái gì vào túi!
+        }
+
         int initialAmount = amountToAdd;
 
         if (itemToAdd.isStackable)
@@ -850,5 +856,38 @@ public class InventoryManager : MonoBehaviour
 
         OnInventoryChanged?.Invoke();
         Debug.Log("[InventoryManager] Đã tải xong dữ liệu Balo từ file Save.");
+    }
+    public bool HasSpaceFor(ItemData itemToAdd, int amountToAdd)
+    {
+        if (itemToAdd == null) return false;
+        int amountLeft = amountToAdd;
+
+        // 1. Nhồi nhét vào các ô đang CÓ SẴN MÓN ĐÓ (Cộng dồn được phép tính cả Hotbar và Balo)
+        if (itemToAdd.isStackable)
+        {
+            foreach (var slot in hotbarSlots)
+            {
+                if (slot.item == itemToAdd) amountLeft -= (itemToAdd.maxStack - slot.amount);
+            }
+            foreach (var slot in inventorySlots)
+            {
+                if (slot.item == itemToAdd) amountLeft -= (itemToAdd.maxStack - slot.amount);
+            }
+        }
+
+        if (amountLeft <= 0) return true;
+
+        // 2. Tính số ô rỗng cần thiết
+        int emptySlotsNeeded = Mathf.CeilToInt((float)amountLeft / itemToAdd.maxStack);
+        int emptySlotsAvailable = 0;
+
+        // [ĐÃ SỬA]: Xóa dòng quét ô rỗng của hotbarSlots đi! 
+        // Chỉ đếm ô rỗng trong Balo chính (inventorySlots) vì AddItem chỉ nhét đồ mới vào đây.
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.item == null) emptySlotsAvailable++;
+        }
+
+        return emptySlotsAvailable >= emptySlotsNeeded;
     }
 }

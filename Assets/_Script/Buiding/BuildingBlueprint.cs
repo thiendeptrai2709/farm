@@ -11,7 +11,8 @@ public enum BlueprintType
 {
     Building,       // Xây nhà (Chuồng gà, bò...)
     FarmExpansion,
-    SmallProp
+    SmallProp,
+    PenCapacityUpgrade
 }
 
 [CreateAssetMenu(fileName = "New Blueprint", menuName = "Farm/Building Blueprint")]
@@ -26,6 +27,9 @@ public class BuildingBlueprint : ScriptableObject
     public Vector3 expandSize;
     public Vector3 centerOffset;
 
+    public int baseCapacity = 5;
+    public int capacityIncreasePerLevel = 2;
+
     public int currentLevel = 0;
     public int maxLevel = 3;
     public float costMultiplierPerLevel = 2f;
@@ -37,18 +41,22 @@ public class BuildingBlueprint : ScriptableObject
     [Header("Bước 2: Xây Dựng (Tại Công Trường)")]
     public List<ItemRequirement> buildItemCosts;
 
+    public int GetCurrentCapacity()
+    {
+        return baseCapacity + (currentLevel * capacityIncreasePerLevel);
+    }
+
     public int GetCurrentUnlockPrice()
     {
-        if (blueprintType != BlueprintType.FarmExpansion || currentLevel == 0) return unlockPrice;
+        if ((blueprintType != BlueprintType.FarmExpansion && blueprintType != BlueprintType.PenCapacityUpgrade) || currentLevel == 0) return unlockPrice;
 
-        // Công thức: Giá gốc * (Hệ số nhân ^ Cấp độ hiện tại)
         return Mathf.RoundToInt(unlockPrice * Mathf.Pow(costMultiplierPerLevel, currentLevel));
     }
 
     // --- TÁCH LOGIC: Hàm tính số lượng Nguyên Liệu hiện tại ---
     public int GetCurrentItemAmount(int baseAmount)
     {
-        if (blueprintType != BlueprintType.FarmExpansion || currentLevel == 0) return baseAmount;
+        if ((blueprintType != BlueprintType.FarmExpansion && blueprintType != BlueprintType.PenCapacityUpgrade) || currentLevel == 0) return baseAmount;
 
         return Mathf.RoundToInt(baseAmount * Mathf.Pow(costMultiplierPerLevel, currentLevel));
     }

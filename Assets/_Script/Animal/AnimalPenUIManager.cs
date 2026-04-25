@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-
+using TMPro;
 public class AnimalPenUIManager : MonoBehaviour
 {
     public static AnimalPenUIManager Instance;
@@ -10,7 +10,7 @@ public class AnimalPenUIManager : MonoBehaviour
     public GameObject uiPanel;
     public Transform contentContainer; // Cục Grid/Vertical Layout Group chứa danh sách nút bấm
     public GameObject animalSlotPrefab; // Kéo Prefab chứa script AnimalSlotUI vào đây
-
+    public TextMeshProUGUI capacityText;
     [Header("Danh sách con vật bán tại trang trại")]
     public List<AnimalData> availableAnimals; // Kéo file ChickenData, CowData... vào đây
 
@@ -30,12 +30,18 @@ public class AnimalPenUIManager : MonoBehaviour
     {
         return uiPanel != null && uiPanel.activeSelf;
     }
-
+    public AnimalPen GetCurrentOpenPen()
+    {
+        return currentOpenPen;
+    }
     public void OpenUI(AnimalPen pen)
     {
         currentOpenPen = pen;
         uiPanel.SetActive(true);
-
+        if (capacityText != null)
+        {
+            capacityText.text = $"{pen.GetAliveAnimalCount()} / {pen.GetCurrentMaxCapacity()}";
+        }
         // Phát loa báo khóa Camera, hiện Chuột
         OnAnimalUIToggled?.Invoke(true);
 

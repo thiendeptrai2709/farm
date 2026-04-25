@@ -117,5 +117,39 @@ public class PlayerUIAutoClose : MonoBehaviour
                 }
             }
         }
+        if (FoodTroughUIManager.Instance != null && FoodTroughUIManager.Instance.IsOpen())
+        {
+            FoodTrough trough = FoodTroughUIManager.Instance.currentTrough;
+            if (trough != null)
+            {
+                Collider troughCollider = trough.GetComponent<Collider>();
+                float distanceToTrough = troughCollider != null
+                    ? Vector3.Distance(checkPosition, troughCollider.ClosestPoint(checkPosition))
+                    : Vector3.Distance(checkPosition, trough.transform.position);
+
+                if (distanceToTrough > closeRadius)
+                {
+                    FoodTroughUIManager.Instance.CloseTroughUI();
+                }
+            }
+        }
+
+        // 8. BẢNG MUA VẬT NUÔI (CHUỒNG)
+        if (AnimalPenUIManager.Instance != null && AnimalPenUIManager.Instance.IsOpen())
+        {
+            AnimalPen pen = AnimalPenUIManager.Instance.GetCurrentOpenPen();
+            if (pen != null)
+            {
+                Collider penCollider = pen.GetComponent<Collider>();
+                float distanceToPen = penCollider != null
+                    ? Vector3.Distance(checkPosition, penCollider.ClosestPoint(checkPosition))
+                    : Vector3.Distance(checkPosition, pen.transform.position);
+
+                if (distanceToPen > closeRadius)
+                {
+                    AnimalPenUIManager.Instance.CloseUI();
+                }
+            }
+        }
     }
 }

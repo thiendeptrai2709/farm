@@ -17,43 +17,44 @@ public class FarmPlot : MonoBehaviour, IInteractable
     public string plotID;
 
     // BỘ NHỚ CỦA Ô ĐẤT
-    private SeedItemData plantedSeed;
-    private float growTimer = 0f;
-    private GameObject matureCropObject;
-    private int currentHarvestCount = 0;
+    public SeedItemData plantedSeed;
+    public float growTimer = 0f;
+    public GameObject matureCropObject;
+    public int currentHarvestCount = 0;
 
     public GameObject needWaterIcon;
 
-    private bool isWatered = false;
-    private bool isFertilized = false;
+    public bool isWatered = false;
+    public bool isFertilized = false;
 
     private bool isTargeted = false;
     public float iconVisibleDistance = 20f; // Cách 20 mét là tắt
     private Transform playerTransform;
 
     public ParticleSystem waterSplashEffect;
+    public void LoadData(FarmPlotData data, SeedItemData seed)
+    {
+        this.plotID = data.id;
+        this.currentState = data.state;
+        this.plantedSeed = seed;
+        this.growTimer = data.growTimer;
+        this.currentHarvestCount = data.harvestCount;
+        this.isWatered = data.watered;
+        this.isFertilized = data.fertilized;
+
+        // Nếu cây đã lớn, phải lôi cái model ra cắm xuống đất ngay
+        if (currentState == PlotState.Grown && plantedSeed != null && plantedSeed.cropPrefab != null)
+        {
+            if (seedSprout) seedSprout.SetActive(false);
+            Vector3 spawnPos = transform.position + new Vector3(0, 0.2f, 0);
+            matureCropObject = Instantiate(plantedSeed.cropPrefab, spawnPos, Quaternion.identity, transform);
+        }
+        UpdateVisuals();
+    }
     private void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) playerTransform = playerObj.transform;
-
-        if (GameDataManager.Instance != null && GameDataManager.Instance.farmPlotDataDict.ContainsKey(plotID))
-        {
-            FarmPlotData data = GameDataManager.Instance.farmPlotDataDict[plotID];
-            currentState = data.state;
-            plantedSeed = data.seed;
-            growTimer = data.growTimer;
-            currentHarvestCount = data.harvestCount;
-            isWatered = data.watered;
-            isFertilized = data.fertilized;
-
-            if (currentState == PlotState.Grown && plantedSeed != null && plantedSeed.cropPrefab != null)
-            {
-                if (seedSprout) seedSprout.SetActive(false);
-                Vector3 spawnPos = transform.position + new Vector3(0, 0.2f, 0);
-                matureCropObject = Instantiate(plantedSeed.cropPrefab, spawnPos, Quaternion.identity, transform);
-            }
-        }
 
         if (WeatherManager.Instance != null)
         {
@@ -70,21 +71,6 @@ public class FarmPlot : MonoBehaviour, IInteractable
             WeatherManager.Instance.OnWeatherChanged -= HandleWeatherChange;
         }
 
-        if (GameDataManager.Instance != null && !string.IsNullOrEmpty(plotID))
-        {
-            FarmPlotData data = new FarmPlotData
-            {
-                id = plotID, // Bổ sung ID
-                position = transform.position, // LƯU VỊ TRÍ LUỐNG ĐẤT
-                state = currentState,
-                seed = plantedSeed,
-                growTimer = growTimer,
-                harvestCount = currentHarvestCount,
-                watered = isWatered,
-                fertilized = isFertilized
-            };
-            GameDataManager.Instance.farmPlotDataDict[plotID] = data;
-        }
     }
     private void HandleWeatherChange(WeatherState newWeather)
     {
@@ -351,12 +337,6 @@ public class FarmPlot : MonoBehaviour, IInteractable
                 }
             }
 
-            // Chức năng: Xóa dữ liệu luống đất khỏi bộ nhớ trung tâm trước khi phá hủy object để tránh lỗi sinh ra "bóng ma" khi load lại scene
-            if (GameDataManager.Instance != null && !string.IsNullOrEmpty(plotID))
-            {
-                GameDataManager.Instance.farmPlotDataDict.Remove(plotID);
-                plotID = ""; // Ngăn hàm OnDestroy chạy lệnh lưu đè
-            }
             Destroy(gameObject);
         }
     }

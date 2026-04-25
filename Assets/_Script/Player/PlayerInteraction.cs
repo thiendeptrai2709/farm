@@ -15,6 +15,9 @@ public class PlayerInteraction : MonoBehaviour
     private PlayerScanner scanner; // Tham chiếu sang Mắt Radar
     public IInteractable currentTarget => scanner != null ? scanner.currentTarget : null;
 
+    [Header("Hệ thống Ngồi")]
+    public bool isSitting = false;
+    private Chair currentChair;
 
     private void Awake()
     {
@@ -62,9 +65,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 if (IsActionable(autoActionTarget))
                 {
-                    // Chuyển quyền quyết định Khóa Chân lại cho ExecuteInteraction
-                    // Nếu là hành động Cần Khóa (Chặt/Cuốc), ExecuteInteraction sẽ tự động khóa lại.
-                    // Nếu là hành động Nhanh (Hái quả/Nhặt đồ), nó sẽ để im cho nhân vật tự do.
+                    
                     ExecuteInteraction(autoActionTarget);
                 }
                 else
@@ -123,6 +124,16 @@ public class PlayerInteraction : MonoBehaviour
     }
     private void Update()
     {
+        if (isSitting)
+        {
+            // Bấm E hoặc cố tình bấm WASD để di chuyển thì sẽ đứng lên
+            if (inputHandler.InteractTriggered || inputHandler.MoveInput.sqrMagnitude > 0)
+            {
+                StandUp();
+            }
+            return; // THOÁT UPDATE, không cho radar quét nhặt đồ hay làm gì khác
+        }
+
         if (inputHandler.MoveInput.sqrMagnitude > 0)
         {
             autoActionTarget = null;
@@ -162,7 +173,55 @@ public class PlayerInteraction : MonoBehaviour
             ExecuteInteraction(target);
         }
     }
+    public void SitDown(Chair chair)
+    {
+        if (chair == null || chair.sitPoint == null) return;
 
+        isSitting = true;
+        currentChair = chair;
+        chair.isOccupied = true;
+
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+        
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (movement != null) movement.isActionLocked = true;
+
+        // 2. Giật (Snap) người vào vị trí mặt ghế
+        transform.position = chair.sitPoint.position;
+        transform.rotation = chair.sitPoint.rotation;
+
+        // 3. Chạy Animation ngồi
+        if (playerAnimator != null) playerAnimator.SetBool("IsSitting", true);
+
+        // 4. Hiện hướng dẫn đứng lên
+        if (InteractionUI.Instance != null)
+            InteractionUI.Instance.ShowPrompt(transform, "[E] / [WASD] Đứng lên", false, 0);
+    }
+
+    public void StandUp()
+    {
+        isSitting = false;
+        if (currentChair != null) currentChair.isOccupied = false;
+
+        // 1. Mở khóa tay chân
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (movement != null) movement.isActionLocked = false;
+
+        // 2. Tắt Animation ngồi
+        if (playerAnimator != null) playerAnimator.SetBool("IsSitting", false);
+
+        // 3. Dịch người ra chỗ thoát để không kẹt vào lưới (Mesh) của ghế
+        if (currentChair != null && currentChair.exitPoint != null)
+        {
+            transform.position = currentChair.exitPoint.position;
+        }
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = true;
+
+        currentChair = null;
+        if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
+    }
     private bool IsActionable(IInteractable target)
     {
         if (target is FarmPlot plot)
@@ -226,7 +285,14 @@ public class PlayerInteraction : MonoBehaviour
             }
             return false;
         }
-
+        else if (target is PickupItem pickup)
+        {
+            if (InventoryManager.Instance != null && !InventoryManager.Instance.HasSpaceFor(pickup.itemData, pickup.amount))
+            {
+                return false; // Balo đầy -> Trả về false -> CẤM TƯƠNG TÁC, CẤM VUNG TAY NHẶT
+            }
+            return true;
+        }
         return true;
     }
 

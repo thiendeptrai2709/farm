@@ -155,3 +155,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickupItem
   itemData: {fileID: 11400000, guid: d3b577c243bb8394389804c96bec98d7, type: 2}
   amount: 5
+  isStaticMapItem: 0
+  uniqueID: Pickup_f5b82611

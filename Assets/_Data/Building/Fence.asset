@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 358884e55bd0fc245b3e15c5c575715c, type: 3}
   m_Name: Fence
   m_EditorClassIdentifier: Assembly-CSharp::BuildingBlueprint
-  buildingName: 
-  icon: {fileID: 0}
+  buildingName: FenceWood
+  icon: {fileID: 21300000, guid: e313c56975f5bd146a18c06e67587c53, type: 3}
   description: 
   prefabToBuild: {fileID: 3479476284328561138, guid: 1eeeb9495939eee409c4c37ac59df250, type: 3}
   blueprintType: 2
   expandSize: {x: 0, y: 0, z: 0}
   centerOffset: {x: 0, y: 0, z: 0}
+  baseCapacity: 5
+  capacityIncreasePerLevel: 2
   currentLevel: 0
   maxLevel: 3
   costMultiplierPerLevel: 2
   unlockPrice: 0
   unlockItemCosts: []
-  buildItemCosts: []
+  buildItemCosts:
+  - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
+    amount: 2

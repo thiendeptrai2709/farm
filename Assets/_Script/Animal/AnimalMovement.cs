@@ -62,7 +62,12 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     // Đồng hồ random để lâu lâu kêu 1 tiếng
     private float randomSoundTimer;
     private AudioSource localAudioSource;
-
+    private void Awake()
+    {
+        currentHunger = maxHunger;
+        starveTimer = starveTimeLimit;
+        produceTimer = produceInterval;
+    }
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -75,10 +80,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
         agent.stoppingDistance = 0.5f;
         agent.angularSpeed = 800f;
         agent.acceleration = 30f;
-
-        currentHunger = maxHunger;
-        starveTimer = starveTimeLimit;
-        produceTimer = produceInterval;
 
         localAudioSource = gameObject.AddComponent<AudioSource>();
         localAudioSource.spatialBlend = 1f; // [QUAN TRỌNG NHẤT]: 1 là chuẩn 3D, 0 là chuẩn 2D

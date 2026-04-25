@@ -3,6 +3,8 @@
 // Kế thừa IInteractable để dùng chung hệ thống tương tác bằng phím E
 public class ConstructionSite : MonoBehaviour, IInteractable
 {
+    public string siteID;
+
     [Header("Bản vẽ của khu đất này")]
     public BuildingBlueprint myBlueprint;
 
@@ -18,7 +20,7 @@ public class ConstructionSite : MonoBehaviour, IInteractable
     {
         // Lắng nghe xem Nhà chính đã unlock chưa
         BuilderUIManager.OnBlueprintUnlocked += HandleBlueprintUnlocked;
-        UpdateVisuals();
+        LoadSiteData();
     }
 
     private void OnDestroy()
@@ -35,7 +37,27 @@ public class ConstructionSite : MonoBehaviour, IInteractable
             UpdateVisuals();
         }
     }
+    private void LoadSiteData()
+    {
+        if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+        {
+            GameData data = SaveManager.Instance.GetCurrentData();
 
+            // Nếu nhà này đã từng được Unlock trong sổ cái thì chuyển ngay sang Pending
+            if (myBlueprint != null && data.unlockedBlueprintIDs.Contains(myBlueprint.name))
+            {
+                if (currentState == SiteState.Hidden) currentState = SiteState.Pending;
+            }
+
+            // Ghi đè trạng thái nếu bãi đất này đã từng được xử lý
+            SavedConstructionSite savedData = data.savedConstructionSites.Find(s => s.siteID == siteID);
+            if (savedData != null)
+            {
+                currentState = (SiteState)savedData.state;
+            }
+        }
+        UpdateVisuals();
+    }
     public void FinishBuilding()
     {
         // UI Nộp đồ báo là đã đủ đồ, khánh thành đi!
@@ -95,5 +117,12 @@ public class ConstructionSite : MonoBehaviour, IInteractable
             Debug.Log("Bạn đang tay không! Hãy cầm Búa lên!");
         }
     }
-
+    [ContextMenu("Tự động tạo ID cho Bãi Đất")]
+    private void AutoGenerateID()
+    {
+        siteID = "Site_" + System.Guid.NewGuid().ToString().Substring(0, 8);
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
+    }
 }

@@ -193,4 +193,57 @@ public class MarketManager : MonoBehaviour
         }
         return amount;
     }
+    public void SaveShopData(GameData data)
+    {
+        data.savedShops.Clear();
+        foreach (ShopData shop in allShopsInGame)
+        {
+            if (shop != null)
+            {
+                SavedShopData savedShop = new SavedShopData();
+                savedShop.shopName = shop.npcName; // Dùng tên NPC làm ID (Lưu ý đừng đặt trùng tên 2 ông NPC nhé)
+                savedShop.currentMoney = shop.merchantMoney;
+
+                savedShop.itemsForSale = new List<SavedSlotData>();
+                foreach (var item in shop.itemsForSale)
+                {
+                    string id = item.item != null ? item.item.name : "";
+                    savedShop.itemsForSale.Add(new SavedSlotData { itemID = id, amount = item.currentQuantity, currentDurability = -1f });
+                }
+
+                data.savedShops.Add(savedShop);
+            }
+        }
+        Debug.Log("[MarketManager] Đã lưu ví tiền và kho hàng của tất cả NPC.");
+    }
+
+    public void LoadShopData(GameData data)
+    {
+        if (data == null || data.savedShops == null || data.savedShops.Count == 0) return;
+
+        foreach (SavedShopData savedShop in data.savedShops)
+        {
+            ShopData shop = allShopsInGame.Find(x => x != null && x.npcName == savedShop.shopName);
+            if (shop != null)
+            {
+                // Phục hồi tiền
+                shop.merchantMoney = savedShop.currentMoney;
+
+                // Phục hồi kho hàng
+                shop.itemsForSale.Clear();
+                foreach (var savedSlot in savedShop.itemsForSale)
+                {
+                    ItemData loadedItem = string.IsNullOrEmpty(savedSlot.itemID) ? null : allItemsDatabase.Find(x => x.name == savedSlot.itemID);
+                    if (loadedItem != null)
+                    {
+                        ShopInventoryItem sItem = new ShopInventoryItem();
+                        sItem.item = loadedItem;
+                        sItem.currentQuantity = savedSlot.amount;
+                        shop.itemsForSale.Add(sItem);
+                    }
+                }
+            }
+        }
+        Debug.Log("[MarketManager] Đã tải ví tiền và kho hàng của NPC từ File Save.");
+    }
 }

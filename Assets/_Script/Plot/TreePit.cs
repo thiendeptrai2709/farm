@@ -8,10 +8,10 @@ public class TreePit : MonoBehaviour, IInteractable
     [Header("Khối 3D Hiển thị")]
     public GameObject saplingModel;
 
+    public string pitID;
 
-
-    private SeedItemData plantedTree;
-    private float growTimer = 0f;
+    public SeedItemData plantedTree;
+    public float growTimer = 0f;
 
     private GameObject matureTreeObject;
     private Transform fruitVisuals;
@@ -19,19 +19,46 @@ public class TreePit : MonoBehaviour, IInteractable
     public ItemData wateringCanItem;
     public ItemData fertilizerItem;
 
-    private int treeHealth = 3;
+    public int treeHealth = 3;
     private bool isDead = false;
 
     public GameObject needWaterIcon;
     // --- BIẾN MỚI: BỘ NHỚ TƯỚI NƯỚC & BÓN PHÂN ---
-    private bool isWatered = false;
-    private bool isFertilized = false;
+    public bool isWatered = false;
+    public bool isFertilized = false;
     private bool isTargeted = false;
     [Header("Cài đặt tầm nhìn Icon")]
     public float iconVisibleDistance = 20f; // Cách 20 mét là tắt
     private Transform playerTransform;
 
     public ParticleSystem waterSplashEffect;
+    public void LoadData(SavedTreePitData data, SeedItemData seed)
+    {
+        this.pitID = data.id;
+        this.currentState = data.state;
+        this.plantedTree = seed;
+        this.growTimer = data.growTimer;
+        this.treeHealth = data.health;
+        this.isWatered = data.watered;
+        this.isFertilized = data.fertilized;
+
+        // Nếu đã thành cây cổ thụ, phải dựng model lên
+        if ((currentState == PitState.Grown_Empty || currentState == PitState.Grown_Fruited) && plantedTree != null && plantedTree.cropPrefab != null)
+        {
+            if (saplingModel) saplingModel.SetActive(false);
+            matureTreeObject = Instantiate(plantedTree.cropPrefab, transform.position, Quaternion.identity, transform);
+
+            TreeVisuals visuals = matureTreeObject.GetComponent<TreeVisuals>();
+            if (visuals != null && visuals.fruitVisuals != null)
+            {
+                fruitVisuals = visuals.fruitVisuals;
+                // Nếu đang có quả thì bật quả lên, không thì tắt
+                fruitVisuals.gameObject.SetActive(currentState == PitState.Grown_Fruited);
+            }
+        }
+        UpdateVisuals();
+    }
+
     private float GetBaseTime()
     {
         if (plantedTree == null) return 0f;

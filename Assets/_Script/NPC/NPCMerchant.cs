@@ -34,12 +34,22 @@ public class NPCMerchant : MonoBehaviour, IInteractable
     private bool isGoingHome = false;
     private bool isInsideHouse = false;
 
+    private bool isInitialized = false;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+    private void OnEnable()
+    {
+        LoadingManager.OnPlayerReady += InitPosition;
+    }
 
+    private void OnDisable()
+    {
+        LoadingManager.OnPlayerReady -= InitPosition;
+    }
     private QuestData GetCurrentQuest()
     {
         if (questLine == null || questLine.Length == 0) return null;
@@ -58,6 +68,13 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        // [ĐÃ SỬA] Phòng hờ nếu m test trực tiếp không qua Main Menu
+        Invoke("InitPosition", 0.2f);
+    }
+    private void InitPosition()
+    {
+        if (isInitialized) return;
+
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys != null && agent != null)
         {
@@ -80,10 +97,13 @@ public class NPCMerchant : MonoBehaviour, IInteractable
                 EnterHouse();
             }
         }
+        isInitialized = true; // Mở khóa
     }
 
     private void Update()
     {
+        if (!isInitialized) return;
+
         bool isTalkingToPlayer =
             (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen() && ShopUIManager.Instance.currentShop == myShopData) ||
             (DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentMerchant == this);

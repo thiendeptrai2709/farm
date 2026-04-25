@@ -95,7 +95,53 @@ public class SaveManager : MonoBehaviour
         {
             QuestManager.Instance.SaveQuestData(currentData);
         }
-
+        if (MarketManager.Instance != null)
+        {
+            MarketManager.Instance.SaveShopData(currentData);
+        }
+        if (FarmingZone.Instance != null)
+        {
+            FarmingZone.Instance.SaveAllPlots(currentData);
+        }
+        else
+        {
+            
+            if (currentData.lastSceneName != "Farm")
+                currentData.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
+        }
+        ConstructionSite[] allSites = UnityEngine.Object.FindObjectsByType<ConstructionSite>(FindObjectsSortMode.None);
+        foreach (var site in allSites)
+        {
+            SavedConstructionSite existingSave = currentData.savedConstructionSites.Find(s => s.siteID == site.siteID);
+            if (existingSave != null)
+            {
+                existingSave.state = (int)site.currentState;
+            }
+            else
+            {
+                currentData.savedConstructionSites.Add(new SavedConstructionSite { siteID = site.siteID, state = (int)site.currentState });
+            }
+        }
+        AnimalPen[] allPens = UnityEngine.Object.FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
+        foreach (var pen in allPens)
+        {
+            pen.SaveAnimalData(currentData);
+        }
+        DroppedItemManager currentMapItemManager = UnityEngine.Object.FindFirstObjectByType<DroppedItemManager>();
+        if (currentMapItemManager != null)
+        {
+            currentMapItemManager.SaveDroppedItemsToData(currentData);
+        }
+        PlacedPropManager currentPropManager = UnityEngine.Object.FindFirstObjectByType<PlacedPropManager>();
+        if (currentPropManager != null)
+        {
+            currentPropManager.SavePropsToData(currentData);
+        }
+        FoodTrough[] allTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
+        foreach (var trough in allTroughs)
+        {
+            trough.SaveTroughData(currentData);
+        }
         string path = GetSaveFilePath(currentSlot);
         string json = JsonUtility.ToJson(currentData, true);
         File.WriteAllText(path, json);
@@ -119,6 +165,10 @@ public class SaveManager : MonoBehaviour
         if (QuestManager.Instance != null)
         {
             QuestManager.Instance.LoadQuestData(currentData);
+        }
+        if (MarketManager.Instance != null)
+        {
+            MarketManager.Instance.LoadShopData(currentData);
         }
         StartAutoSave();
     }

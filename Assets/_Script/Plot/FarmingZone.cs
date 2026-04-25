@@ -46,9 +46,21 @@ public class FarmingZone : MonoBehaviour, IInteractable
     public float maxAlpha = 0.8f;       // Viền thì có thể để đậm hơn thảm (0.8)
 
     private Material lineMaterial;
+
+    private static Vector3 originalSize = Vector3.zero;
+    private static Vector3 originalCenter = Vector3.zero;
+    private static bool hasCapturedOriginal = false;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
+        if (!hasCapturedOriginal && farmBoundary != null)
+        {
+            originalSize = farmBoundary.size;
+            originalCenter = farmBoundary.center;
+            hasCapturedOriginal = true;
+            Debug.Log($"[FarmingZone] Đã ghi nhớ kích thước đất mặc định: {originalSize}");
+        }
     }
 
     private void Start()
@@ -92,37 +104,6 @@ public class FarmingZone : MonoBehaviour, IInteractable
             return;
         }
 
-        // -----------------------------------------------------
-        // KẾT NỐI SỔ CÁI: Đọc dữ liệu và đẻ lại toàn bộ luống đất cũ
-        // -----------------------------------------------------
-        if (GameDataManager.Instance != null && tilledDirtPrefab != null)
-        {
-            float offlineSeconds = 0f;
-            if (GameDataManager.Instance.lastFarmExitTimeTicks != 0)
-            {
-                System.TimeSpan timeSpan = System.DateTime.Now - new System.DateTime(GameDataManager.Instance.lastFarmExitTimeTicks);
-                offlineSeconds = (float)timeSpan.TotalSeconds;
-                Debug.Log($"Bạn đã rời Farm {offlineSeconds} giây. Đang tua nhanh sự phát triển của cây...");
-            }
-
-            foreach (var kvp in GameDataManager.Instance.farmPlotDataDict)
-            {
-                FarmPlotData data = kvp.Value;
-                Vector3Int coords = GetGridCoords(data.position);
-
-                if (!activePlots.ContainsKey(coords))
-                {
-                    if (data.state == PlotState.Planted)
-                    {
-                        data.growTimer += offlineSeconds;
-                    }
-
-                    GameObject restoredPlot = Instantiate(tilledDirtPrefab, data.position, Quaternion.identity);
-                    restoredPlot.GetComponent<FarmPlot>().plotID = data.id;
-                    activePlots.Add(coords, restoredPlot);
-                }
-            }
-        }
     }
 
     private void Update()
@@ -439,6 +420,12 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
             currentShowTimer = showDuration; // Nạp lại 3 giây hiển thị
             currentCooldownTimer = cooldownTime;
+
+            if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+            {
+                SaveManager.Instance.GetCurrentData().farmBoundarySize = farmBoundary.size;
+                SaveManager.Instance.GetCurrentData().farmBoundaryCenter = farmBoundary.center;
+            }
         }
     }
     public void RefreshFarmTerrain()
@@ -481,10 +468,148 @@ public class FarmingZone : MonoBehaviour, IInteractable
     }
     private void OnDestroy()
     {
-        if (GameDataManager.Instance != null)
+        
+    }
+    public void SaveAllPlots(GameData data)
+    {
+        data.savedFarmPlots.Clear();
+        data.savedTreePits.Clear();
+
+        HashSet<GameObject> processedTrees = new HashSet<GameObject>();
+
+        foreach (var kvp in activePlots)
         {
-            GameDataManager.Instance.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
+            GameObject plotObj = kvp.Value;
+            if (plotObj == null) continue;
+
+            // 1. Phân loại là cây rau (FarmPlot)
+            FarmPlot fPlot = plotObj.GetComponent<FarmPlot>();
+            if (fPlot != null)
+            {
+                FarmPlotData pData = new FarmPlotData
+                {
+                    id = fPlot.plotID,
+                    position = fPlot.transform.position,
+                    state = fPlot.currentState,
+                    seedID = fPlot.plantedSeed != null ? fPlot.plantedSeed.name : "", // LƯU BẰNG TÊN ID (string)
+                    growTimer = fPlot.growTimer,
+                    harvestCount = fPlot.currentHarvestCount,
+                    watered = fPlot.isWatered,
+                    fertilized = fPlot.isFertilized
+                };
+                data.savedFarmPlots.Add(pData);
+                continue;
+            }
+
+            // 2. Phân loại là cây to (TreePit)
+            TreePit tPit = plotObj.GetComponent<TreePit>();
+            if (tPit != null)
+            {
+                if (!processedTrees.Contains(plotObj))
+                {
+                    SavedTreePitData tData = new SavedTreePitData
+                    {
+                        id = tPit.pitID,
+                        position = tPit.transform.position,
+                        state = tPit.currentState,
+                        seedID = tPit.plantedTree != null ? tPit.plantedTree.name : "", // LƯU BẰNG TÊN ID (string)
+                        growTimer = tPit.growTimer,
+                        health = tPit.treeHealth,
+                        watered = tPit.isWatered,
+                        fertilized = tPit.isFertilized
+                    };
+                    data.savedTreePits.Add(tData);
+                    processedTrees.Add(plotObj);
+                }
+            }
         }
+
+        data.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
+        Debug.Log($"[FarmingZone] Đã đóng gói {data.savedFarmPlots.Count} luống rau và {data.savedTreePits.Count} cây ăn quả vào File Save.");
     }
 
+    public void LoadAllPlots(GameData data)
+    {
+        foreach (var kvp in activePlots) { if (kvp.Value != null) Destroy(kvp.Value); }
+        activePlots.Clear();
+
+        if (data == null) return;
+
+        if (terrainPainter != null && hasCapturedOriginal)
+        {
+            // Trả lại cỏ cho toàn bộ khu vực để xóa vết tích của Slot trước
+            terrainPainter.WipeFarmArea(originalCenter, 100f);
+        }
+
+        // BƯỚC B: ÉP THU NHỎ SIZE VỀ MẶC ĐỊNH LEVEL 1
+        if (farmBoundary != null && hasCapturedOriginal)
+        {
+            farmBoundary.size = originalSize;
+            farmBoundary.center = originalCenter;
+        }
+
+        // BƯỚC C: NẾU FILE SAVE CÓ NÂNG CẤP THÌ MỚI ĐƯỢC PHÉP DÀI RA
+        if (data.farmBoundarySize != Vector3.zero && farmBoundary != null)
+        {
+            farmBoundary.size = data.farmBoundarySize;
+            farmBoundary.center = data.farmBoundaryCenter;
+        }
+
+        // BƯỚC D: VẼ LẠI KHUNG VÀ TÔ LẠI ĐẤT THEO ĐÚNG SIZE VỪA CHỐT
+        UpdateBoundaryLine();
+        RefreshFarmTerrain();
+
+        float offlineSeconds = 0f;
+        if (data.lastFarmExitTimeTicks != 0)
+        {
+            System.TimeSpan timeSpan = System.DateTime.Now - new System.DateTime(data.lastFarmExitTimeTicks);
+            offlineSeconds = (float)timeSpan.TotalSeconds;
+        }
+
+        // 1. Load Rau nhỏ
+        foreach (FarmPlotData pData in data.savedFarmPlots)
+        {
+            if (pData.state == PlotState.Planted) pData.growTimer += offlineSeconds;
+
+            GameObject restoredPlot = Instantiate(tilledDirtPrefab, pData.position, Quaternion.identity);
+            FarmPlot fPlot = restoredPlot.GetComponent<FarmPlot>();
+
+            // Tìm hạt giống từ Market
+            SeedItemData seed = null;
+            if (!string.IsNullOrEmpty(pData.seedID) && MarketManager.Instance != null)
+                seed = MarketManager.Instance.allItemsDatabase.Find(x => x.name == pData.seedID) as SeedItemData;
+
+            // GỌI HÀM KHỞI TẠO ĐÃ VIẾT Ở BƯỚC 1
+            fPlot.LoadData(pData, seed);
+
+            Vector3Int coords = GetGridCoords(pData.position);
+            if (!activePlots.ContainsKey(coords)) activePlots.Add(coords, restoredPlot);
+        }
+
+        // 2. Load Cây to
+        foreach (SavedTreePitData tData in data.savedTreePits)
+        {
+            if (tData.state == TreePit.PitState.Planted || tData.state == TreePit.PitState.Grown_Empty)
+                tData.growTimer += offlineSeconds;
+
+            GameObject restoredTree = Instantiate(treePitPrefab, tData.position, Quaternion.identity);
+            TreePit tPit = restoredTree.GetComponent<TreePit>();
+
+            SeedItemData seed = null;
+            if (!string.IsNullOrEmpty(tData.seedID) && MarketManager.Instance != null)
+                seed = MarketManager.Instance.allItemsDatabase.Find(x => x.name == tData.seedID) as SeedItemData;
+
+            // GỌI HÀM KHỞI TẠO ĐÃ VIẾT Ở BƯỚC 2
+            tPit.LoadData(tData, seed);
+
+            // Khóa lưới
+            Vector3Int baseCoords = GetGridCoords(tData.position - new Vector3(gridSize / 2f, 0, gridSize / 2f));
+            for (int x = 0; x < 2; x++)
+                for (int z = 0; z < 2; z++)
+                {
+                    Vector3Int lockCoord = new Vector3Int(baseCoords.x + x, 0, baseCoords.z + z);
+                    if (!activePlots.ContainsKey(lockCoord)) activePlots.Add(lockCoord, restoredTree);
+                }
+        }
+    }
 }

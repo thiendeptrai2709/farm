@@ -201,9 +201,14 @@ public class HammerBuildManager : MonoBehaviour
         }
         else
         {
-            // Nếu là Hàng rào, Lò rèn... -> Đẻ bình thường
-            Instantiate(blueprintToPlace.prefabToBuild, pos, rot);
-            Debug.Log($"[Thành công] Đã xây {blueprintToPlace.buildingName} theo lưới chuẩn!");
+            GameObject newProp = Instantiate(blueprintToPlace.prefabToBuild, pos, rot);
+
+            // [MỚI]: Báo cho Quản lý biết là tao vừa xây thêm 1 món, ghi sổ đi!
+            if (PlacedPropManager.Instance != null)
+            {
+                // Lấy tên Prefab gốc làm ID nhận diện
+                PlacedPropManager.Instance.RegisterProp(newProp, blueprintToPlace.prefabToBuild.name);
+            }
         }
 
         if (HasEnoughMaterials(blueprintToPlace))

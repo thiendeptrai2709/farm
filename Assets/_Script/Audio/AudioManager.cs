@@ -41,6 +41,15 @@ public class AudioManager : MonoBehaviour
         {
             sfxDictionary[audio.soundName] = audio;
         }
+
+        isMuted = PlayerPrefs.GetInt("IsMuted", 0) == 1;
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        // Kích hoạt ngay lập tức các trạng thái vừa nạp
+        ToggleMute(isMuted);
+        SetMusicVolume(musicVolume);
+        SetSFXVolume(sfxVolume);
     }
 
     public void PlayMusic(string name)
@@ -48,7 +57,7 @@ public class AudioManager : MonoBehaviour
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
             musicSource.clip = data.clip;
-            musicSource.volume = isMuted ? 0 : data.volume * musicVolume;
+            musicSource.volume = data.volume * musicVolume;
             musicSource.Play();
         }
     }
@@ -97,5 +106,6 @@ public class AudioManager : MonoBehaviour
         musicSource.mute = isMuted;
         sfxSource.mute = isMuted;
         loopSource.mute = isMuted;
+        AudioListener.pause = isMuted;
     }
 }

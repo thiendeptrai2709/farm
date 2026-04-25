@@ -11,6 +11,12 @@ public class PauseMenuManager : MonoBehaviour
     private bool isPaused = false;
     private bool hasSaved = false;
     private bool isAttemptingToQuit = false;
+    public GameObject settingsPanel;
+    private void Start()
+    {
+        // Đảm bảo ẩn bảng cài đặt khi mới bắt đầu
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+    }
 
     private void Update()
     {
@@ -22,6 +28,11 @@ public class PauseMenuManager : MonoBehaviour
             {
                 CancelWarning();
             }
+            else if (settingsPanel != null && settingsPanel.activeSelf)
+            {
+                // [ĐÃ THÊM]: Nếu đang mở Setting thì bấm ESC sẽ lùi lại bảng Pause
+                CloseSettings();
+            }
             else
             {
                 TogglePause();
@@ -32,7 +43,18 @@ public class PauseMenuManager : MonoBehaviour
     public void TogglePause()
     {
         isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            CloseAllOtherUIs();
+        }
+
         pauseMenuPanel.SetActive(isPaused);
+
+        if (!isPaused && settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
 
         // Gọi sang CameraManager để quản lý chuột đồng bộ với các UI khác
         if (PlayerCameraManager.Instance != null)
@@ -40,7 +62,64 @@ public class PauseMenuManager : MonoBehaviour
             PlayerCameraManager.Instance.SetPauseMenuOpenState(isPaused);
         }
     }
+    private void CloseAllOtherUIs()
+    {
+        // Đóng Rương
+        if (InventoryManager.Instance != null && InventoryManager.Instance.currentOpenChest != null)
+            InventoryManager.Instance.CloseChest();
 
+        // Đóng Balo cá nhân (Tên file UI của bác có thể là InventoryUI, hãy kiểm tra lại cho chuẩn)
+        // if (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen()) 
+        //     InventoryUI.Instance.CloseUI();
+
+        // Đóng UI Luống Đất
+        if (FarmPlotUIManager.Instance != null && FarmPlotUIManager.Instance.IsOpen())
+            FarmPlotUIManager.Instance.ClosePlotUI();
+
+        // Đóng Cửa Hàng
+        if (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen())
+            ShopUIManager.Instance.CloseShop();
+
+        // Đóng Bàn Thợ Mộc
+        if (BuilderUIManager.Instance != null && BuilderUIManager.Instance.IsOpen())
+            BuilderUIManager.Instance.CloseUI();
+
+        // Đóng Công Trường Xây Dựng
+        if (SiteConstructionUIManager.Instance != null && SiteConstructionUIManager.Instance.IsOpen())
+            SiteConstructionUIManager.Instance.CloseUI();
+
+        // Đóng Xe Bus
+        if (BusUI.Instance != null && BusUI.Instance.IsOpen())
+            BusUI.Instance.CloseUI();
+
+        // Đóng Hội Thoại NPC
+        if (DialogueUIManager.Instance != null && DialogueUIManager.Instance.IsOpen())
+            DialogueUIManager.Instance.CloseDialogue();
+
+        // Đóng Máng Ăn
+        if (FoodTroughUIManager.Instance != null && FoodTroughUIManager.Instance.IsOpen())
+            FoodTroughUIManager.Instance.CloseTroughUI();
+
+        // Đóng Chuồng Thú
+        if (AnimalPenUIManager.Instance != null && AnimalPenUIManager.Instance.IsOpen())
+            AnimalPenUIManager.Instance.CloseUI();
+
+        if (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen())
+            HammerUIManager.Instance.CloseUI();
+    }
+
+    public void OpenSettings()
+    {
+        pauseMenuPanel.SetActive(false);
+        settingsPanel.SetActive(true);
+    }
+
+    // Gắn hàm này vào sự kiện OnClick của nút "Quay Lại / X" trong bảng Cài Đặt
+    public void CloseSettings()
+    {
+        settingsPanel.SetActive(false);
+        pauseMenuPanel.SetActive(true);
+    }
     public void ResumeGame()
     {
         if (isPaused) TogglePause();

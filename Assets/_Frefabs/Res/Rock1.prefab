@@ -311,6 +311,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickupItem
   itemData: {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}
   amount: 1
+  isStaticMapItem: 1
+  uniqueID: 
 --- !u!1 &8902894262221262112
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,6 +29,8 @@ public class PlayerGravityAndJump : MonoBehaviour
 
     private void Update()
     {
+        if (controller != null && !controller.enabled) return;
+
         HandleGravityAndJump();
     }
 
