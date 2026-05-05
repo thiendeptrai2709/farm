@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using static GameData;
 
 public class MarketManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class MarketManager : MonoBehaviour
     public List<ShopData> allShopsInGame;
     private Dictionary<ItemData, float> dailyPriceMultipliers = new Dictionary<ItemData, float>();
 
+    private bool hasLoadedFromSave = false;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -26,6 +28,8 @@ public class MarketManager : MonoBehaviour
     private void Start()
     {
         if (TimeManager.Instance != null) TimeManager.Instance.OnNewDay += GenerateNewDailyPrices;
+
+        if (hasLoadedFromSave) return;
 
         // KIỂM TRA SỔ CÁI: Hôm nay đã khởi tạo thị trường chưa?
         if (GameDataManager.Instance != null)
@@ -214,12 +218,22 @@ public class MarketManager : MonoBehaviour
                 data.savedShops.Add(savedShop);
             }
         }
+        data.savedPrices.Clear();
+        foreach (var kvp in dailyPriceMultipliers)
+        {
+            if (kvp.Key != null)
+            {
+                data.savedPrices.Add(new SavedPriceMultiplier { itemID = kvp.Key.name, multiplier = kvp.Value });
+            }
+        }
         Debug.Log("[MarketManager] Đã lưu ví tiền và kho hàng của tất cả NPC.");
     }
 
     public void LoadShopData(GameData data)
     {
         if (data == null || data.savedShops == null || data.savedShops.Count == 0) return;
+
+        hasLoadedFromSave = true;
 
         foreach (SavedShopData savedShop in data.savedShops)
         {
@@ -241,6 +255,18 @@ public class MarketManager : MonoBehaviour
                         sItem.currentQuantity = savedSlot.amount;
                         shop.itemsForSale.Add(sItem);
                     }
+                }
+            }
+        }
+        if (data.savedPrices != null && data.savedPrices.Count > 0)
+        {
+            dailyPriceMultipliers.Clear();
+            foreach (var savedPrice in data.savedPrices)
+            {
+                ItemData item = allItemsDatabase.Find(x => x.name == savedPrice.itemID);
+                if (item != null)
+                {
+                    dailyPriceMultipliers.Add(item, savedPrice.multiplier);
                 }
             }
         }

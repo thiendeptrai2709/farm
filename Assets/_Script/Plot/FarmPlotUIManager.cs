@@ -19,7 +19,7 @@ public class FarmPlotUIManager : MonoBehaviour
     // Lưu lại cái "gốc gác" của hạt giống để tý nữa trừ cho đúng ô
     private StorageType sourceStorage;
     private int sourceIndex;
-
+    public SeedDropSlotUI seedDropSlot;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -84,6 +84,11 @@ public class FarmPlotUIManager : MonoBehaviour
 
         // Khóa nút Trồng
         if (plantButton != null) plantButton.interactable = false;
+
+        if (seedDropSlot != null)
+        {
+            seedDropSlot.currentSeed = null;
+        }
     }
     public void ClosePlotUI()
     {
@@ -168,7 +173,6 @@ public class FarmPlotUIManager : MonoBehaviour
         return currentOpenPlot != null ? currentOpenPlot.GetComponent<Collider>() : null;
     }
 
-    // Nhận hạt giống bay thẳng vào khi người chơi bấm Shift + Click
     public void ReceiveSeedFromShiftClick(SeedItemData seedData, StorageType storage, int index)
     {
         if (seedData.isBigTree)
@@ -186,7 +190,10 @@ public class FarmPlotUIManager : MonoBehaviour
             seedIcon.sprite = seedData.icon;
             seedIcon.enabled = true;
         }
-
+        if (seedDropSlot != null)
+        {
+            seedDropSlot.currentSeed = seedData;
+        }
         if (plantButton != null) plantButton.interactable = true;
     }
 }

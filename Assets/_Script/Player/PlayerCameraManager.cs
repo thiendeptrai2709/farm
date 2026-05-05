@@ -20,6 +20,8 @@ public class PlayerCameraManager : MonoBehaviour
     private bool isFoodTroughOpen = false;
     private bool isBusUIOpen = false;
     private bool isPauseMenuOpen = false;
+    private bool isSleepUIOpen = false;
+    private bool isNoticeBoardOpen = false;
 
     public Behaviour cameraInputProvider;
     public GameObject cameraObject;
@@ -127,6 +129,16 @@ public class PlayerCameraManager : MonoBehaviour
         }
         UpdateCursorState();
     }
+    public void SetSleepUIOpenState(bool isOpen)
+    {
+        isSleepUIOpen = isOpen;
+        UpdateCursorState();
+    }
+    public void SetNoticeBoardOpenState(bool isOpen)
+    {
+        isNoticeBoardOpen = isOpen;
+        UpdateCursorState();
+    }
     private void Update()
     {
         // 1. NÚT TAB: Bật/Tắt túi đồ
@@ -167,6 +179,18 @@ public class PlayerCameraManager : MonoBehaviour
                 if (BusUI.Instance != null) BusUI.Instance.CloseUI();
                 return;
             }
+            if (isSleepUIOpen)
+            {
+                // Chức năng: Bấm TAB để tắt bảng ngủ
+                if (SleepUIManager.Instance != null) SleepUIManager.Instance.CancelSleep();
+                return;
+            }
+            if (isNoticeBoardOpen)
+            {
+                // Chức năng: Bấm TAB để tắt bảng thông báo chợ
+                if (NoticeBoardUIManager.Instance != null) NoticeBoardUIManager.Instance.CloseBoard();
+                return;
+            }
             isInventoryOpen = !isInventoryOpen;
 
             if (InventoryUI.Instance != null)
@@ -175,7 +199,7 @@ public class PlayerCameraManager : MonoBehaviour
             UpdateCursorState();
         }
         // 3. Chuột TRÁI: Nếu đang mở UI mà click ra ngoài viền thì khóa chuột lại
-        if (inputHandler.ClickTriggered && !isCursorLocked && !isPauseMenuOpen && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen && !isBusUIOpen)
+        if (inputHandler.ClickTriggered && !isCursorLocked && !isPauseMenuOpen && !isInventoryOpen && !isChestOpen && !isShopOpen && !isPlotUIOpen && !isBuilderOpen && !isHammerOpen && !isAnimalUIOpen && !isFoodTroughOpen && !isBusUIOpen && !isSleepUIOpen && !isNoticeBoardOpen)
         {
             SetCursorState(true);
         }
@@ -184,7 +208,7 @@ public class PlayerCameraManager : MonoBehaviour
     // Hàm tổng hợp: Chỉ khóa chuột khi TẤT CẢ các bảng UI đều đang tắt
     private void UpdateCursorState()
     {
-        if (isPauseMenuOpen || isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen)
+        if (isPauseMenuOpen || isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen || isSleepUIOpen || isNoticeBoardOpen)
         {
             SetCursorState(false); // Nhả chuột ra để kéo thả UI
 

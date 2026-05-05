@@ -1,36 +1,41 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.Localization;
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCVillager : MonoBehaviour, IInteractable
 {
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString interactTextNormal; // Chữ bình thường
+    public LocalizedString interactTextQuest;
+
     [Header("Thông tin Dân làng")]
     public string npcName = "Dân Làng";
     public string greetingSound = "Villager_Hello";
 
     [Header("Hội thoại Mặc định")]
     [Tooltip("Gõ các câu chào vào đây. Gõ \\n để xuống dòng.")]
-    [TextArea(2, 4)]
-    public string[] defaultDialogues = new string[]
-    {
-        "Chào buổi sáng! Dạo này trang trại của cậu phát triển tốt chứ?",
-        "Thôi tớ đi dạo tiếp đây, gặp lại sau nhé!"
-    };
+    public LocalizedString[] defaultDialogues;
 
     [Header("Chuỗi Nhiệm vụ (Tùy chọn)")]
-    public QuestData[] questLine; // Khai báo dạng mảng (Nhiều nhiệm vụ)
+    public QuestData[] questLine;
     public QuestData secretStoryQuest;
 
     [Header("Lịch trình & Địa điểm")]
     public NPCSchedule schedule;
     public Transform homePoint;
-    public Transform wanderCenter;
-    public float wanderRadius = 10f;
 
-    [Header("Cài đặt Hành vi")]
+    [Header("Cài đặt Đi Dạo (Dành cho NPC thường)")]
+    public Transform wanderCenter;
     public bool canWander = true;
+    public float wanderRadius = 10f;
     public float minWaitTime = 2f;
     public float maxWaitTime = 5f;
+
+    [Header("Cài đặt Ngồi (Dành cho NPC gốc cây/ghế)")]
+    [Tooltip("Nếu kéo 1 điểm (Transform) vào đây, NPC sẽ không đi dạo nữa mà ra thẳng đây ngồi tới tối.")]
+    public Transform sitPoint;
+    public Transform standPoint;
+
 
     [Header("Thành phần AI")]
     public Animator npcAnimator;
@@ -42,6 +47,10 @@ public class NPCVillager : MonoBehaviour, IInteractable
     private bool isWaiting = false;
     private bool isInitialized = false;
 
+    // [MỚI]: Biến quản lý trạng thái ngồi
+    private bool isCurrentlySitting = false;
+    private bool wasTalkingToPlayer = false; // Nhớ xem vừa nói chuyện xong chưa
+    private float sitCooldownTimer = 0f;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -63,8 +72,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
         foreach (QuestData q in questLine)
         {
             if (QuestManager.Instance.GetQuestStatus(q) == QuestStatus.Completed) continue;
-
-            // Kiểm tra xem Quest này đã đủ điều kiện thời gian/cốt truyện chưa
             if (!QuestManager.Instance.IsQuestLogicReady(q)) continue;
 
             return q;
@@ -79,20 +86,22 @@ public class NPCVillager : MonoBehaviour, IInteractable
     private void InitPosition()
     {
         if (isInitialized) return;
-        if (wanderCenter == null)
+
+        // Chỉ tạo wanderCenter ảo nếu thằng này KHÔNG CÓ chỗ ngồi
+        if (wanderCenter == null && sitPoint == null)
         {
             GameObject tempCenter = new GameObject(npcName + "_TempWanderCenter");
             tempCenter.transform.position = transform.position;
             wanderCenter = tempCenter.transform;
         }
 
-        // Vẫn phải bắt buộc có nhà để về ngủ
         if (homePoint == null)
         {
             Debug.LogError($"[NPC] Cảnh báo: {npcName} chưa được gắn vị trí nhà (homePoint) trên Inspector!");
             isInitialized = true;
             return;
         }
+
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys != null && agent != null)
         {
@@ -101,7 +110,17 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
             if (isDayTime)
             {
-                agent.Warp(wanderCenter.position);
+                // [ĐÃ SỬA]: Kiểm tra xem nó là loại đi dạo hay loại ngồi gốc cây
+                if (sitPoint != null)
+                {
+                    agent.Warp(sitPoint.position);
+                    SnapToSitPoint();
+                }
+                else
+                {
+                    agent.Warp(wanderCenter.position);
+                }
+
                 isSleeping = false;
                 isGoingHome = false;
                 SetNPCVisibility(true);
@@ -112,7 +131,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 EnterHouse();
             }
         }
-        isInitialized = true; // Mở khóa
+        isInitialized = true;
     }
     private void Update()
     {
@@ -121,6 +140,13 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
         if (isTalkingToPlayer)
         {
+            wasTalkingToPlayer = true; // Đánh dấu là đang buôn chuyện
+
+            if (isCurrentlySitting)
+            {
+                StandUpFromSitPoint();
+            }
+
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
 
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -134,6 +160,13 @@ public class NPCVillager : MonoBehaviour, IInteractable
         }
         else
         {
+            // Bắt đúng khoảnh khắc người chơi vừa bấm nút tắt bảng thoại
+            if (wasTalkingToPlayer)
+            {
+                wasTalkingToPlayer = false;
+                sitCooldownTimer = 1.5f; // Vặn đồng hồ delay 1.5s
+            }
+
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
             UpdateRoutine();
         }
@@ -156,13 +189,30 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 SetNPCVisibility(true);
                 isSleeping = false;
                 isGoingHome = false;
-                if (!canWander) GoToPoint(wanderCenter.position);
+
+                if (sitPoint != null) GoToPoint(sitPoint.position);
+                else if (!canWander) GoToPoint(wanderCenter.position);
                 else PickNewWanderPoint();
             }
-            HandleWandering();
+
+            // [MỚI]: Chia nhánh hành vi ban ngày
+            if (sitPoint != null)
+            {
+                HandleSitting();
+            }
+            else
+            {
+                HandleWandering();
+            }
         }
         else
         {
+            // [MỚI]: Buổi tối -> Đứng dậy đi về
+            if (isCurrentlySitting)
+            {
+                StandUpFromSitPoint();
+            }
+
             if (!isSleeping)
             {
                 if (!isGoingHome)
@@ -178,6 +228,56 @@ public class NPCVillager : MonoBehaviour, IInteractable
             }
         }
     }
+
+    // ==========================================
+    // LOGIC NGỒI GỐC CÂY
+    // ==========================================
+    private void HandleSitting()
+    {
+        if (isCurrentlySitting) return;
+
+        if (sitCooldownTimer > 0)
+        {
+            sitCooldownTimer -= Time.deltaTime;
+            return;
+        }
+        // Bỏ qua trục Y (chiều cao), chỉ đo khoảng cách bề ngang trên mặt đất (X và Z)
+        Vector2 npcPosXZ = new Vector2(transform.position.x, transform.position.z);
+        Vector2 sitPosXZ = new Vector2(sitPoint.position.x, sitPoint.position.z);
+
+        // Nới lỏng khoảng cách ra 0.5f để dễ bắt trúng hơn
+        if (Vector2.Distance(npcPosXZ, sitPosXZ) < 0.5f)
+        {
+            SnapToSitPoint();
+        }
+        else if (agent.enabled && !agent.pathPending)
+        {
+            GoToPoint(sitPoint.position);
+        }
+    }
+
+    private void SnapToSitPoint()
+    {
+        isCurrentlySitting = true;
+
+        // Tắt AI NavMesh đi để có thể dịch chuyển mông vào ghế/gốc cây
+        if (agent.enabled) agent.enabled = false;
+
+        transform.position = sitPoint.position;
+        transform.rotation = sitPoint.rotation;
+    }
+
+    private void StandUpFromSitPoint()
+    {
+        isCurrentlySitting = false;
+        if (standPoint != null)
+        {
+            transform.position = standPoint.position;
+        }
+        // Bật lại AI để đi về nhà
+        agent.enabled = true;
+    }
+    // ==========================================
 
     private void HandleWandering()
     {
@@ -239,7 +339,9 @@ public class NPCVillager : MonoBehaviour, IInteractable
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = isVisible;
 
-        agent.enabled = isVisible;
+        // Chỉ bật agent nếu ko đang ngồi
+        if (isVisible && !isCurrentlySitting) agent.enabled = true;
+        else if (!isVisible) agent.enabled = false;
     }
 
     private void UpdateAnimation()
@@ -248,6 +350,9 @@ public class NPCVillager : MonoBehaviour, IInteractable
         {
             float speed = (agent.enabled && agent.isOnNavMesh) ? agent.velocity.magnitude : 0f;
             npcAnimator.SetFloat("Speed", speed);
+
+            // [MỚI]: Kích hoạt State ngồi trong Animator
+            npcAnimator.SetBool("IsSitting", isCurrentlySitting);
         }
     }
 
@@ -255,21 +360,21 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (isSleeping) return "";
 
-        // [ĐÃ SỬA]: Dùng hàm GetCurrentQuest() thay vì myQuest
         QuestData activeQuest = GetCurrentQuest();
         if (activeQuest != null && QuestManager.Instance.GetQuestStatus(activeQuest) != QuestStatus.Completed)
         {
-            return $"[E] <color=yellow>!</color> Trò chuyện với {npcName}";
+            // Lấy chữ từ từ điển rồi cộng với tên NPC
+            return $"{interactTextQuest.GetLocalizedString()} {npcName}";
         }
 
-        return $"[E] Trò chuyện với {npcName}";
+        // Lấy chữ từ từ điển rồi cộng với tên NPC
+        return $"{interactTextNormal.GetLocalizedString()} {npcName}";
     }
 
     public void Interact()
     {
         if (isSleeping) return;
 
-        // Âm thầm hoàn thành cột mốc cốt truyện
         if (secretStoryQuest != null && QuestManager.Instance != null)
         {
             if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
@@ -285,28 +390,83 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
         if (DialogueUIManager.Instance != null)
         {
-            QuestData activeQuest = GetCurrentQuest();
-            string[] linesToSay = defaultDialogues;
-            bool isStoryDialogue = false;
-
-            if (activeQuest != null)
+            // 1. Lọc lấy các câu thoại chào hỏi mặc định (An toàn)
+            System.Collections.Generic.List<string> defaultLines = new System.Collections.Generic.List<string>();
+            if (defaultDialogues != null)
             {
-                // [ĐIỂM QUAN TRỌNG]: Tự động phân biệt Nhiệm vụ bình thường và Nhiệm vụ Cốt truyện
-                bool isHiddenStoryQuest = (activeQuest.requiredPreviousQuest != null || activeQuest.requiredDay > 0);
-
-                if (isHiddenStoryQuest)
+                for (int i = 0; i < defaultDialogues.Length; i++)
                 {
-                    // Nếu là cốt truyện: Đọc luôn thoại khóc lóc, bỏ qua câu chào
-                    QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
-                    if (status == QuestStatus.Available) linesToSay = activeQuest.offerLines;
-                    else if (status == QuestStatus.InProgress) linesToSay = activeQuest.inProgressLines;
-                    else if (status == QuestStatus.ReadyToTurnIn) linesToSay = activeQuest.completeLines;
-
-                    isStoryDialogue = true; // Báo cho UI biết đây là chuyện gấp!
+                    if (defaultDialogues[i] != null && !defaultDialogues[i].IsEmpty)
+                    {
+                        defaultLines.Add(defaultDialogues[i].GetLocalizedString());
+                    }
                 }
             }
 
-            DialogueUIManager.Instance.OpenDialogueForVillager(this, linesToSay, activeQuest, isStoryDialogue);
+            QuestData activeQuest = GetCurrentQuest();
+            System.Collections.Generic.List<string> finalLinesToSay = new System.Collections.Generic.List<string>();
+            bool isStoryDialogue = false;
+
+            // 2. KỊCH BẢN 1: Cốt truyện nối tiếp (Auto Story Quest)
+            if (activeQuest != null && activeQuest.isAutoStoryQuest)
+            {
+                QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
+
+                if (status == QuestStatus.Available)
+                {
+                    if (questLine != null && questLine.Length > 0 && activeQuest == questLine[0])
+                    {
+                        finalLinesToSay.AddRange(defaultLines);
+                    }
+                    // Chức năng: Thêm thoại giao nhiệm vụ
+                    finalLinesToSay.AddRange(activeQuest.GetOfferLines());
+                }
+                else if (status == QuestStatus.InProgress)
+                {
+                    // Đang làm dở: Bỏ qua chào hỏi, nói thẳng câu nhắc nhở
+                    finalLinesToSay.AddRange(activeQuest.GetInProgressLines());
+                }
+                else if (status == QuestStatus.ReadyToTurnIn)
+                {
+                    // Trả nhiệm vụ: Bỏ qua chào hỏi, nói thẳng câu cảm ơn
+                    finalLinesToSay.AddRange(activeQuest.GetCompleteLines());
+                }
+
+                isStoryDialogue = true;
+            }
+            // 3. KỊCH BẢN 2: Việc vặt (Có nút Quest) hoặc đang rảnh rỗi
+            else
+            {
+                // Chức năng: Tìm nhiệm vụ đã hoàn thành cuối cùng trong mảng questLine
+                QuestData lastCompletedQuest = null;
+                if (questLine != null)
+                {
+                    for (int i = questLine.Length - 1; i >= 0; i--)
+                    {
+                        if (questLine[i] != null && QuestManager.Instance.GetQuestStatus(questLine[i]) == QuestStatus.Completed)
+                        {
+                            lastCompletedQuest = questLine[i];
+                            break;
+                        }
+                    }
+                }
+
+                // Chức năng: Nếu đã hết sạch nhiệm vụ hiện tại và nhiệm vụ cuối là cốt truyện thì lặp lại câu trả nhiệm vụ
+                if (activeQuest == null && lastCompletedQuest != null && lastCompletedQuest.isAutoStoryQuest)
+                {
+                    finalLinesToSay.AddRange(lastCompletedQuest.GetCompleteLines());
+                    isStoryDialogue = true;
+                }
+                else
+                {
+                    // Chức năng: Nếu chưa làm nhiệm vụ nào hoặc là nhiệm vụ phụ thì nói câu mặc định
+                    finalLinesToSay.AddRange(defaultLines);
+                }
+            }
+            // Chốt chặn cuối cùng nếu không có câu thoại nào
+            if (finalLinesToSay.Count == 0) finalLinesToSay.Add("...");
+
+            DialogueUIManager.Instance.OpenDialogueForVillager(this, finalLinesToSay.ToArray(), activeQuest, isStoryDialogue);
         }
     }
 }

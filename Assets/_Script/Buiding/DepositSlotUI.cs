@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class DepositSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler
+public class DepositSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Tham chiếu UI")]
     public Image itemIcon;
@@ -130,7 +130,21 @@ public class DepositSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler
         }
         return null;
     }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (currentItem != null && ItemTooltipUI.Instance != null)
+        {
+            ItemTooltipUI.Instance.StartHover(currentItem, GetComponent<RectTransform>());
+        }
+    }
 
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (ItemTooltipUI.Instance != null)
+        {
+            ItemTooltipUI.Instance.StopHover();
+        }
+    }
     private int GetItemAmount(StorageType type, int index)
     {
         if (type == StorageType.Hotbar) return InventoryManager.Instance.hotbarSlots[index].amount;

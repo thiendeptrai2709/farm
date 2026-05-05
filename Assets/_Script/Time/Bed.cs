@@ -3,28 +3,34 @@
 public class Bed : MonoBehaviour, IInteractable
 {
     [Header("Cài đặt Giấc ngủ")]
-    [Tooltip("Giờ thức dậy (Ví dụ: 6 là 6h sáng)")]
-    public float wakeUpTime = 6f;
+    public float canSleepAfterHour = 22f; // Chức năng: Cài đặt giờ bắt đầu được phép ngủ (10h tối)
+    public float canSleepBeforeHour = 6f; // Chức năng: Cài đặt giờ kết thúc giới hạn ngủ (6h sáng)
 
     public string GetInteractText()
     {
-        // Gắn chữ báo giờ lên UI luôn cho xịn
-        return $"[E] Sleep until {wakeUpTime}:00 AM";
+        // Chức năng: Trả về chữ tương tác
+        return "[E] Đi Ngủ";
     }
 
     public void Interact()
     {
-        // Tìm não bộ quản lý thời gian trên Scene
         TimeSystem timeSystem = FindAnyObjectByType<TimeSystem>();
 
         if (timeSystem != null)
         {
-            // Gọi lệnh đi ngủ!
-            timeSystem.SkipToMorning(wakeUpTime);
-
-            // Ở đây sau này ông có thể thêm đoạn làm màn hình chớp đen (Fade Black) 
-            // hoặc hồi lại 100% Máu/Thể lực cho Player
-            Debug.Log("Zzz... Ngủ ngon! Mọi thứ đã được tua nhanh.");
+            // Chức năng: Kiểm tra điều kiện thời gian từ 22h đêm đến 6h sáng
+            if (timeSystem.hour >= canSleepAfterHour || timeSystem.hour <= canSleepBeforeHour)
+            {
+                if (SleepUIManager.Instance != null)
+                {
+                    SleepUIManager.Instance.OpenSleepPanel();
+                }
+            }
+            else
+            {
+                // Chức năng: Thông báo nếu chưa đến giờ ngủ
+                Debug.Log("Chưa đến 10h tối, không thể ngủ được!");
+            }
         }
         else
         {

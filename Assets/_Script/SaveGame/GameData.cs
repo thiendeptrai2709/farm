@@ -55,6 +55,11 @@ public class SavedAnimalPenData
 {
     public string penID;
     public List<SavedAnimalData> savedAnimals = new List<SavedAnimalData>();
+    public bool isProcessing;
+    public float processTimer;
+    public string animalToSpawnName;
+
+    public long lastSavedTimeTicks;
 }
 [System.Serializable]
 public class SavedDroppedItem
@@ -113,6 +118,7 @@ public class GameData
     public List<SavedDroppedItem> savedDroppedItems;
     public List<SavedPropData> savedProps;
     public List<SavedTroughData> savedTroughs;
+    public List<SavedPriceMultiplier> savedPrices;
 
     public GameData()
     {
@@ -139,5 +145,12 @@ public class GameData
         savedDroppedItems = new List<SavedDroppedItem>();
         savedProps = new List<SavedPropData>();
         savedTroughs = new List<SavedTroughData>();
+        savedPrices = new List<SavedPriceMultiplier>();
+    }
+    [System.Serializable]
+    public class SavedPriceMultiplier
+    {
+        public string itemID;
+        public float multiplier;
     }
 }

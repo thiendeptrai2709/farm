@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b6307e14f37d624986ee407cf850f0b, type: 3}
+  m_Name: OrangeSeed
+  m_EditorClassIdentifier: Assembly-CSharp::SeedItemData
+  displayName: Orange Seed
+  icon: {fileID: 21300000, guid: 2b423c336a7c8cc41ba35c4a6971837d, type: 3}
+  itemType: 2
+  isStackable: 1
+  maxStack: 36
+  sellPrice: 7
+  buyPrice: 15
+  growTime: 5760
+  cropPrefab: {fileID: 6695511089697368958, guid: c16d5e2fd695d08449675e785c516a36, type: 3}
+  yieldItem: {fileID: 11400000, guid: 01e43854f281b7047a3b86bcd7a2eaeb, type: 2}
+  yieldAmount: 10
+  woodItem: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
+  woodAmount: 3
+  fruitModelPrefab: {fileID: 0}
+  isMultiHarvest: 0
+  maxHarvestTimes: 3
+  regrowTime: 2880
+  isBigTree: 1

@@ -31,6 +31,222 @@ MonoBehaviour:
     m_Key: Chest
     m_Metadata:
       m_Items: []
+  - m_Id: 4050124415098880
+    m_Key: 'audio
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051853638557696
+    m_Key: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051882562478080
+    m_Key: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051901386514432
+    m_Key: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4054679672512512
+    m_Key: music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4054828876488704
+    m_Key: CommingSoon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055145902956544
+    m_Key: "S\xE9nitivity"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055266900238336
+    m_Key: Invert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072838513221632
+    m_Key: talk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072872961040384
+    m_Key: 'Talk_Quest '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072907593408512
+    m_Key: Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072935170957312
+    m_Key: Trade Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096305992228864
+    m_Key: 'cancel
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096577938317312
+    m_Key: buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096596863016960
+    m_Key: sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173256056561664
+    m_Key: Req
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173259005157376
+    m_Key: ReWard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173412650901504
+    m_Key: Money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173435908317184
+    m_Key: accept
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173618310209536
+    m_Key: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173645887758336
+    m_Key: Quest_empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173717362892800
+    m_Key: Quset_Header
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173777387577344
+    m_Key: Progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4175611317641216
+    m_Key: NPC1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4175629659332608
+    m_Key: NPC2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178121440813056
+    m_Key: shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178186880344064
+    m_Key: end
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4179966552891392
+    m_Key: NPCLawer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4463865380134912
+    m_Key: QuestNameCollectApple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4464139041693696
+    m_Key: 'QuestDescCollectApple '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466705087520768
+    m_Key: OfferLine_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466719549480960
+    m_Key: InProgressLine_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466739786997760
+    m_Key: CompleteLine_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467742053687296
+    m_Key: QuestName_UseBus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467756515647488
+    m_Key: QuestDesc_UseBus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467767789936640
+    m_Key: ActionDesc_Travel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467779437518848
+    m_Key: OfferLine_Lawyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4468533573378048
+    m_Key: CompleteLine_Lawyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4521209862479872
+    m_Key: NPC_GREET_CITY_BOY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523525449637888
+    m_Key: Q_LAWYER_TOOLS_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523555447300096
+    m_Key: Q_LAWYER_TOOLS_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523589777678336
+    m_Key: Q_TOOLS_REQ_ACTION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524209393819648
+    m_Key: Q_LAWYER_TOOLS_OFFER_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524262640508928
+    m_Key: Q_LAWYER_TOOLS_OFFER_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524305388855296
+    m_Key: Q_LAWYER_TOOLS_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524335927582720
+    m_Key: Q_LAWYER_TOOLS_COMPLETE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535085714825216
+    m_Key: Q_LAWYER_PLANT_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535138982486016
+    m_Key: Q_LAWYER_PLANT_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535187971956736
+    m_Key: Q_LAWYER_PLANT_REQ_ACT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535253944164352
+    m_Key: Q_LAWYER_PLANT_OFFER_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535273372180480
+    m_Key: Q_LAWYER_PLANT_OFFER_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535330448269312
+    m_Key: Q_LAWYER_PLANT_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535372085125120
+    m_Key: Q_LAWYER_PLANT_COMPLETE
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

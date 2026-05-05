@@ -13,8 +13,27 @@ MonoBehaviour:
   m_Name: CollectApple
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questID: 2
-  questName: Collect Apple
-  description: "Th\u1EE3 s\u0103n qu\u1EA3"
+  isAutoStoryQuest: 1
+  questName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4463865380134912
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4464139041693696
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  requiredPreviousQuest: {fileID: 0}
+  requiredDay: 0
   questType: 0
   requiredItem: {fileID: 11400000, guid: ca089d8d06da571418f6bc0608e58481, type: 2}
   requiredAmount: 5
@@ -22,10 +41,42 @@ MonoBehaviour:
   itemReward: {fileID: 11400000, guid: 17ed0a15d584e5548916c4478c1468de, type: 2}
   itemRewardAmount: 100
   requiredAction: 
-  actionDescription: Collet Apple
+  actionDescription:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   offerLines:
-  - "Thu th\u1EADp 5 qu\u1EA3 t\xE1o "
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4466705087520768
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   inProgressLines:
-  - "Ch\u01B0a nh\u1EB7t \u0111\u1EE7 \xE0 "
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4466719549480960
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   completeLines:
-  - "L\xE0m t\u1ED1t l\u1EAFm"
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4466739786997760
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

@@ -13,8 +13,27 @@ MonoBehaviour:
   m_Name: PlantSeed
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questID: 1
-  questName: Plant Seed
-  description: "Ng\u01B0\u1EDDi gieo h\u1EA1t "
+  isAutoStoryQuest: 1
+  questName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535085714825216
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535138982486016
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  requiredPreviousQuest: {fileID: 0}
+  requiredDay: 0
   questType: 1
   requiredItem: {fileID: 11400000, guid: 4c359654c2a6f23418b7830a2d11c636, type: 2}
   requiredAmount: 5
@@ -22,10 +41,50 @@ MonoBehaviour:
   itemReward: {fileID: 11400000, guid: 17ed0a15d584e5548916c4478c1468de, type: 2}
   itemRewardAmount: 100
   requiredAction: TrongCay_cornflourSeed
-  actionDescription: Plant Cornflour
+  actionDescription:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535187971956736
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   offerLines:
-  - "Tr\u1ED3ng 5 h\u1EA1t gi\u1ED1ng l\xFAa m\xEC  "
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535253944164352
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535273372180480
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   inProgressLines:
-  - "Ch\u01B0a tr\u1ED3ng \u0111\u1EE7 \xE0"
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535330448269312
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   completeLines:
-  - "L\xE0m t\u1ED1t l\u1EAFm"
+  - m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4535372085125120
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

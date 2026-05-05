@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Res
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  npcName: "S\u1EA1p T\xE0i Nguy\xEAn"
+  npcName: "Ng\u01B0\u1EDDi bu\xF4n t\xE0i nguy\xEAn"
   merchantMoney: 1984
-  maxShopSlots: 12
+  maxShopSlots: 10
   itemsForSale:
   - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
-    currentQuantity: 0
+    currentQuantity: 4
   - item: {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}
-    currentQuantity: 0
+    currentQuantity: 2
   possibleItemsToSell:
   - {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
   - {fileID: 11400000, guid: 7479ba8836cd7b0449db71dddc01b905, type: 2}

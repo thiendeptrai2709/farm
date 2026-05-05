@@ -141,9 +141,11 @@ public class ShopUIManager : MonoBehaviour
         if (shopPanel != null) shopPanel.SetActive(false);
         if (buyPopupPanel != null) buyPopupPanel.SetActive(false);
 
-        // Tell Inventory to close (This will trigger Camera/Cursor to lock again)
-        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceClose(false);
-
+        if (InventoryUI.Instance != null)
+        {
+            InventoryUI.Instance.ForceClose(false);
+            InventoryUI.Instance.ToggleInGameUI(true); // [ĐÃ SỬA]: Thêm dòng này để gọi Hotbar hiện về!
+        }
         OnShopUIToggled?.Invoke(false);
         if (PlayerCameraManager.Instance != null)
         {

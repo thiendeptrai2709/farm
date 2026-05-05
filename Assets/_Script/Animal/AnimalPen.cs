@@ -109,6 +109,11 @@ public class AnimalPen : MonoBehaviour, IInteractable
         // 2. Xóa data cũ của CHỈ RIÊNG chuồng này để cập nhật cái mới
         myPenData.savedAnimals.Clear();
 
+        myPenData.isProcessing = this.isProcessing;
+        myPenData.processTimer = this.processTimer;
+        myPenData.animalToSpawnName = (this.animalToSpawn != null && this.animalToSpawn.animalPrefab != null) ? this.animalToSpawn.animalPrefab.name : "";
+        myPenData.lastSavedTimeTicks = System.DateTime.Now.Ticks;
+
         currentAnimals.RemoveAll(animal => animal == null || animal.currentState == AnimalState.Dead);
 
         foreach (var animal in currentAnimals)
@@ -148,35 +153,75 @@ public class AnimalPen : MonoBehaviour, IInteractable
         if (data == null || data.savedAnimalPens == null) return;
 
         SavedAnimalPenData myPenData = data.savedAnimalPens.Find(p => p.penID == this.penID);
-        if (myPenData == null || myPenData.savedAnimals.Count == 0) return;
+        if (myPenData == null) return;
 
-        foreach (SavedAnimalData aData in myPenData.savedAnimals)
+        // [MỚI]: Tải lại trạng thái đang ấp thú
+        this.isProcessing = myPenData.isProcessing;
+        this.processTimer = myPenData.processTimer;
+
+        if (this.isProcessing && !string.IsNullOrEmpty(myPenData.animalToSpawnName))
         {
-            // [ĐÃ SỬA]: Chạy qua kho dữ liệu của UIManager để móc đúng cái Prefab ra, ko dùng Resources.Load nữa!
-            GameObject prefabToSpawn = null;
+            // Đi tìm cái file AnimalData khớp với tên để nhét lại vào biến animalToSpawn
             if (AnimalPenUIManager.Instance != null && AnimalPenUIManager.Instance.availableAnimals != null)
             {
-                AnimalData matchData = AnimalPenUIManager.Instance.availableAnimals.Find(a => a.animalPrefab != null && a.animalPrefab.name == aData.animalName);
-                if (matchData != null) prefabToSpawn = matchData.animalPrefab;
+                this.animalToSpawn = AnimalPenUIManager.Instance.availableAnimals.Find(a => a.animalPrefab != null && a.animalPrefab.name == myPenData.animalToSpawnName);
             }
-
-            if (prefabToSpawn != null)
+            if (myPenData.lastSavedTimeTicks > 0)
             {
-                GameObject newObj = Instantiate(prefabToSpawn, aData.position, aData.rotation);
-                AnimalMovement aMovement = newObj.GetComponent<AnimalMovement>();
+                // Tính xem người chơi đã đi vắng bao nhiêu Ticks
+                long elapsedTicks = System.DateTime.Now.Ticks - myPenData.lastSavedTimeTicks;
 
-                if (aMovement != null)
+                // Quy đổi Ticks ra Giây (10 triệu Ticks = 1 giây)
+                float elapsedSeconds = elapsedTicks / 10000000f;
+
+                // Trừ thẳng vào thời gian đếm ngược
+                this.processTimer -= elapsedSeconds;
+
+                // Nếu thời gian đếm ngược bị trừ thủng mức 0 -> Tức là đã đẻ xong từ lúc đang đi vắng
+                if (this.processTimer <= 0)
                 {
-                    aMovement.currentHunger = aData.currentHunger;
-                    aMovement.currentState = aData.currentState;
-                    currentAnimals.Add(aMovement);
+                    this.processTimer = 0;
+                    // Ở khung hình Update tiếp theo, nó sẽ tự gọi hàm FinishSpawning()
                 }
-            }
-            else
-            {
-                Debug.LogWarning($"[AnimalPen {penID}] Báo động: Không tìm thấy Prefab thú tên là {aData.animalName}. Hãy kiểm tra xem file AnimalData trong UIManager đã có con này chưa!");
+                Debug.Log($"[AnimalPen {penID}] Bạn đã đi vắng {elapsedSeconds} giây. Cập nhật lại thời gian ấp còn: {this.processTimer} giây.");
             }
         }
-        Debug.Log($"[AnimalPen {penID}] Đã phục hồi {currentAnimals.Count} con vật.");
+        else
+        {
+            this.animalToSpawn = null;
+        }
+
+        // Tải lại thú đã đẻ
+        if (myPenData.savedAnimals.Count > 0)
+        {
+            foreach (SavedAnimalData aData in myPenData.savedAnimals)
+            {
+                GameObject prefabToSpawn = null;
+                if (AnimalPenUIManager.Instance != null && AnimalPenUIManager.Instance.availableAnimals != null)
+                {
+                    AnimalData matchData = AnimalPenUIManager.Instance.availableAnimals.Find(a => a.animalPrefab != null && a.animalPrefab.name == aData.animalName);
+                    if (matchData != null) prefabToSpawn = matchData.animalPrefab;
+                }
+
+                if (prefabToSpawn != null)
+                {
+                    GameObject newObj = Instantiate(prefabToSpawn, aData.position, aData.rotation);
+                    AnimalMovement aMovement = newObj.GetComponent<AnimalMovement>();
+
+                    if (aMovement != null)
+                    {
+                        aMovement.currentHunger = aData.currentHunger;
+                        aMovement.currentState = aData.currentState;
+                        currentAnimals.Add(aMovement);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[AnimalPen {penID}] Báo động: Không tìm thấy Prefab thú tên là {aData.animalName}. Hãy kiểm tra xem file AnimalData trong UIManager đã có con này chưa!");
+                }
+            }
+        }
+
+        Debug.Log($"[AnimalPen {penID}] Đã phục hồi {currentAnimals.Count} con vật. Đang ấp: {this.isProcessing}");
     }
 }

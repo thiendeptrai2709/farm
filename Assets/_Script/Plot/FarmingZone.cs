@@ -538,9 +538,10 @@ public class FarmingZone : MonoBehaviour, IInteractable
         if (terrainPainter != null && hasCapturedOriginal)
         {
             // Trả lại cỏ cho toàn bộ khu vực để xóa vết tích của Slot trước
-            terrainPainter.WipeFarmArea(originalCenter, 100f);
+            // Ép từ Local Center sang World Center để chổi quét đúng chỗ
+            Vector3 worldOriginalCenter = farmBoundary.transform.TransformPoint(originalCenter);
+            terrainPainter.WipeSpecificArea(worldOriginalCenter, new Vector3(100f, 0f, 100f));
         }
-
         // BƯỚC B: ÉP THU NHỎ SIZE VỀ MẶC ĐỊNH LEVEL 1
         if (farmBoundary != null && hasCapturedOriginal)
         {

@@ -13,8 +13,25 @@ MonoBehaviour:
   m_Name: Mom
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questID: mom
-  questName: Mom
-  description: "Th\u1EB1ng b\xE9 \u0111\xE3 \u0111i \u0111\xE2u ?"
+  isAutoStoryQuest: 1
+  questName:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  description:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   requiredPreviousQuest: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
   requiredDay: 2
   questType: 0
@@ -24,13 +41,58 @@ MonoBehaviour:
   itemReward: {fileID: 0}
   itemRewardAmount: 0
   requiredAction: 
-  actionDescription: 
+  actionDescription:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   offerLines:
-  - "Th\u1EB1ng con t\xF4i n\xF3 \u0111i l\u1EA1c \u0111\xE2u m\u1EA5t r\u1ED3i ?"
-  - "H\xF4m qua n\xF3 \u0111\xE3 n\xF3i \u0111\xE3 \u0111i v\xE0o khu r\u1EEBng v\xE0
-    ch\u01B0a th\u1EA5y tr\u1EDF v\u1EC1"
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   inProgressLines:
-  - "T\xF4i bu\u1ED3n qu\xE1"
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   completeLines:
-  - "Th\u1EADt tuy\u1EC7t v\u1EDDi  !"
-  - "T\xF4i v\xF4 c\xF9ng bi\u1EBFt \u01A1n b\u1EA1n "
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

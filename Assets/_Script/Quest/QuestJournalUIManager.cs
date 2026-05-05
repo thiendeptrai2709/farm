@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using TMPro;
-
+using UnityEngine.Localization;
 public class QuestJournalUIManager : MonoBehaviour
 {
     public static QuestJournalUIManager Instance;
 
     public GameObject journalPanel;
     public TextMeshProUGUI journalText; // Kéo text rộng ra để in được nhiều dòng
+
+    [Header("Đa Ngôn Ngữ cho Chữ tĩnh")]
+    public LocalizedString emptyJournalText;  // Text "Bạn không có nhiệm vụ..."
+    public LocalizedString headerText;        // Text "--- NHIỆM VỤ ĐANG LÀM ---"
+    public LocalizedString progressLabelText;
 
     private PlayerInputHandler playerInput;
 
@@ -68,11 +73,13 @@ public class QuestJournalUIManager : MonoBehaviour
     {
         if (QuestManager.Instance.activeQuests.Count == 0)
         {
-            journalText.text = "Bạn không có nhiệm vụ nào đang nhận.";
+            // [ĐÃ SỬA]: Kéo chữ trống ra từ bảng dịch
+            journalText.text = emptyJournalText.GetLocalizedString();
             return;
         }
 
-        journalText.text = "<color=yellow>--- NHIỆM VỤ ĐANG LÀM ---</color>\n\n";
+        // [ĐÃ SỬA]: Kéo tiêu đề từ bảng dịch
+        journalText.text = $"<color=yellow>{headerText.GetLocalizedString()}</color>\n\n";
 
         foreach (QuestData q in QuestManager.Instance.activeQuests)
         {
@@ -87,12 +94,14 @@ public class QuestJournalUIManager : MonoBehaviour
                 int count = 0;
                 if (QuestManager.Instance.actionProgress.ContainsKey(q.questID)) count = QuestManager.Instance.actionProgress[q.questID];
 
-                // [ĐÃ SỬA]: Lấy actionDescription ra in
-                string displayName = string.IsNullOrEmpty(q.actionDescription) ? q.requiredAction : q.actionDescription;
+                // [ĐÃ SỬA]: Lấy actionDescription thông qua hàm GetActionDescription()
+                string actDesc = q.GetActionDescription();
+                string displayName = string.IsNullOrEmpty(actDesc) ? q.requiredAction : actDesc;
                 progress = $"{count}/{q.requiredAmount} {displayName}";
             }
 
-            journalText.text += $"<b>{q.questName}</b>\n> Tiến độ: {progress}\n\n";
+            // [ĐÃ SỬA]: Gọi GetQuestName() và lấy chữ "Tiến độ" từ bảng dịch
+            journalText.text += $"<b>{q.GetQuestName()}</b>\n{progressLabelText.GetLocalizedString()} {progress}\n\n";
         }
     }
 

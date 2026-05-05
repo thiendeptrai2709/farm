@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
+using UnityEngine.Localization;
 public class DialogueUIManager : MonoBehaviour
 {
     public static DialogueUIManager Instance;
@@ -17,6 +17,9 @@ public class DialogueUIManager : MonoBehaviour
     public Button shopButton;
     public Button questButton;
     public Button byeButton;
+
+    public LocalizedString btnAcceptText;  // Text "Accept" / "Chấp nhận"
+    public LocalizedString btnQuestText;
 
     private PlayerInputHandler playerInput;
 
@@ -33,7 +36,7 @@ public class DialogueUIManager : MonoBehaviour
     private QuestData currentAvailableQuest;
 
     private bool isPlayingQuestDialogue = false;
-
+    private float inputDelayTimer = 0f;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -44,6 +47,12 @@ public class DialogueUIManager : MonoBehaviour
 
     private void Update()
     {
+        if (inputDelayTimer > 0)
+        {
+            inputDelayTimer -= Time.deltaTime;
+            return;
+        }
+
         if (playerInput == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -109,8 +118,8 @@ public class DialogueUIManager : MonoBehaviour
 
         if (isStoryDialogue)
         {
-            // LUỒNG 1: Cốt truyện -> Hiện chữ "Accept", bấm là nhận luôn
-            if (btnText != null) btnText.text = "Accept";
+            // [ĐÃ SỬA]: Lấy chữ "Accept" từ bảng từ vựng
+            if (btnText != null) btnText.text = btnAcceptText.GetLocalizedString();
 
             questButton.onClick.AddListener(() => {
                 if (quest != null && QuestManager.Instance.GetQuestStatus(quest) == QuestStatus.Available)
@@ -122,8 +131,8 @@ public class DialogueUIManager : MonoBehaviour
         }
         else
         {
-            // LUỒNG 2: Bình thường -> Hiện chữ "Quest", bấm thì bắt đầu chạy chữ nhờ vặt
-            if (btnText != null) btnText.text = "Quest";
+            // [ĐÃ SỬA]: Lấy chữ "Quest" từ bảng từ vựng
+            if (btnText != null) btnText.text = btnQuestText.GetLocalizedString();
 
             questButton.onClick.AddListener(StartQuestDialogueSequence);
         }
@@ -139,6 +148,8 @@ public class DialogueUIManager : MonoBehaviour
 
         currentLines = (lines == null || lines.Length == 0) ? new string[] { "..." } : lines;
         currentLineIndex = 0;
+
+        inputDelayTimer = 0.2f;
 
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeLine());
@@ -189,10 +200,14 @@ public class DialogueUIManager : MonoBehaviour
 
         isPlayingQuestDialogue = true;
         QuestStatus status = QuestManager.Instance.GetQuestStatus(currentAvailableQuest);
-        string[] questLines = currentAvailableQuest.offerLines;
 
-        if (status == QuestStatus.InProgress) questLines = currentAvailableQuest.inProgressLines;
-        else if (status == QuestStatus.ReadyToTurnIn) questLines = currentAvailableQuest.completeLines;
+        string[] questLines = currentAvailableQuest.GetOfferLines();
+
+        if (status == QuestStatus.InProgress) questLines = currentAvailableQuest.GetInProgressLines();
+        else if (status == QuestStatus.ReadyToTurnIn) questLines = currentAvailableQuest.GetCompleteLines();
+
+        // [MỚI]: Đổi nút [Quest] thành nút [Accept] khi mạch truyện bắt đầu
+        SetupQuestButton(currentAvailableQuest, true);
 
         StartDialogue(questLines);
     }
@@ -227,8 +242,13 @@ public class DialogueUIManager : MonoBehaviour
         ToggleGameplayUI(true);
     }
 
-    public bool IsOpen() => dialoguePanel != null && dialoguePanel.activeSelf;
+    public bool IsOpen()
+    {
+        bool isDialoguePanelOpen = dialoguePanel != null && dialoguePanel.activeSelf;
+        bool isQuestPanelOpen = QuestUIManager.Instance != null && QuestUIManager.Instance.IsOpen();
 
+        return isDialoguePanelOpen || isQuestPanelOpen;
+    }
     private void LockCameraAndCursor(bool isLocked)
     {
         if (PlayerCameraManager.Instance != null)

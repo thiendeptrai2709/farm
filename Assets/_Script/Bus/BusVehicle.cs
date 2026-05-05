@@ -128,6 +128,11 @@ public class BusVehicle : MonoBehaviour, IInteractable
             {
                 timeSys.AddBusTravelTime(1f); // Mất 1 tiếng
             }
+            if (QuestManager.Instance != null && targetScene == "Farm")
+            {
+                // Báo cho QuestManager biết người chơi đã làm hành động này
+                QuestManager.Instance.ReportAction("Travel_To_Farm");
+            }
             // Bấm lên xe -> Load map
             LoadingManager.Instance.LoadScene(targetScene, targetSpawnID);
 

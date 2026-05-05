@@ -151,5 +151,21 @@ public class PlayerUIAutoClose : MonoBehaviour
                 }
             }
         }
+        if (NoticeBoardUIManager.Instance != null && NoticeBoardUIManager.Instance.IsOpen())
+        {
+            Transform boardTransform = NoticeBoardUIManager.Instance.currentBoardTransform;
+            if (boardTransform != null)
+            {
+                Collider boardCollider = boardTransform.GetComponent<Collider>();
+                float distanceToBoard = boardCollider != null
+                    ? Vector3.Distance(checkPosition, boardCollider.ClosestPoint(checkPosition))
+                    : Vector3.Distance(checkPosition, boardTransform.position);
+
+                if (distanceToBoard > closeRadius)
+                {
+                    NoticeBoardUIManager.Instance.CloseBoard();
+                }
+            }
+        }
     }
 }

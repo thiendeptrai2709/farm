@@ -34,6 +34,219 @@ MonoBehaviour:
     m_Localized: '[E] Open Chest'
     m_Metadata:
       m_Items: []
+  - m_Id: 4050124415098880
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051853638557696
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051882562478080
+    m_Localized: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051901386514432
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4054679672512512
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4054828876488704
+    m_Localized: Coming Soon...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055145902956544
+    m_Localized: Sensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055266900238336
+    m_Localized: Invert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072838513221632
+    m_Localized: '[E] Talk to
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072907593408512
+    m_Localized: '[E] Trade with'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096305992228864
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096577938317312
+    m_Localized: Buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096596863016960
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173435908317184
+    m_Localized: Accept
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173256056561664
+    m_Localized: Requirement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173259005157376
+    m_Localized: Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173412650901504
+    m_Localized: ' Money'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173618310209536
+    m_Localized: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173645887758336
+    m_Localized: You have no active quests.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173717362892800
+    m_Localized: ACTIVE QUESTS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173777387577344
+    m_Localized: '> Progress:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4175611317641216
+    m_Localized: Hello !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4175629659332608
+    m_Localized: I have some items that you might need.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178121440813056
+    m_Localized: Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178186880344064
+    m_Localized: End
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4179966552891392
+    m_Localized: "Are you Richard\u2019s son?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4463865380134912
+    m_Localized: Harvest Apples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4464139041693696
+    m_Localized: Go to the orchard and collect 5 fresh apples.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466705087520768
+    m_Localized: Can you help me harvest some apples?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466719549480960
+    m_Localized: You haven't got enough apples yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466739786997760
+    m_Localized: Great job! These apples look delicious.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467742053687296
+    m_Localized: First Trip to the Farm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467756515647488
+    m_Localized: Follow the Lawyer's advice and take the bus to the farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467767789936640
+    m_Localized: Take the bus at the station.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467779437518848
+    m_Localized: The farm is located quite far from town. Use the bus to get there;
+      I will be waiting for you at the destination.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4468533573378048
+    m_Localized: Welcome to the farm that your father, Richard, left behind.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4521209862479872
+    m_Localized: For someone who has lived in the city as long as you have, I'm afraid
+      you might have forgotten how to handle these farming tools, haven't you?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523525449637888
+    m_Localized: The Starting Kit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523555447300096
+    m_Localized: Check the chest inside the house to collect the necessary items
+      as instructed by the Lawyer.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523589777678336
+    m_Localized: "Thu th\u1EADp d\u1EE5ng c\u1EE5 trong r\u01B0\u01A1ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524209393819648
+    m_Localized: Your father has left a few things for you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524262640508928
+    m_Localized: Please go inside and open the wooden chest in the corner. You'll
+      find the necessary tools to begin your work here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524305388855296
+    m_Localized: Haven't you checked the chest yet? Everything you need is already
+      sealed inside.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524335927582720
+    m_Localized: Very well. Now you have all the tools to legally take over this
+      farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535085714825216
+    m_Localized: Farming Trial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535138982486016
+    m_Localized: Receive wheat seeds from the Lawyer and plant them in the garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535187971956736
+    m_Localized: Plant wheat seeds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535253944164352
+    m_Localized: I will give you some wheat seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535273372180480
+    m_Localized: Go out to the garden and plant these seeds there.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535330448269312
+    m_Localized: Haven't you planted the seeds yet? The garden is just outside, go
+      get it done.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4535372085125120
+    m_Localized: Very good. At this rate, the farm will be back in business soon.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

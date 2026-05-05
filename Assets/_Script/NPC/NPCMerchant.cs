@@ -1,21 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.Localization;
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCMerchant : MonoBehaviour, IInteractable
 {
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString interactTextNormal;
+    public LocalizedString interactTextQuest;
+
     [Header("Shop Data")]
     public ShopData myShopData;
     public string greetingSound = "Merchant_Hello";
 
     [Header("Hội thoại Mặc định")]
     [Tooltip("Gõ các câu chào vào đây. Gõ \\n để xuống dòng.")]
-    [TextArea(2, 4)]
-    public string[] defaultDialogues = new string[]
-    {
-        "Xin chào! Cậu đến mua hàng hả?",
-        "Hôm nay tớ có mấy món hàng mới về xịn lắm đấy."
-    };
+    
+    public LocalizedString[] defaultDialogues;
 
     [Header("Chuỗi Nhiệm vụ (Tùy chọn)")]
     public QuestData[] questLine;
@@ -106,7 +106,7 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 
         bool isTalkingToPlayer =
             (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen() && ShopUIManager.Instance.currentShop == myShopData) ||
-            (DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentMerchant == this);
+            (DialogueUIManager.Instance != null && DialogueUIManager.Instance.IsOpen() && DialogueUIManager.Instance.currentMerchant == this);
 
         if (isTalkingToPlayer)
         {
@@ -224,17 +224,16 @@ public class NPCMerchant : MonoBehaviour, IInteractable
         QuestData activeQuest = GetCurrentQuest();
         if (activeQuest != null)
         {
-            return $"[E] <color=yellow>!</color> Giao dịch với {shopName}";
+            return $"{interactTextQuest.GetLocalizedString()} {shopName}";
         }
 
-        return $"[E] Giao dịch với {shopName}";
+        return $"{interactTextNormal.GetLocalizedString()} {shopName}";
     }
 
     public void Interact()
     {
         if (!isAtWork || isInsideHouse) return;
 
-        // 1. Âm thầm hoàn thành cột mốc cốt truyện
         if (secretStoryQuest != null && QuestManager.Instance != null)
         {
             if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
@@ -250,28 +249,83 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 
             if (DialogueUIManager.Instance != null)
             {
-                QuestData activeQuest = GetCurrentQuest();
-                string[] linesToSay = defaultDialogues;
-                bool isStoryDialogue = false;
-
-                // [MỚI]: Logic phân loại nhiệm vụ cốt truyện giống hệt NPCVillager
-                if (activeQuest != null)
+                // 1. Lọc lấy các câu thoại chào hỏi mặc định (An toàn)
+                System.Collections.Generic.List<string> defaultLines = new System.Collections.Generic.List<string>();
+                if (defaultDialogues != null)
                 {
-                    bool isHiddenStoryQuest = (activeQuest.requiredPreviousQuest != null || activeQuest.requiredDay > 0);
-
-                    if (isHiddenStoryQuest)
+                    for (int i = 0; i < defaultDialogues.Length; i++)
                     {
-                        QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
-                        if (status == QuestStatus.Available) linesToSay = activeQuest.offerLines;
-                        else if (status == QuestStatus.InProgress) linesToSay = activeQuest.inProgressLines;
-                        else if (status == QuestStatus.ReadyToTurnIn) linesToSay = activeQuest.completeLines;
-
-                        isStoryDialogue = true;
+                        if (defaultDialogues[i] != null && !defaultDialogues[i].IsEmpty)
+                        {
+                            defaultLines.Add(defaultDialogues[i].GetLocalizedString());
+                        }
                     }
                 }
 
-                // Gọi hộp thoại với chế độ có thể mở bảng Quest trực tiếp
-                DialogueUIManager.Instance.OpenDialogueForMerchant(this, linesToSay, activeQuest, isStoryDialogue);
+                QuestData activeQuest = GetCurrentQuest();
+                System.Collections.Generic.List<string> finalLinesToSay = new System.Collections.Generic.List<string>();
+                bool isStoryDialogue = false;
+
+                // 2. KỊCH BẢN 1: Cốt truyện nối tiếp (Auto Story Quest)
+                if (activeQuest != null && activeQuest.isAutoStoryQuest)
+                {
+                    QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
+
+                    if (status == QuestStatus.Available)
+                    {
+                        if (questLine != null && questLine.Length > 0 && activeQuest == questLine[0])
+                        {
+                            finalLinesToSay.AddRange(defaultLines);
+                        }
+                        // Chức năng: Thêm thoại giao nhiệm vụ
+                        finalLinesToSay.AddRange(activeQuest.GetOfferLines());
+                    }
+                    else if (status == QuestStatus.InProgress)
+                    {
+                        // Đang làm dở: Bỏ qua chào hỏi, nói thẳng câu nhắc nhở
+                        finalLinesToSay.AddRange(activeQuest.GetInProgressLines());
+                    }
+                    else if (status == QuestStatus.ReadyToTurnIn)
+                    {
+                        // Trả nhiệm vụ: Bỏ qua chào hỏi, nói thẳng câu cảm ơn
+                        finalLinesToSay.AddRange(activeQuest.GetCompleteLines());
+                    }
+
+                    isStoryDialogue = true;
+                }
+                // 3. KỊCH BẢN 2: Việc vặt (Có nút Quest) hoặc đang rảnh rỗi
+                else
+                {
+                    // Chức năng: Tìm nhiệm vụ đã hoàn thành cuối cùng trong mảng questLine
+                    QuestData lastCompletedQuest = null;
+                    if (questLine != null)
+                    {
+                        for (int i = questLine.Length - 1; i >= 0; i--)
+                        {
+                            if (questLine[i] != null && QuestManager.Instance.GetQuestStatus(questLine[i]) == QuestStatus.Completed)
+                            {
+                                lastCompletedQuest = questLine[i];
+                                break;
+                            }
+                        }
+                    }
+
+                    // Chức năng: Nếu đã hết sạch nhiệm vụ hiện tại và nhiệm vụ cuối là cốt truyện thì lặp lại câu trả nhiệm vụ
+                    if (activeQuest == null && lastCompletedQuest != null && lastCompletedQuest.isAutoStoryQuest)
+                    {
+                        finalLinesToSay.AddRange(lastCompletedQuest.GetCompleteLines());
+                        isStoryDialogue = true;
+                    }
+                    else
+                    {
+                        // Chức năng: Nếu chưa làm nhiệm vụ nào hoặc là nhiệm vụ phụ thì nói câu mặc định
+                        finalLinesToSay.AddRange(defaultLines);
+                    }
+                }
+
+                if (finalLinesToSay.Count == 0) finalLinesToSay.Add("...");
+
+                DialogueUIManager.Instance.OpenDialogueForMerchant(this, finalLinesToSay.ToArray(), activeQuest, isStoryDialogue);
             }
         }
     }

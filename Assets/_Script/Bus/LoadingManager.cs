@@ -60,9 +60,6 @@ public class LoadingManager : MonoBehaviour
             {
                 currentPropManager.SavePropsToData(currentData);
             }
-
-            // [ĐÂY LÀ ĐOẠN BÁC QUÊN NHÉT VÀO NÀY!!!]
-            // Ép Nông trại lưu lại số lượng cây hiện tại vào RAM trước khi sang Town
             if (FarmingZone.Instance != null)
             {
                 FarmingZone.Instance.SaveAllPlots(currentData);
@@ -72,6 +69,11 @@ public class LoadingManager : MonoBehaviour
             foreach (var trough in allTroughs)
             {
                 trough.SaveTroughData(currentData);
+            }
+            if (MarketManager.Instance != null)
+            {
+                MarketManager.Instance.SaveShopData(currentData);
+                Debug.Log("[LoadingManager] Đã đồng bộ Chợ vào RAM trước khi chuyển Map!");
             }
         }
         // Truyền thẳng cái prefab xuống cho Giai đoạn 2 để nó đẻ Player
@@ -155,6 +157,11 @@ public class LoadingManager : MonoBehaviour
                 {
                     trough.LoadTroughData(currentData);
                 }
+                MarketManager newMapMarketManager = UnityEngine.Object.FindFirstObjectByType<MarketManager>();
+                if (newMapMarketManager != null)
+                {
+                    newMapMarketManager.LoadShopData(currentData);
+                }
             }
         }
         if (playerObj != null)
@@ -216,6 +223,7 @@ public class LoadingManager : MonoBehaviour
             {
                 var targetCam = coreInstance.GetComponentInChildren<CinemachineVirtualCameraBase>();
                 var brain = FindFirstObjectByType<CinemachineBrain>();
+                Debug.Log($"Brain: {brain}, Cam: {targetCam}, CoreInstance: {coreInstance}");
 
                 if (brain != null && targetCam != null)
                 {
@@ -244,6 +252,9 @@ public class LoadingManager : MonoBehaviour
         yield return null;
 
         OnPlayerReady?.Invoke();
+        yield return null;
+        yield return null;
+        yield return new WaitForSeconds(0.3f);
 
         loadingPanel.SetActive(false);
     }

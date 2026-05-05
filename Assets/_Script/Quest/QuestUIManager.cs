@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Localization; // [THÊM MỚI] Khai báo thư viện ngôn ngữ
 
 public class QuestUIManager : MonoBehaviour
 {
@@ -15,41 +16,48 @@ public class QuestUIManager : MonoBehaviour
     public TextMeshProUGUI requirementText;
     public TextMeshProUGUI rewardText;
 
+    [Header("Đa Ngôn Ngữ cho Chữ tĩnh")]
+    [Tooltip("Tạo Key trong bảng từ vựng cho các chữ cố định")]
+    public LocalizedString reqLabelText;       // "Yêu cầu: " / "Requirement: "
+    public LocalizedString rewardLabelText;    // "Phần thưởng:\n" / "Rewards:\n"
+    public LocalizedString goldText;           // " Vàng" / " Gold"
+    public LocalizedString justTalkText;       // "Chỉ cần đến gặp là xong!" / "Just talk to them!"
+
     [Header("Nút bấm")]
     public Button acceptButton;
     public Button completeButton;
     public Button closeButton;
 
     private QuestData currentDisplayingQuest;
-    private Transform currentNPCTransform; // Để đo khoảng cách tự đóng UI
+    private Transform currentNPCTransform;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         if (questPanel != null) questPanel.SetActive(false);
 
-        // Gán sự kiện cho các nút (Đều trỏ về hàm đóng an toàn)
         acceptButton.onClick.AddListener(OnAcceptClicked);
         completeButton.onClick.AddListener(OnCompleteClicked);
         closeButton.onClick.AddListener(CloseEverythingAndUnlockCamera);
     }
 
-    // Hàm do DialogueUIManager gọi để mở bảng Nhiệm vụ lên
     public void OpenQuestUI(QuestData quest, Transform npcTransform)
     {
         currentDisplayingQuest = quest;
         currentNPCTransform = npcTransform;
 
-        // Điền chữ vào giao diện
-        questNameText.text = quest.questName;
-        descriptionText.text = quest.description;
+        // [ĐÃ SỬA]: Gọi hàm hỗ trợ từ QuestData để lấy chữ đã dịch
+        questNameText.text = quest.GetQuestName();
+        descriptionText.text = quest.GetDescription();
 
         // Hiển thị tiến độ thu thập
         if (quest.questType == QuestType.FetchItem && quest.requiredItem != null)
         {
             int currentAmount = InventoryManager.Instance.GetPersonalItemCount(quest.requiredItem);
             string colorHex = currentAmount >= quest.requiredAmount ? "#00FF00" : "#FF0000";
-            requirementText.text = $"Yêu cầu: {quest.requiredItem.displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
+
+            // Lấy chữ "Yêu cầu:" từ từ điển
+            requirementText.text = $"{reqLabelText.GetLocalizedString()} {quest.requiredItem.displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
         }
         else if (quest.questType == QuestType.Action)
         {
@@ -59,27 +67,29 @@ public class QuestUIManager : MonoBehaviour
 
             string colorHex = currentAmount >= quest.requiredAmount ? "#00FF00" : "#FF0000";
 
-            // [ĐÃ SỬA]: Lấy actionDescription ra in thay vì requiredAction
-            string displayName = string.IsNullOrEmpty(quest.actionDescription) ? quest.requiredAction : quest.actionDescription;
-            requirementText.text = $"Nhiệm vụ: {displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
+            // [ĐÃ SỬA]: Lấy actionDescription đã dịch ra
+            string actDesc = quest.GetActionDescription();
+            string displayName = string.IsNullOrEmpty(actDesc) ? quest.requiredAction : actDesc;
+
+            requirementText.text = $"{reqLabelText.GetLocalizedString()} {displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
         }
         else
         {
-            requirementText.text = "Chỉ cần đến gặp là xong!";
+            requirementText.text = justTalkText.GetLocalizedString();
         }
 
         // Hiển thị phần thưởng
-        rewardText.text = "Phần thưởng:\n";
-        if (quest.coinReward > 0) rewardText.text += $"- {quest.coinReward} Vàng\n";
+        rewardText.text = $"{rewardLabelText.GetLocalizedString()}";
+        if (quest.coinReward > 0) rewardText.text += $"- {quest.coinReward}{goldText.GetLocalizedString()}\n";
+
+        // (ItemData sẽ cần được gắn Localization sau nếu m muốn dịch cả tên đồ vật)
         if (quest.itemReward != null) rewardText.text += $"- {quest.itemRewardAmount}x {quest.itemReward.displayName}";
 
-        // Bật/Tắt nút tùy theo trạng thái
         QuestStatus status = QuestManager.Instance.GetQuestStatus(quest);
 
         acceptButton.gameObject.SetActive(status == QuestStatus.Available);
         completeButton.gameObject.SetActive(status == QuestStatus.ReadyToTurnIn);
 
-        // Nếu đang làm dở (InProgress), tắt cả 2 nút
         if (status == QuestStatus.InProgress)
         {
             acceptButton.gameObject.SetActive(false);
@@ -112,11 +122,10 @@ public class QuestUIManager : MonoBehaviour
     {
         currentDisplayingQuest = null;
         currentNPCTransform = null;
-        questPanel.SetActive(false); // Tắt bảng Quest
+        questPanel.SetActive(false);
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
 
-        // Gọi thằng DialogueManager để nó gỡ lệnh Khóa Camera và bật lại thanh Balo/Hotbar
         if (DialogueUIManager.Instance != null)
         {
             DialogueUIManager.Instance.CloseDialogue();

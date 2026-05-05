@@ -12,7 +12,7 @@ public class TerrainPainter : MonoBehaviour
     public int grassLayerIndex = 0; // THƯỜNG LÀ 0
 
     // Hàm chà sạch bóng một khu vực (Xóa đất, đắp cỏ)
-    public void WipeFarmArea(Vector3 center, float wipeSize = 100f)
+    public void WipeSpecificArea(Vector3 center, Vector3 areaSize)
     {
         if (activeTerrain == null) activeTerrain = Terrain.activeTerrain;
         if (activeTerrain == null) return;
@@ -23,13 +23,13 @@ public class TerrainPainter : MonoBehaviour
         float widthRatio = terrainData.alphamapWidth / terrainData.size.x;
         float lengthRatio = terrainData.alphamapHeight / terrainData.size.z;
 
-        float startX = center.x - (wipeSize / 2f);
-        float startZ = center.z - (wipeSize / 2f);
+        float startX = center.x - (areaSize.x / 2f);
+        float startZ = center.z - (areaSize.z / 2f);
 
         int mapStartX = Mathf.RoundToInt((startX - terrainPos.x) * widthRatio);
         int mapStartZ = Mathf.RoundToInt((startZ - terrainPos.z) * lengthRatio);
-        int mapSizeX = Mathf.RoundToInt(wipeSize * widthRatio);
-        int mapSizeZ = Mathf.RoundToInt(wipeSize * lengthRatio);
+        int mapSizeX = Mathf.RoundToInt(areaSize.x * widthRatio);
+        int mapSizeZ = Mathf.RoundToInt(areaSize.z * lengthRatio);
 
         // Clamp chống tràn map
         mapStartX = Mathf.Clamp(mapStartX, 0, terrainData.alphamapWidth);
@@ -45,14 +45,24 @@ public class TerrainPainter : MonoBehaviour
         {
             for (int x = 0; x < mapSizeX; x++)
             {
-                // Xóa lớp đất trồng, đắp lớp cỏ lên 100%
-                splatmapData[z, x, dirtLayerIndex] = 0.0f;
-                splatmapData[z, x, grassLayerIndex] = 1.0f;
+                float dirtAmount = splatmapData[z, x, dirtLayerIndex];
+
+                // Nếu chỗ này có đất trồng thì mới xử lý
+                if (dirtAmount > 0)
+                {
+                    // Chuyển toàn bộ alpha của đất sang cho cỏ (bù vào chỗ bị khuyết)
+                    splatmapData[z, x, grassLayerIndex] += dirtAmount;
+
+                    // Xóa lớp đất
+                    splatmapData[z, x, dirtLayerIndex] = 0.0f;
+
+                    // Khóa giá trị cỏ không cho vượt quá 1.0f để tránh lỗi hiển thị Terrain
+                    splatmapData[z, x, grassLayerIndex] = Mathf.Clamp01(splatmapData[z, x, grassLayerIndex]);
+                }
             }
         }
         terrainData.SetAlphamaps(mapStartX, mapStartZ, splatmapData);
     }
-
     public void PaintDirtArea(Vector3 newAreaCenter, Vector3 areaSize)
     {
         if (activeTerrain == null) activeTerrain = Terrain.activeTerrain;
