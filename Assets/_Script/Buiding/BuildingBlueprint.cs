@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization; // Chức năng: Gọi thư viện Đa ngôn ngữ
 
 [System.Serializable]
 public struct ItemRequirement
@@ -18,9 +19,30 @@ public enum BlueprintType
 [CreateAssetMenu(fileName = "New Blueprint", menuName = "Farm/Building Blueprint")]
 public class BuildingBlueprint : ScriptableObject
 {
-    public string buildingName;
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString localizedBuildingName;
+    public LocalizedString localizedDescription;
+
+    // Chức năng: Đọc tên bản vẽ từ bảng dịch hoặc trả về tên file gốc nếu rỗng
+    public string buildingName
+    {
+        get
+        {
+            return localizedBuildingName.IsEmpty ? name : localizedBuildingName.GetLocalizedString();
+        }
+    }
+
     public Sprite icon;
-    public string description;
+
+    // Chức năng: Đọc mô tả từ bảng dịch hoặc trả về chuỗi rỗng nếu chưa cài
+    public string description
+    {
+        get
+        {
+            return localizedDescription.IsEmpty ? "" : localizedDescription.GetLocalizedString();
+        }
+    }
+
     public GameObject prefabToBuild;
 
     public BlueprintType blueprintType = BlueprintType.Building;

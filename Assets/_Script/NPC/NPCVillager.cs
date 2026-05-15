@@ -1,15 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Localization;
+
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCVillager : MonoBehaviour, IInteractable
 {
     [Header("Đa Ngôn Ngữ")]
     public LocalizedString interactTextNormal; // Chữ bình thường
-    public LocalizedString interactTextQuest;
+    public LocalizedString localizedNpcName;
 
     [Header("Thông tin Dân làng")]
-    public string npcName = "Dân Làng";
+    public string npcName
+    {
+        get
+        {
+            return localizedNpcName.IsEmpty ? gameObject.name : localizedNpcName.GetLocalizedString();
+        }
+    }
+
     public string greetingSound = "Villager_Hello";
 
     [Header("Hội thoại Mặc định")]
@@ -19,6 +27,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
     [Header("Chuỗi Nhiệm vụ (Tùy chọn)")]
     public QuestData[] questLine;
     public QuestData secretStoryQuest;
+    public QuestData disableAfterQuestCompleted;
 
     [Header("Lịch trình & Địa điểm")]
     public NPCSchedule schedule;
@@ -41,30 +50,42 @@ public class NPCVillager : MonoBehaviour, IInteractable
     public Animator npcAnimator;
     private NavMeshAgent agent;
 
+    [Header("Cài đặt Nhìn (IK)")]
+    public float lookRadius = 5f;
+    private Transform playerTransform;
+    private float currentLookWeight = 0f;
+
     private bool isSleeping = false;
     private bool isGoingHome = false;
     private float waitTimer = 0f;
     private bool isWaiting = false;
     private bool isInitialized = false;
 
-    // [MỚI]: Biến quản lý trạng thái ngồi
+    // Biến quản lý trạng thái ngồi
     private bool isCurrentlySitting = false;
-    private bool wasTalkingToPlayer = false; // Nhớ xem vừa nói chuyện xong chưa
+    private bool wasTalkingToPlayer = false;
     private float sitCooldownTimer = 0f;
+
+    private Chair currentDynamicChair;
+    private int currentChairSeatIndex = -1;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
     }
+
     private void OnEnable()
     {
         LoadingManager.OnPlayerReady += InitPosition;
+        if (TimeManager.Instance != null) TimeManager.Instance.OnNewDay += InitPosition;
     }
 
     private void OnDisable()
     {
         LoadingManager.OnPlayerReady -= InitPosition;
+        if (TimeManager.Instance != null) TimeManager.Instance.OnNewDay -= InitPosition;
     }
+
     private QuestData GetCurrentQuest()
     {
         if (questLine == null || questLine.Length == 0) return null;
@@ -82,12 +103,25 @@ public class NPCVillager : MonoBehaviour, IInteractable
     private void Start()
     {
         Invoke("InitPosition", 0.2f);
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) playerTransform = playerObj.transform;
     }
+
     private void InitPosition()
     {
         if (isInitialized) return;
 
-        // Chỉ tạo wanderCenter ảo nếu thằng này KHÔNG CÓ chỗ ngồi
+        if (disableAfterQuestCompleted != null && QuestManager.Instance != null)
+        {
+            if (QuestManager.Instance.GetQuestStatus(disableAfterQuestCompleted) == QuestStatus.Completed)
+            {
+                gameObject.SetActive(false);
+                isInitialized = true;
+                return;
+            }
+        }
+
         if (wanderCenter == null && sitPoint == null)
         {
             GameObject tempCenter = new GameObject(npcName + "_TempWanderCenter");
@@ -110,11 +144,11 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
             if (isDayTime)
             {
-                // [ĐÃ SỬA]: Kiểm tra xem nó là loại đi dạo hay loại ngồi gốc cây
                 if (sitPoint != null)
                 {
                     agent.Warp(sitPoint.position);
-                    SnapToSitPoint();
+                    // [ĐÃ SỬA LỖI]: Truyền đúng biến sitPoint vào hàm
+                    SnapToSitPoint(sitPoint);
                 }
                 else
                 {
@@ -133,14 +167,16 @@ public class NPCVillager : MonoBehaviour, IInteractable
         }
         isInitialized = true;
     }
+
     private void Update()
     {
         if (!isInitialized) return;
+
         bool isTalkingToPlayer = DialogueUIManager.Instance != null && DialogueUIManager.Instance.currentVillager == this;
 
         if (isTalkingToPlayer)
         {
-            wasTalkingToPlayer = true; // Đánh dấu là đang buôn chuyện
+            wasTalkingToPlayer = true;
 
             if (isCurrentlySitting)
             {
@@ -160,11 +196,10 @@ public class NPCVillager : MonoBehaviour, IInteractable
         }
         else
         {
-            // Bắt đúng khoảnh khắc người chơi vừa bấm nút tắt bảng thoại
             if (wasTalkingToPlayer)
             {
                 wasTalkingToPlayer = false;
-                sitCooldownTimer = 1.5f; // Vặn đồng hồ delay 1.5s
+                sitCooldownTimer = 1.5f;
             }
 
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
@@ -195,8 +230,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 else PickNewWanderPoint();
             }
 
-            // [MỚI]: Chia nhánh hành vi ban ngày
-            if (sitPoint != null)
+            if (sitPoint != null || currentDynamicChair != null)
             {
                 HandleSitting();
             }
@@ -207,7 +241,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
         }
         else
         {
-            // [MỚI]: Buổi tối -> Đứng dậy đi về
             if (isCurrentlySitting)
             {
                 StandUpFromSitPoint();
@@ -241,40 +274,80 @@ public class NPCVillager : MonoBehaviour, IInteractable
             sitCooldownTimer -= Time.deltaTime;
             return;
         }
-        // Bỏ qua trục Y (chiều cao), chỉ đo khoảng cách bề ngang trên mặt đất (X và Z)
-        Vector2 npcPosXZ = new Vector2(transform.position.x, transform.position.z);
-        Vector2 sitPosXZ = new Vector2(sitPoint.position.x, sitPoint.position.z);
 
-        // Nới lỏng khoảng cách ra 0.5f để dễ bắt trúng hơn
+        Transform targetSitPoint = sitPoint;
+        if (targetSitPoint == null && currentDynamicChair != null)
+        {
+            targetSitPoint = currentDynamicChair.sitPoints[currentChairSeatIndex];
+        }
+
+        if (targetSitPoint == null) return;
+
+        Vector2 npcPosXZ = new Vector2(transform.position.x, transform.position.z);
+        Vector2 sitPosXZ = new Vector2(targetSitPoint.position.x, targetSitPoint.position.z);
+
         if (Vector2.Distance(npcPosXZ, sitPosXZ) < 0.5f)
         {
-            SnapToSitPoint();
+            SnapToSitPoint(targetSitPoint);
         }
         else if (agent.enabled && !agent.pathPending)
         {
-            GoToPoint(sitPoint.position);
+            GoToPoint(targetSitPoint.position);
         }
     }
 
-    private void SnapToSitPoint()
+    private bool TryFindAndTargetChair()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, wanderRadius);
+        foreach (Collider hit in hits)
+        {
+            Chair chair = hit.GetComponentInParent<Chair>();
+            if (chair == null) chair = hit.GetComponent<Chair>();
+
+            if (chair != null)
+            {
+                int seatIndex = chair.NPCTryOccupy();
+                if (seatIndex != -1) // Có ghế trống!
+                {
+                    currentDynamicChair = chair;
+                    currentChairSeatIndex = seatIndex;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // [ĐÃ SỬA LỖI]: Khai báo hàm chuẩn xác có nhận biến Transform
+    private void SnapToSitPoint(Transform targetPoint)
     {
         isCurrentlySitting = true;
 
-        // Tắt AI NavMesh đi để có thể dịch chuyển mông vào ghế/gốc cây
         if (agent.enabled) agent.enabled = false;
 
-        transform.position = sitPoint.position;
-        transform.rotation = sitPoint.rotation;
+        transform.position = targetPoint.position;
+        transform.rotation = targetPoint.rotation;
     }
 
     private void StandUpFromSitPoint()
     {
         isCurrentlySitting = false;
-        if (standPoint != null)
+
+        Transform targetStandPoint = standPoint;
+
+        if (currentDynamicChair != null)
         {
-            transform.position = standPoint.position;
+            targetStandPoint = currentDynamicChair.exitPoint;
+            currentDynamicChair.LeaveChair(currentChairSeatIndex);
+            currentDynamicChair = null;
+            currentChairSeatIndex = -1;
         }
-        // Bật lại AI để đi về nhà
+
+        if (targetStandPoint != null)
+        {
+            transform.position = targetStandPoint.position;
+        }
+
         agent.enabled = true;
     }
     // ==========================================
@@ -297,6 +370,12 @@ public class NPCVillager : MonoBehaviour, IInteractable
             if (waitTimer <= 0)
             {
                 isWaiting = false;
+
+                if (Random.value < 0.3f && TryFindAndTargetChair())
+                {
+                    return;
+                }
+
                 PickNewWanderPoint();
             }
         }
@@ -339,7 +418,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = isVisible;
 
-        // Chỉ bật agent nếu ko đang ngồi
         if (isVisible && !isCurrentlySitting) agent.enabled = true;
         else if (!isVisible) agent.enabled = false;
     }
@@ -351,7 +429,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
             float speed = (agent.enabled && agent.isOnNavMesh) ? agent.velocity.magnitude : 0f;
             npcAnimator.SetFloat("Speed", speed);
 
-            // [MỚI]: Kích hoạt State ngồi trong Animator
             npcAnimator.SetBool("IsSitting", isCurrentlySitting);
         }
     }
@@ -360,15 +437,8 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (isSleeping) return "";
 
-        QuestData activeQuest = GetCurrentQuest();
-        if (activeQuest != null && QuestManager.Instance.GetQuestStatus(activeQuest) != QuestStatus.Completed)
-        {
-            // Lấy chữ từ từ điển rồi cộng với tên NPC
-            return $"{interactTextQuest.GetLocalizedString()} {npcName}";
-        }
-
-        // Lấy chữ từ từ điển rồi cộng với tên NPC
-        return $"{interactTextNormal.GetLocalizedString()} {npcName}";
+        string interactStr = interactTextNormal.IsEmpty ? "[E] Nói chuyện" : interactTextNormal.GetLocalizedString();
+        return $"{interactStr} {npcName}";
     }
 
     public void Interact()
@@ -390,7 +460,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
 
         if (DialogueUIManager.Instance != null)
         {
-            // 1. Lọc lấy các câu thoại chào hỏi mặc định (An toàn)
             System.Collections.Generic.List<string> defaultLines = new System.Collections.Generic.List<string>();
             if (defaultDialogues != null)
             {
@@ -407,7 +476,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
             System.Collections.Generic.List<string> finalLinesToSay = new System.Collections.Generic.List<string>();
             bool isStoryDialogue = false;
 
-            // 2. KỊCH BẢN 1: Cốt truyện nối tiếp (Auto Story Quest)
             if (activeQuest != null && activeQuest.isAutoStoryQuest)
             {
                 QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
@@ -416,28 +484,26 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 {
                     if (questLine != null && questLine.Length > 0 && activeQuest == questLine[0])
                     {
-                        finalLinesToSay.AddRange(defaultLines);
+                        if (activeQuest.requiredPreviousQuest == null)
+                        {
+                            finalLinesToSay.AddRange(defaultLines);
+                        }
                     }
-                    // Chức năng: Thêm thoại giao nhiệm vụ
                     finalLinesToSay.AddRange(activeQuest.GetOfferLines());
                 }
                 else if (status == QuestStatus.InProgress)
                 {
-                    // Đang làm dở: Bỏ qua chào hỏi, nói thẳng câu nhắc nhở
                     finalLinesToSay.AddRange(activeQuest.GetInProgressLines());
                 }
                 else if (status == QuestStatus.ReadyToTurnIn)
                 {
-                    // Trả nhiệm vụ: Bỏ qua chào hỏi, nói thẳng câu cảm ơn
                     finalLinesToSay.AddRange(activeQuest.GetCompleteLines());
                 }
 
                 isStoryDialogue = true;
             }
-            // 3. KỊCH BẢN 2: Việc vặt (Có nút Quest) hoặc đang rảnh rỗi
             else
             {
-                // Chức năng: Tìm nhiệm vụ đã hoàn thành cuối cùng trong mảng questLine
                 QuestData lastCompletedQuest = null;
                 if (questLine != null)
                 {
@@ -451,7 +517,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
                     }
                 }
 
-                // Chức năng: Nếu đã hết sạch nhiệm vụ hiện tại và nhiệm vụ cuối là cốt truyện thì lặp lại câu trả nhiệm vụ
                 if (activeQuest == null && lastCompletedQuest != null && lastCompletedQuest.isAutoStoryQuest)
                 {
                     finalLinesToSay.AddRange(lastCompletedQuest.GetCompleteLines());
@@ -459,14 +524,90 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 }
                 else
                 {
-                    // Chức năng: Nếu chưa làm nhiệm vụ nào hoặc là nhiệm vụ phụ thì nói câu mặc định
                     finalLinesToSay.AddRange(defaultLines);
                 }
             }
-            // Chốt chặn cuối cùng nếu không có câu thoại nào
             if (finalLinesToSay.Count == 0) finalLinesToSay.Add("...");
 
             DialogueUIManager.Instance.OpenDialogueForVillager(this, finalLinesToSay.ToArray(), activeQuest, isStoryDialogue);
+        }
+    }
+
+    private void OnAnimatorIK(int layerIndex)
+    {
+        if (npcAnimator == null || !isInitialized) return;
+
+        if (isSleeping)
+        {
+            npcAnimator.SetLookAtWeight(0f);
+            return;
+        }
+
+        if (playerTransform == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerTransform = playerObj.transform;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        bool isTalking = false;
+        if (DialogueUIManager.Instance != null)
+        {
+            isTalking = (DialogueUIManager.Instance.currentVillager == this);
+        }
+
+        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
+        float angleToPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+
+        if (isTalking || (distanceToPlayer <= lookRadius && angleToPlayer < 75f))
+        {
+            currentLookWeight = Mathf.Lerp(currentLookWeight, 1f, Time.deltaTime * 4f);
+        }
+        else
+        {
+            currentLookWeight = Mathf.Lerp(currentLookWeight, 0f, Time.deltaTime * 3f);
+        }
+
+        npcAnimator.SetLookAtWeight(currentLookWeight, 0.1f, 0.8f, 1f, 0.5f);
+
+        npcAnimator.SetLookAtPosition(playerTransform.position + Vector3.up * 1.5f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (canWander)
+        {
+            Gizmos.color = Color.green;
+            Vector3 centerPos = (wanderCenter != null) ? wanderCenter.position : transform.position;
+            Gizmos.DrawWireSphere(centerPos, wanderRadius);
+        }
+
+        if (sitPoint != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(sitPoint.position, 0.3f);
+            Gizmos.DrawLine(transform.position, sitPoint.position);
+        }
+
+        if (standPoint != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(standPoint.position, 0.3f);
+        }
+
+        if (homePoint != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(homePoint.position, 0.5f);
+            Gizmos.DrawLine(transform.position, homePoint.position);
         }
     }
 }

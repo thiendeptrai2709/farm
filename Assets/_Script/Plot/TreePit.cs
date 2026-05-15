@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-
+﻿using System.IO;
+using UnityEngine;
+using UnityEngine.Localization;
 public class TreePit : MonoBehaviour, IInteractable
 {
     public enum PitState { Planted, Grown_Empty, Grown_Fruited }
@@ -32,6 +33,16 @@ public class TreePit : MonoBehaviour, IInteractable
     private Transform playerTransform;
 
     public ParticleSystem waterSplashEffect;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString textChopSapling;
+    public LocalizedString textChopTree;
+    public LocalizedString textHarvest;
+    public LocalizedString textWater;
+    public LocalizedString textFertilize;
+    public LocalizedString textGrowing;
+    public LocalizedString textRegrowing;
+
     public void LoadData(SavedTreePitData data, SeedItemData seed)
     {
         this.pitID = data.id;
@@ -292,17 +303,43 @@ public class TreePit : MonoBehaviour, IInteractable
             if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Axe) isHoldingAxe = true;
         }
 
-        if (isHoldingAxe) return currentState == PitState.Planted ? "[E] Chop Sapling" : "[E] Chop Tree";
-        if (currentState == PitState.Grown_Fruited) return $"[E] Harvest {plantedTree.displayName}";
+        if (isHoldingAxe)
+        {
+            if (currentState == PitState.Planted)
+                return textChopSapling.IsEmpty ? "[E] Chop Sapling" : textChopSapling.GetLocalizedString();
+            else
+                return textChopTree.IsEmpty ? "[E] Chop Tree" : textChopTree.GetLocalizedString();
+        }
+
+        if (currentState == PitState.Grown_Fruited)
+        {
+            string harvestStr = textHarvest.IsEmpty ? "[E] Harvest" : textHarvest.GetLocalizedString();
+            // Lấy tên của Nông Sản (yieldItem) thay vì Hạt Giống
+            string fruitName = (plantedTree.yieldItem != null) ? plantedTree.yieldItem.displayName : "Quả";
+            return $"{harvestStr} {fruitName}";
+        }
 
         // QUÉT ĐỒ TƯỚI/BÓN KHI ĐANG MỌC
         if (currentState == PitState.Planted || currentState == PitState.Grown_Empty)
         {
-            if (CanBeWatered()) return "[E] Water Plant";
-            if (CanBeFertilized()) return "[E] Fertilize";
+            if (CanBeWatered())
+                return textWater.IsEmpty ? "[E] Water Plant" : textWater.GetLocalizedString();
+
+            if (CanBeFertilized())
+                return textFertilize.IsEmpty ? "[E] Fertilize" : textFertilize.GetLocalizedString();
 
             int percent = Mathf.Clamp(Mathf.RoundToInt((growTimer / GetBaseTime()) * 100), 0, 100);
-            return currentState == PitState.Planted ? $"Growing... {percent}%" : $"Regrowing Fruits... {percent}%";
+
+            if (currentState == PitState.Planted)
+            {
+                string growStr = textGrowing.IsEmpty ? "Growing..." : textGrowing.GetLocalizedString();
+                return $"{growStr} {percent}%";
+            }
+            else
+            {
+                string regrowStr = textRegrowing.IsEmpty ? "Regrowing Fruits..." : textRegrowing.GetLocalizedString();
+                return $"{regrowStr} {percent}%";
+            }
         }
 
         return "";

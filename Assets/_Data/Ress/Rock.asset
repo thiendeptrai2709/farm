@@ -12,11 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f830dacf03fd5f408dacda861cff1a2, type: 3}
   m_Name: Rock
   m_EditorClassIdentifier: Assembly-CSharp::MaterialItemData
-  displayName: Rock
-  icon: {fileID: 21300000, guid: 0867b6c0280ff8b42b470cb8b2c4a264, type: 3}
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8517505657004032
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 5bb6a73bfc071404ebc1db586f483b9d, type: 3}
   itemType: 3
   isStackable: 1
   maxStack: 36
   sellPrice: 12
   buyPrice: 15
   materialCategory: 1
+  references:
+    version: 2
+    RefIds: []

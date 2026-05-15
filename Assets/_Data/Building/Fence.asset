@@ -12,9 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 358884e55bd0fc245b3e15c5c575715c, type: 3}
   m_Name: Fence
   m_EditorClassIdentifier: Assembly-CSharp::BuildingBlueprint
-  buildingName: FenceWood
+  localizedBuildingName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8530481373962240
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  localizedDescription:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: e313c56975f5bd146a18c06e67587c53, type: 3}
-  description: 
   prefabToBuild: {fileID: 3479476284328561138, guid: 1eeeb9495939eee409c4c37ac59df250, type: 3}
   blueprintType: 2
   expandSize: {x: 0, y: 0, z: 0}
@@ -29,3 +45,6 @@ MonoBehaviour:
   buildItemCosts:
   - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
     amount: 2
+  references:
+    version: 2
+    RefIds: []

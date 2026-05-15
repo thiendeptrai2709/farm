@@ -2053,6 +2053,8 @@ MonoBehaviour:
   gravity: -9.81
   jumpBufferTime: 0.2
   jumpCooldown: 0.25
+  stickToGroundForce: -8
+  groundedGraceTime: 0.1
 --- !u!114 &8950212855293684918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2109,6 +2111,7 @@ MonoBehaviour:
   inputHandler: {fileID: 355052223789210879}
   playerAnimator: {fileID: 2814063503236505521}
   interactTriggerName: Pickup
+  isSitting: 0
 --- !u!114 &1598000530897346741
 MonoBehaviour:
   m_ObjectHideFlags: 0

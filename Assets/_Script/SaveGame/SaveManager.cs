@@ -61,6 +61,24 @@ public class SaveManager : MonoBehaviour
         currentSlot = slotIndex;
         LoadGame();
     }
+    public void SaveAllNPCsToData(GameData data)
+    {
+        NPCVillager[] villagers = UnityEngine.Object.FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
+        foreach (var v in villagers)
+        {
+            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == v.gameObject.name);
+            if (existing != null) existing.position = v.transform.position;
+            else data.savedNPCs.Add(new SavedNPCData { npcName = v.gameObject.name, position = v.transform.position });
+        }
+
+        NPCMerchant[] merchants = UnityEngine.Object.FindObjectsByType<NPCMerchant>(FindObjectsSortMode.None);
+        foreach (var m in merchants)
+        {
+            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == m.gameObject.name);
+            if (existing != null) existing.position = m.transform.position;
+            else data.savedNPCs.Add(new SavedNPCData { npcName = m.gameObject.name, position = m.transform.position });
+        }
+    }
     public void SaveGame()
     {
         if (currentData == null) currentData = new GameData();
@@ -142,6 +160,9 @@ public class SaveManager : MonoBehaviour
         {
             trough.SaveTroughData(currentData);
         }
+
+        SaveAllNPCsToData(currentData);
+
         string path = GetSaveFilePath(currentSlot);
         string json = JsonUtility.ToJson(currentData, true);
         File.WriteAllText(path, json);

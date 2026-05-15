@@ -1118,7 +1118,6 @@ MonoBehaviour:
   maxHunger: 100
   currentHunger: 0
   hungerDrainRate: 1
-  starveTimeLimit: 5
   wanderRadius: 10
   minWaitTime: 2
   maxWaitTime: 5

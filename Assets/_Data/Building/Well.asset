@@ -12,12 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 358884e55bd0fc245b3e15c5c575715c, type: 3}
   m_Name: Well
   m_EditorClassIdentifier: Assembly-CSharp::BuildingBlueprint
-  buildingName: Well
+  localizedBuildingName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8530540094218240
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  localizedDescription:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 5cecfee535f4efa4c9310d88234ab926, type: 3}
-  description: 
+  prefabToBuild: {fileID: 0}
   blueprintType: 0
   expandSize: {x: 0, y: 0, z: 0}
   centerOffset: {x: 0, y: 0, z: 0}
+  baseCapacity: 5
+  capacityIncreasePerLevel: 2
   currentLevel: 0
   maxLevel: 3
   costMultiplierPerLevel: 2
@@ -28,3 +47,6 @@ MonoBehaviour:
     amount: 10
   - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
     amount: 10
+  references:
+    version: 2
+    RefIds: []

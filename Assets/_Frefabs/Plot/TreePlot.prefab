@@ -5135,11 +5135,83 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreePit
   currentState: 0
   saplingModel: {fileID: 2609885273532044150}
+  pitID: 
+  plantedTree: {fileID: 0}
+  growTimer: 0
   wateringCanItem: {fileID: 11400000, guid: 5487a6909ee4e62439c1ce70981f8b12, type: 2}
   fertilizerItem: {fileID: 11400000, guid: 359eb4ee6dc50cb40bf54512b74ff5fb, type: 2}
+  treeHealth: 3
   needWaterIcon: {fileID: 3264405257503552187}
+  isWatered: 0
+  isFertilized: 0
   iconVisibleDistance: 20
   waterSplashEffect: {fileID: 7925610705740482673}
+  textChopSapling:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354768104644608
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textChopTree:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354769753006080
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textHarvest:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354771531390976
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textWater:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354773473353728
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textFertilize:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354775369179136
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textGrowing:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354800123961344
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textRegrowing:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354800925073408
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!65 &2958112488995612150
 BoxCollider:
   m_ObjectHideFlags: 0

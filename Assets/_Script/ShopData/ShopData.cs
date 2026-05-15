@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization; // [THÊM MỚI] Thư viện đa ngôn ngữ
 
 [System.Serializable]
 public class ShopInventoryItem
@@ -11,11 +12,25 @@ public class ShopInventoryItem
 [CreateAssetMenu(fileName = "New Shop", menuName = "Market/Shop Data")]
 public class ShopData : ScriptableObject
 {
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString localizedNpcName; // [THÊM MỚI] Biến chứa Key dịch tên chủ sạp
+
     [Header("Thông tin chủ sạp")]
-    public string npcName = "Thương nhân";
+    // Chức năng: Đọc tên NPC từ bảng dịch, nếu rỗng thì lấy tạm tên file ScriptableObject
+    public string npcName
+    {
+        get
+        {
+            return localizedNpcName.IsEmpty ? name : localizedNpcName.GetLocalizedString();
+        }
+    }
 
     [Header("Ví tiền của NPC (Hiển thị UI)")]
     public int merchantMoney = 1000;
+    // Chức năng: Khai báo số tiền tối thiểu NPC có mỗi ngày
+    public int minDailyMoney = 500;
+    // Chức năng: Khai báo số tiền tối đa NPC có mỗi ngày
+    public int maxDailyMoney = 2000;
 
     // [ĐÃ THÊM]: Giao quyền quyết định số ô cho NPC này (Ví dụ: 12 ô)
     [Header("Cài đặt Sạp hàng")]
@@ -34,6 +49,8 @@ public class ShopData : ScriptableObject
 
     public void GenerateDailyInventory()
     {
+        merchantMoney = Random.Range(minDailyMoney, maxDailyMoney + 1);
+
         itemsForSale.Clear(); // Dọn sạch quầy hàng hôm qua
 
         if (possibleItemsToSell == null || possibleItemsToSell.Count == 0) return;

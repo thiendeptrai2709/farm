@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 // Thẻ căn cước gắn lên món đồ để khi bị đập vỡ, nó tự biết xóa tên khỏi sổ
-public class PlacedProp : MonoBehaviour
+public class PlacedProp : MonoBehaviour, IInteractable
 {
     public string prefabID;
     public string instanceID;
@@ -13,6 +13,55 @@ public class PlacedProp : MonoBehaviour
         if (PlacedPropManager.Instance != null)
         {
             PlacedPropManager.Instance.RemoveProp(this);
+        }
+    }
+
+    // Chức năng: Hiển thị chữ "[E] Phá dỡ" nếu đang cầm rìu
+    public string GetInteractText()
+    {
+        if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+        {
+            ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+            if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Axe)
+            {
+                return "[E] Phá dỡ";
+            }
+        }
+        return ""; // Tay không cầm rìu thì ẩn luôn nút E
+    }
+
+    // Chức năng: Xóa sổ món đồ
+    public void Interact()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Axe_Hit"); // Chỗ này bạn có thể đổi tên Sound tùy ý
+        }
+
+        RefundMaterials();
+
+        Destroy(gameObject); // Bùm!
+    }
+    private void RefundMaterials()
+    {
+        if (HammerBuildManager.Instance == null || string.IsNullOrEmpty(prefabID)) return;
+
+        // Dò tìm bản vẽ gốc dựa trên prefabID
+        BuildingBlueprint blueprint = HammerBuildManager.Instance.smallPropBlueprints.Find(b => b.prefabToBuild != null && b.prefabToBuild.name == prefabID);
+
+        if (blueprint != null && blueprint.buildItemCosts != null)
+        {
+            foreach (var cost in blueprint.buildItemCosts)
+            {
+                // Nhét lại đồ vào Balo
+                bool added = InventoryManager.Instance.AddItem(cost.item, cost.amount, true);
+                if (!added)
+                {
+                    Debug.LogWarning($"[Phá dỡ] Balo đầy! Bị rơi mất {cost.amount} {cost.item.displayName} ra ngoài không gian!");
+                    // Nếu sau này bạn có hàm rơi đồ ra đất (Instantiate PickupItem), hãy thay thế vào chỗ này.
+                }
+            }
+            Debug.Log($"[Phá dỡ] Đã hoàn trả 100% tài nguyên của {blueprint.buildingName}!");
         }
     }
 }

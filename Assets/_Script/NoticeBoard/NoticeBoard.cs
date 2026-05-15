@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.Localization;
 
 public class NoticeBoard : MonoBehaviour, IInteractable
 {
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString interactText;
+
     public string GetInteractText()
     {
         // Chức năng: Hiển thị chữ tương tác UI
-        return "[E] Xem Thông Báo Chợ";
+        return interactText.IsEmpty ? "[E] Xem Thông Báo Chợ" : interactText.GetLocalizedString();
     }
 
     public void Interact()

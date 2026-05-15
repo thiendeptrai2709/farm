@@ -776,6 +776,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6dff1a1f8c6e84f489ab2741db2baa4f, type: 3}
+--- !u!1 &180511797
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 180511798}
+  m_Layer: 7
+  m_Name: SitPoint (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &180511798
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180511797}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.016, z: 0.403}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590715106}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &180650149 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4416568323508693019, guid: bcc7d3ec7cdb0344599766c0a3bcfff3, type: 3}
@@ -2797,6 +2828,21 @@ PrefabInstance:
       addedObject: {fileID: 1969923868}
     - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 2045302681}
+    - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1894726051}
+    - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 180511798}
+    - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1154214009}
+    - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1220032218}
+    - targetCorrespondingSourceObject: {fileID: 7273014689770204115, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1522369757}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8044872589480505705, guid: bdfe562a489d7af43a0cfa474f8e430b, type: 3}
@@ -2825,9 +2871,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17bf6b88a9f21cf40bbb0edb847f3e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Chair
-  sitPoint: {fileID: 1969923868}
+  sitPoints:
+  - {fileID: 1969923868}
+  - {fileID: 2045302681}
+  - {fileID: 1894726051}
+  - {fileID: 180511798}
+  - {fileID: 1154214009}
+  - {fileID: 1220032218}
   exitPoint: {fileID: 1522369757}
-  isOccupied: 0
+  occupiedSeats: 
+  interactText:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8682786912133120
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &593121613
 GameObject:
   m_ObjectHideFlags: 0
@@ -4015,16 +4079,15 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  interactTextQuest:
+  localizedNpcName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 8700236500230144
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  npcName: "V\xF4 gia c\u01B0"
   greetingSound: Merchant_Hello
   defaultDialogues:
   - m_TableReference:
@@ -4046,6 +4109,7 @@ MonoBehaviour:
   questLine:
   - {fileID: 11400000, guid: 95e644033b20c994da5f18fa5ef47d8f, type: 2}
   secretStoryQuest: {fileID: 0}
+  disableAfterQuestCompleted: {fileID: 0}
   schedule:
     workStartTime: 7.5
     workEndTime: 17.5
@@ -4058,6 +4122,7 @@ MonoBehaviour:
   sitPoint: {fileID: 654237330}
   standPoint: {fileID: 1748714002}
   npcAnimator: {fileID: 783697026}
+  lookRadius: 5
   references:
     version: 2
     RefIds: []
@@ -6058,6 +6123,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e9cbcf956215164b9eb1e0f029703bd, type: 3}
+--- !u!1 &1154214008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1154214009}
+  m_Layer: 7
+  m_Name: SitPoint (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1154214009
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154214008}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.859, y: 0.016, z: 0.371}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590715106}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1162178141 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9097101323999314563, guid: 2e9cbcf956215164b9eb1e0f029703bd, type: 3}
@@ -6202,6 +6298,37 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6696208783447112275, guid: 7b37891502886084788d0acb64445fb5, type: 3}
   m_PrefabInstance: {fileID: 6291056853378178737}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1220032217
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1220032218}
+  m_Layer: 7
+  m_Name: SitPoint (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1220032218
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220032217}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.758, y: 0.016, z: 0.352}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590715106}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1236626721
 GameObject:
   m_ObjectHideFlags: 0
@@ -6592,6 +6719,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 593121614}
     m_Modifications:
+    - target: {fileID: 478600161557205408, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1629507032815443717, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -103.236176
@@ -6640,6 +6771,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3129132831428413449, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5236144692209929571, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8732460108933748607, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
     m_RemovedGameObjects: []
@@ -6675,6 +6814,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusStop
   myBus: {fileID: 1977434601}
+  interactText:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8682789114142720
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &1306248399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7481,16 +7632,15 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  interactTextQuest:
+  localizedNpcName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 8700174500028416
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  npcName: "Ng\u01B0\u1EDDi m\u1EB9"
   greetingSound: Merchant_Hello
   defaultDialogues:
   - m_TableReference:
@@ -7512,6 +7662,7 @@ MonoBehaviour:
   questLine:
   - {fileID: 11400000, guid: 732d85d1f6414854098e98d1ce81ebdc, type: 2}
   secretStoryQuest: {fileID: 0}
+  disableAfterQuestCompleted: {fileID: 0}
   schedule:
     workStartTime: 7.5
     workEndTime: 17.5
@@ -7524,6 +7675,7 @@ MonoBehaviour:
   sitPoint: {fileID: 0}
   standPoint: {fileID: 0}
   npcAnimator: {fileID: 1361844882}
+  lookRadius: 5
   references:
     version: 2
     RefIds: []
@@ -8784,6 +8936,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 593121614}
     m_Modifications:
+    - target: {fileID: 478600161557205408, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1629507032815443717, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -22.436188
@@ -8832,6 +8988,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3129132831428413449, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5236144692209929571, guid: 9db28b8e527f9824494b5d4aca73f1c2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -8866,6 +9030,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusStop
   myBus: {fileID: 40939600484858567}
+  interactText:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8682789114142720
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &1618185186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9071,9 +9247,6 @@ PrefabInstance:
       addedObject: {fileID: 1618185189}
     - targetCorrespondingSourceObject: {fileID: 5986958801767457440, guid: 87a7b985b15a4244091de35d7df9169a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1618185188}
-    - targetCorrespondingSourceObject: {fileID: 5986958801767457440, guid: 87a7b985b15a4244091de35d7df9169a, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1618185192}
     - targetCorrespondingSourceObject: {fileID: 5986958801767457440, guid: 87a7b985b15a4244091de35d7df9169a, type: 3}
       insertIndex: -1
@@ -9087,19 +9260,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5986958801767457440, guid: 87a7b985b15a4244091de35d7df9169a, type: 3}
   m_PrefabInstance: {fileID: 1618185186}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1618185188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1618185187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ad985bbf1b3570448dbe73521fea851, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectTrigger
-  targetQuest: {fileID: 11400000, guid: 732d85d1f6414854098e98d1ce81ebdc, type: 2}
 --- !u!114 &1618185189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9121,16 +9281,15 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  interactTextQuest:
+  localizedNpcName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 8700207878299648
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  npcName: "C\u1EADu b\xE9"
   greetingSound: Merchant_Hello
   defaultDialogues:
   - m_TableReference:
@@ -9151,6 +9310,7 @@ MonoBehaviour:
     m_LocalVariables: []
   questLine: []
   secretStoryQuest: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
+  disableAfterQuestCompleted: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
   schedule:
     workStartTime: 7.5
     workEndTime: 17.5
@@ -9163,6 +9323,7 @@ MonoBehaviour:
   sitPoint: {fileID: 0}
   standPoint: {fileID: 0}
   npcAnimator: {fileID: 1618185191}
+  lookRadius: 5
   references:
     version: 2
     RefIds: []
@@ -10693,6 +10854,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5202341895802565206, guid: 6dff1a1f8c6e84f489ab2741db2baa4f, type: 3}
   m_PrefabInstance: {fileID: 175877660}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1894726050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1894726051}
+  m_Layer: 7
+  m_Name: SitPoint (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1894726051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894726050}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -0.781, y: 0.016, z: -0.395}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590715106}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1916994499
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11169,7 +11361,7 @@ Transform:
   m_GameObject: {fileID: 1969923867}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.016, z: -0.395}
+  m_LocalPosition: {x: 0.88, y: 0.016, z: -0.395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11850,6 +12042,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5202341895802565206, guid: 6dff1a1f8c6e84f489ab2741db2baa4f, type: 3}
   m_PrefabInstance: {fileID: 2028407368}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2045302680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2045302681}
+  m_Layer: 7
+  m_Name: SitPoint (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2045302681
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045302680}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.016, z: -0.395}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 590715106}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!4 &2054785057 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5202341895802565206, guid: 6dff1a1f8c6e84f489ab2741db2baa4f, type: 3}
@@ -14916,12 +15139,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
+      propertyPath: localizedNpcName.m_TableEntryReference.m_KeyId
+      value: 8700271837241344
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
       propertyPath: interactTextQuest.m_TableEntryReference.m_KeyId
       value: 4072838513221632
       objectReference: {fileID: 0}
     - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
       propertyPath: interactTextNormal.m_TableEntryReference.m_KeyId
-      value: 0
+      value: 4175611317641216
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
+      propertyPath: localizedNpcName.m_TableReference.m_TableCollectionName
+      value: GUID:b128b4439333ee54ea4f487b9b6033f3
       objectReference: {fileID: 0}
     - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
       propertyPath: interactTextQuest.m_TableReference.m_TableCollectionName
@@ -14929,7 +15160,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
       propertyPath: interactTextNormal.m_TableReference.m_TableCollectionName
-      value: 
+      value: GUID:b128b4439333ee54ea4f487b9b6033f3
       objectReference: {fileID: 0}
     - target: {fileID: 4001372661466881212, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
       propertyPath: defaultDialogues.Array.data[0].m_TableEntryReference.m_KeyId

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class BusVehicle : MonoBehaviour, IInteractable
 {
     [Header("Cài đặt Di chuyển")]
     public Transform startPoint;
     public Transform stopPoint;
-    public Transform exitPoint; // Điểm xe sẽ chạy đến để biến mất
+    public Transform exitPoint;
     public float driveSpeed = 10f;
 
     [Header("Thành phần 3D")]
@@ -23,12 +24,25 @@ public class BusVehicle : MonoBehaviour, IInteractable
 
     private AudioSource busAudio;
 
-    // [ĐÃ SỬA]: Quản lý toàn bộ bằng Enum này, dẹp bỏ isDriving và hasArrived
     private enum BusState { Hidden, Inbound, AtStop, Outbound }
     private BusState currentState = BusState.Hidden;
 
     private string targetScene = "";
     private string targetSpawnID = "";
+
+    public Rigidbody rb;
+    public float maxMotorTorque = 1500f;
+    public float maxSteerAngle = 30f;
+    public float brakeForce = 3000f;
+    public float stopDistance = 1.5f;
+
+    // ── CenterOfMass: kéo vào GameObject con có Y = -0.5 (xem hướng dẫn D) ──
+    public Transform centerOfMass;
+
+    public WheelCollider frontLeftW, frontRightW, rearLeftW, rearRightW;
+    public Transform frontLeftT, frontRightT, rearLeftT, rearRightT;
+
+
 
     private void Awake()
     {
@@ -41,71 +55,145 @@ public class BusVehicle : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        if (rb == null) rb = GetComponent<Rigidbody>();
+        if (rb != null && centerOfMass != null)
+        {
+            rb.centerOfMass = centerOfMass.localPosition;
+        }
+
         ResetBus();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         switch (currentState)
         {
             case BusState.Inbound:
                 MoveBus(stopPoint.position, BusState.AtStop);
-                if (currentState == BusState.AtStop) OnArrived();
                 break;
-
-            case BusState.AtStop:
-                // Đếm ngược nếu người chơi không lên xe
-                idleTimer += Time.deltaTime;
-                if (idleTimer >= maxWaitTime)
-                {
-                    Debug.Log("Quá thời gian chờ, xe bus rời bến.");
-                    StartDrivingOut();
-                }
-                break;
-
             case BusState.Outbound:
-                // Chạy thêm một đoạn tới ExitPoint rồi mới biến mất
                 MoveBus(exitPoint.position, BusState.Hidden);
-                if (currentState == BusState.Hidden) ResetBus();
+                break;
+            case BusState.AtStop:
                 break;
         }
+    }
+
+    // Xử lý thời gian chờ
+    private void Update()
+    {
+        if (currentState == BusState.AtStop)
+        {
+            idleTimer += Time.deltaTime;
+            if (idleTimer >= maxWaitTime)
+            {
+                StartDrivingOut();
+            }
+        }
+
+        UpdateWheelPoses();
     }
 
     private void MoveBus(Vector3 target, BusState nextState)
     {
-        transform.position = Vector3.MoveTowards(transform.position, target, driveSpeed * Time.deltaTime);
-        transform.LookAt(target);
-        if (Vector3.Distance(transform.position, target) < 0.1f) currentState = nextState;
+        // Sử dụng khoảng cách 3D để tính toán chính xác khi lên dốc
+        Vector3 currentPos = transform.position;
+        float dist = Vector3.Distance(currentPos, target);
+
+        if (dist < 0.5f)
+        {
+            // Kiểm tra trạng thái isKinematic trước khi gán vận tốc
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+            }
+            currentState = nextState;
+
+            if (currentState == BusState.AtStop) OnArrived();
+            if (currentState == BusState.Hidden) ResetBus();
+        }
+        else
+        {
+            Vector3 moveDir = (target - transform.position).normalized;
+            rb.linearVelocity = moveDir * driveSpeed;
+
+            if (moveDir != Vector3.zero)
+            {
+                // Lấy góc xoay hướng về đích
+                Vector3 euler = Quaternion.LookRotation(moveDir).eulerAngles;
+                // Ép cứng trục Z (Roll) về 0 để xe không bao giờ bị lật nghiêng sang hai bên
+                Quaternion targetRot = Quaternion.Euler(euler.x, euler.y, 0f);
+                // Dùng Time.fixedDeltaTime vì hàm này được gọi trong FixedUpdate
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRot, Time.fixedDeltaTime * 5f));
+            }
+        }
     }
 
+    private void UpdateWheelPoses()
+    {
+        UpdateWheelPose(frontLeftW, frontLeftT);
+        UpdateWheelPose(frontRightW, frontRightT);
+        UpdateWheelPose(rearLeftW, rearLeftT);
+        UpdateWheelPose(rearRightW, rearRightT);
+    }
+
+    private void UpdateWheelPose(WheelCollider col, Transform meshTransform)
+    {
+        if (col == null || meshTransform == null) return;
+        col.GetWorldPose(out Vector3 pos, out Quaternion rot);
+        meshTransform.position = pos;
+        meshTransform.rotation = rot;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (startPoint != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(startPoint.position, 0.5f);
+            Gizmos.DrawRay(startPoint.position, startPoint.forward * 3f);
+        }
+        if (stopPoint != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(stopPoint.position, 0.5f);
+        }
+        if (exitPoint != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(exitPoint.position, 0.5f);
+        }
+    }
     public void StartDrivingIn(string destinationScene, string spawnID)
     {
-        // Đang chạy trên đường (vào hoặc ra) thì cấm cản địa
         if (currentState == BusState.Inbound || currentState == BusState.Outbound) return;
 
-        // Nếu xe ĐÃ ĐỖ TRẠM mà đổi vé
         if (currentState == BusState.AtStop)
         {
             targetScene = destinationScene;
             targetSpawnID = spawnID;
-            idleTimer = 0f; // Reset lại đồng hồ chờ cho khách mới đổi vé
-            Debug.Log($"Đã đổi vé sang: {targetScene} - {targetSpawnID}");
+            idleTimer = 0f;
             return;
         }
 
-        // Nếu xe đang GIẤU, gọi xe ra
         targetScene = destinationScene;
         targetSpawnID = spawnID;
         busModel.SetActive(true);
         if (busCollider != null) busCollider.enabled = false;
 
+        // Cho phép xe chịu tác động vật lý để lăn bánh
+        if (rb != null) rb.isKinematic = false;
+
         idleTimer = 0f;
-        currentState = BusState.Inbound; // Bắt đầu chạy vào
+        currentState = BusState.Inbound;
         PlayEngineSound();
     }
 
     private void OnArrived()
     {
+        // Khóa chết xe bằng isKinematic khi đã đến bến, người chơi đẩy thoải mái không xê dịch
+        if (rb != null) rb.isKinematic = true;
+
         if (busCollider != null) busCollider.enabled = true;
         busAudio.Stop();
         if (brakeClip) busAudio.PlayOneShot(brakeClip);
@@ -114,7 +202,6 @@ public class BusVehicle : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
-        // Chỉ hiện chữ khi xe đang đỗ chờ
         if (currentState != BusState.AtStop) return "";
         return $"[E] Lên xe đi tới {targetScene}";
     }
@@ -124,36 +211,30 @@ public class BusVehicle : MonoBehaviour, IInteractable
         if (currentState == BusState.AtStop && !string.IsNullOrEmpty(targetScene))
         {
             TimeSystem timeSys = FindFirstObjectByType<TimeSystem>();
-            if (timeSys != null)
-            {
-                timeSys.AddBusTravelTime(1f); // Mất 1 tiếng
-            }
+            if (timeSys != null) timeSys.AddBusTravelTime(1f);
+
             if (QuestManager.Instance != null && targetScene == "Farm")
             {
-                // Báo cho QuestManager biết người chơi đã làm hành động này
                 QuestManager.Instance.ReportAction("Travel_To_Farm");
             }
-            // Bấm lên xe -> Load map
-            LoadingManager.Instance.LoadScene(targetScene, targetSpawnID);
 
-            // [ĐÃ SỬA]: Ép xe chạy ra Exit chứ không tàng hình cái rụp
+            LoadingManager.Instance.LoadScene(targetScene, targetSpawnID);
             StartDrivingOut();
         }
     }
 
     public void ForceCancelBus()
     {
-        if (currentState == BusState.AtStop)
-        {
-            Debug.Log("Người chơi đã hủy chuyến, xe bus từ từ rời bến.");
-            // [ĐÃ SỬA]: Hủy chuyến thì xe cũng nổ máy chạy đi thẳng
-            StartDrivingOut();
-        }
+        if (currentState == BusState.AtStop) StartDrivingOut();
     }
 
     private void StartDrivingOut()
     {
         if (busCollider != null) busCollider.enabled = false;
+
+        // Mở khóa vật lý để xe chạy ra khỏi bến
+        if (rb != null) rb.isKinematic = false;
+
         currentState = BusState.Outbound;
         PlayEngineSound();
     }
@@ -167,14 +248,32 @@ public class BusVehicle : MonoBehaviour, IInteractable
             busAudio.Play();
         }
     }
-
     private void ResetBus()
     {
         currentState = BusState.Hidden;
         targetScene = "";
         busModel.SetActive(false);
         if (busCollider != null) busCollider.enabled = false;
-        if (startPoint != null) transform.position = startPoint.position;
+
+        if (startPoint != null)
+        {
+            transform.position = startPoint.position;
+            Vector3 dir = (stopPoint.position - startPoint.position).normalized;
+            dir.y = 0;
+            if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+        }
+
+        if (rb != null)
+        {
+            // Xóa vận tốc trước khi bật isKinematic
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+            rb.isKinematic = true;
+        }
+
         if (busAudio != null) busAudio.Stop();
     }
 }

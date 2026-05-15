@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.Localization;
 
-// Lưu ý: Tui bỏ dòng CreateAssetMenu ở đây vì mình sẽ không tạo "Item chung chung" nữa
 public class ItemData : ScriptableObject
 {
     [Header("Thông tin cơ bản")]
-    public string displayName;
+    public LocalizedString localizedDisplayName;
     public Sprite icon;
     public ItemType itemType;
 
@@ -15,4 +15,13 @@ public class ItemData : ScriptableObject
     [Header("Giá trị Mua Bán")]
     public int sellPrice;
     public int buyPrice;
+
+    public string displayName
+    {
+        get
+        {
+            // Nếu chưa gán Key đa ngôn ngữ thì lấy tạm tên của file ScriptableObject, nếu gán rồi thì bốc chữ từ từ điển ra
+            return localizedDisplayName.IsEmpty ? name : localizedDisplayName.GetLocalizedString();
+        }
+    }
 }

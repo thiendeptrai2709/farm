@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Localization;
+
 public class MainMenuController : MonoBehaviour
 {
     [Header("Scene bắt đầu game")]
@@ -13,6 +15,10 @@ public class MainMenuController : MonoBehaviour
     public GameObject settingPanel;
 
     public TextMeshProUGUI[] slotTexts;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString textDay;
+    public LocalizedString textSlot;
     private void Start()
     {
         if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.enabled = false;
@@ -56,13 +62,17 @@ public class MainMenuController : MonoBehaviour
 
                 if (slotData != null)
                 {
+                    // Chức năng: Lấy chữ "Ngày" từ bảng dịch
+                    string dayStr = textDay.IsEmpty ? "Ngày" : textDay.GetLocalizedString();
                     // Nếu đã có Save -> Hiện Ngày và Thời gian
-                    slotTexts[i].text = string.Format("Ngày: {0} - {1:00}:{2:00}", slotData.daysInGame, slotData.savedHour, slotData.savedMinute);
+                    slotTexts[i].text = string.Format("{0}: {1} - {2:00}:{3:00}", dayStr, slotData.daysInGame, slotData.savedHour, slotData.savedMinute);
                 }
                 else
                 {
+                    // Chức năng: Lấy chữ "Slot" từ bảng dịch
+                    string slotStr = textSlot.IsEmpty ? "Slot" : textSlot.GetLocalizedString();
                     // Nếu rỗng -> Trả về mặc định
-                    slotTexts[i].text = "Slot " + slotIndex;
+                    slotTexts[i].text = slotStr + " " + slotIndex;
                 }
             }
         }

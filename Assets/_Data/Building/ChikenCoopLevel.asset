@@ -12,9 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 358884e55bd0fc245b3e15c5c575715c, type: 3}
   m_Name: ChikenCoopLevel
   m_EditorClassIdentifier: Assembly-CSharp::BuildingBlueprint
-  buildingName: Update Level Coop
+  localizedBuildingName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8530171230347264
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  localizedDescription:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: 4824e84ac31b98e4bb60593af81f2237, type: 3}
-  description: 
   prefabToBuild: {fileID: 0}
   blueprintType: 3
   expandSize: {x: 0, y: 0, z: 0}
@@ -27,3 +43,6 @@ MonoBehaviour:
   unlockPrice: 100
   unlockItemCosts: []
   buildItemCosts: []
+  references:
+    version: 2
+    RefIds: []

@@ -6,7 +6,6 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 {
     [Header("Đa Ngôn Ngữ")]
     public LocalizedString interactTextNormal;
-    public LocalizedString interactTextQuest;
 
     [Header("Shop Data")]
     public ShopData myShopData;
@@ -29,6 +28,11 @@ public class NPCMerchant : MonoBehaviour, IInteractable
     [Header("Thành phần AI")]
     public Animator npcAnimator;
     private NavMeshAgent agent;
+
+    [Header("Cài đặt Nhìn (IK)")]
+    public float lookRadius = 5f;
+    private Transform playerTransform;
+    private float currentLookWeight = 0f;
 
     private bool isAtWork = false;
     private bool isGoingHome = false;
@@ -221,12 +225,6 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 
         string shopName = myShopData != null ? myShopData.npcName : "Cửa hàng";
 
-        QuestData activeQuest = GetCurrentQuest();
-        if (activeQuest != null)
-        {
-            return $"{interactTextQuest.GetLocalizedString()} {shopName}";
-        }
-
         return $"{interactTextNormal.GetLocalizedString()} {shopName}";
     }
 
@@ -234,11 +232,15 @@ public class NPCMerchant : MonoBehaviour, IInteractable
     {
         if (!isAtWork || isInsideHouse) return;
 
+        bool isSecretQuestTriggered = false;
+
         if (secretStoryQuest != null && QuestManager.Instance != null)
         {
             if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
             {
                 QuestManager.Instance.completedQuests.Add(secretStoryQuest.questID);
+                // Chức năng: Xác nhận nhiệm vụ ẩn vừa hoàn thành để ưu tiên thoại
+                isSecretQuestTriggered = true;
             }
         }
 
@@ -266,8 +268,12 @@ public class NPCMerchant : MonoBehaviour, IInteractable
                 System.Collections.Generic.List<string> finalLinesToSay = new System.Collections.Generic.List<string>();
                 bool isStoryDialogue = false;
 
-                // 2. KỊCH BẢN 1: Cốt truyện nối tiếp (Auto Story Quest)
-                if (activeQuest != null && activeQuest.isAutoStoryQuest)
+                if (isSecretQuestTriggered)
+                {
+                    finalLinesToSay.AddRange(secretStoryQuest.GetCompleteLines());
+                    isStoryDialogue = true;
+                }
+                else if (activeQuest != null && activeQuest.isAutoStoryQuest)
                 {
                     QuestStatus status = QuestManager.Instance.GetQuestStatus(activeQuest);
 
@@ -328,5 +334,57 @@ public class NPCMerchant : MonoBehaviour, IInteractable
                 DialogueUIManager.Instance.OpenDialogueForMerchant(this, finalLinesToSay.ToArray(), activeQuest, isStoryDialogue);
             }
         }
+    }
+
+    private void OnAnimatorIK(int layerIndex)
+    {
+        // 1. Chưa nạp xong AI hoặc Animator thì cấm chạy
+        if (npcAnimator == null || !isInitialized) return;
+
+        // Đang ở trong nhà thì gục mặt không nhìn
+        if (isInsideHouse)
+        {
+            npcAnimator.SetLookAtWeight(0f);
+            return;
+        }
+
+        // 2. Liên tục quét tìm Player lúc mới Load game
+        if (playerTransform == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerTransform = playerObj.transform;
+            }
+            else
+            {
+                return; // Player chưa load xong thì ngưng bẻ cổ
+            }
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        // 3. Kiểm tra xem có đang mở bảng thoại hoặc mở Shop không
+        bool isTalkingToPlayer =
+            (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen() && ShopUIManager.Instance.currentShop == myShopData) ||
+            (DialogueUIManager.Instance != null && DialogueUIManager.Instance.IsOpen() && DialogueUIManager.Instance.currentMerchant == this);
+
+        // Tính góc nhìn
+        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
+        float angleToPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+
+        // Liếc nhìn khi: Đang buôn chuyện/Mua đồ HOẶC (Player đứng gần VÀ nằm trong góc nhìn 75 độ trước mặt)
+        if (isTalkingToPlayer || (distanceToPlayer <= lookRadius && angleToPlayer < 75f))
+        {
+            currentLookWeight = Mathf.Lerp(currentLookWeight, 1f, Time.deltaTime * 4f);
+        }
+        else
+        {
+            currentLookWeight = Mathf.Lerp(currentLookWeight, 0f, Time.deltaTime * 3f);
+        }
+
+        // Thông số bẻ khớp (Trọng số tổng, thân, đầu, mắt, giới hạn)
+        npcAnimator.SetLookAtWeight(currentLookWeight, 0.1f, 0.8f, 1f, 0.5f);
+        npcAnimator.SetLookAtPosition(playerTransform.position + Vector3.up * 1.5f);
     }
 }

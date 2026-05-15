@@ -12,5 +12,5 @@ AssetOrigin:
   productId: 122225
   packageName: Lowpoly Medieval Peasants - Free - MEDIEVAL FANTASY SERIES
   packageVersion: 4.2.1
-  assetPath: Assets/Polytope Studio/Lowpoly_Environments/Sources/Shaders/VS_indirect.cginc
+  assetPath: Assets/_Import/Polytope Studio/Lowpoly_Environments/Sources/Shaders/VS_indirect.cginc
   uploadId: 721311

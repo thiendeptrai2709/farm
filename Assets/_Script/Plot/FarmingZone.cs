@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Localization;
 public class FarmingZone : MonoBehaviour, IInteractable
 {
     [Header("Ranh giới Nông Trại")]
@@ -51,6 +51,9 @@ public class FarmingZone : MonoBehaviour, IInteractable
     private static Vector3 originalCenter = Vector3.zero;
     private static bool hasCapturedOriginal = false;
 
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString textTillSoil;
+    public LocalizedString textPlant;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -328,8 +331,15 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
-        if (isHoldingHoe) return "[E] Till Soil";
-        if (holdingBigTreeSeed != null) return $"[E] Plant {holdingBigTreeSeed.displayName}";
+        if (isHoldingHoe)
+            return textTillSoil.IsEmpty ? "[E] Till Soil" : textTillSoil.GetLocalizedString();
+
+        if (holdingBigTreeSeed != null)
+        {
+            string plantStr = textPlant.IsEmpty ? "[E] Plant" : textPlant.GetLocalizedString();
+            return $"{plantStr} {holdingBigTreeSeed.displayName}";
+        }
+
         return "";
     }
 

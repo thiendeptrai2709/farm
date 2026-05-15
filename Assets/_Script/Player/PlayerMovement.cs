@@ -30,9 +30,12 @@ public class PlayerMovement : MonoBehaviour
     private float originalHeight;
     private Vector3 originalCenter;
 
-
     private CharacterController controller;
     private PlayerInputHandler inputHandler;
+
+    // [THÊM MỚI]: Tham chiếu đến file Gravity để lấy trạng thái tiếp đất chuẩn
+    private PlayerGravityAndJump gravityScript;
+
     private float turnSmoothVelocity;
 
     // Biến lưu trữ đà di chuyển ngang (trục X và Z)
@@ -44,6 +47,7 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        gravityScript = GetComponent<PlayerGravityAndJump>();
 
         if (mainCamera == null && Camera.main != null)
         {
@@ -107,8 +111,12 @@ public class PlayerMovement : MonoBehaviour
         Vector3 targetDirection = transform.right * input.x + transform.forward * input.y;
         Vector3 targetVelocity = targetDirection.normalized * currentSpeed;
 
-        // XỬ LÝ QUÁN TÍNH
-        if (controller.isGrounded)
+        // ==========================================
+        // [ĐÃ SỬA]: Lấy biến IsStableGrounded từ gravityScript để kiểm tra
+        // ==========================================
+        bool isStableGrounded = gravityScript != null ? gravityScript.IsStableGrounded : controller.isGrounded;
+
+        if (isStableGrounded)
         {
             // Đang chạm đất -> Gán tốc độ thực tế bằng tốc độ phím bấm ngay lập tức
             currentMomentum = targetVelocity;

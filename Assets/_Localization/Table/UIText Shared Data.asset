@@ -15,20 +15,12 @@ MonoBehaviour:
   m_TableCollectionName: UIText
   m_TableCollectionNameGuidString: b128b4439333ee54ea4f487b9b6033f3
   m_Entries:
-  - m_Id: 225914576896
-    m_Key: Play
+  - m_Id: 4173435908317184
+    m_Key: accept
     m_Metadata:
       m_Items: []
-  - m_Id: 929848811520
-    m_Key: Setting
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1528564736000
-    m_Key: Quit
-    m_Metadata:
-      m_Items: []
-  - m_Id: 15925362221056
-    m_Key: Chest
+  - m_Id: 4467767789936640
+    m_Key: ActionDesc_Travel
     m_Metadata:
       m_Items: []
   - m_Id: 4050124415098880
@@ -37,48 +29,24 @@ MonoBehaviour:
 '
     m_Metadata:
       m_Items: []
-  - m_Id: 4051853638557696
-    m_Key: Graphics
+  - m_Id: 8360122188226560
+    m_Key: BARN_FULL
     m_Metadata:
       m_Items: []
-  - m_Id: 4051882562478080
-    m_Key: Controls
+  - m_Id: 8360123572346880
+    m_Key: BARN_OPEN_BUY
     m_Metadata:
       m_Items: []
-  - m_Id: 4051901386514432
-    m_Key: Language
+  - m_Id: 8360119877165056
+    m_Key: BARN_SPAWNING
     m_Metadata:
       m_Items: []
-  - m_Id: 4054679672512512
-    m_Key: music
+  - m_Id: 8353255609262080
+    m_Key: Bed
     m_Metadata:
       m_Items: []
-  - m_Id: 4054828876488704
-    m_Key: CommingSoon
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4055145902956544
-    m_Key: "S\xE9nitivity"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4055266900238336
-    m_Key: Invert
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4072838513221632
-    m_Key: talk
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4072872961040384
-    m_Key: 'Talk_Quest '
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4072907593408512
-    m_Key: Trade
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4072935170957312
-    m_Key: Trade Quest
+  - m_Id: 4096577938317312
+    m_Key: buy
     m_Metadata:
       m_Items: []
   - m_Id: 4096305992228864
@@ -87,44 +55,148 @@ MonoBehaviour:
 '
     m_Metadata:
       m_Items: []
-  - m_Id: 4096577938317312
-    m_Key: buy
+  - m_Id: 15925362221056
+    m_Key: Chest
     m_Metadata:
       m_Items: []
-  - m_Id: 4096596863016960
-    m_Key: sell
+  - m_Id: 4054828876488704
+    m_Key: CommingSoon
     m_Metadata:
       m_Items: []
-  - m_Id: 4173256056561664
-    m_Key: Req
+  - m_Id: 4466739786997760
+    m_Key: CompleteLine_Apple
     m_Metadata:
       m_Items: []
-  - m_Id: 4173259005157376
-    m_Key: ReWard
+  - m_Id: 4468533573378048
+    m_Key: CompleteLine_Lawyer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6238816651108352
+    m_Key: CompleteLine_Mother
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051882562478080
+    m_Key: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178186880344064
+    m_Key: end
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051853638557696
+    m_Key: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360667791679488
+    m_Key: HINT_BUILD_OPEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360657817624576
+    m_Key: HINT_BUILD_PLACING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6238751828140032
+    m_Key: InProgress_Mother
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4466719549480960
+    m_Key: InProgressLine_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8359881682640896
+    m_Key: INTERACT_CARPENTER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055266900238336
+    m_Key: Invert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365339327782912
+    m_Key: Item_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365340518965248
+    m_Key: Item_Avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365342834221056
+    m_Key: Item_Carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365343505309696
+    m_Key: Item_Cornflour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365344176398336
+    m_Key: Item_Garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365344881041408
+    m_Key: Item_Lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365345615044608
+    m_Key: Item_Mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365346827198464
+    m_Key: Item_Onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365349981315072
+    m_Key: Item_Orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365350782427136
+    m_Key: Item_Pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365351524818944
+    m_Key: Item_Pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365352330125312
+    m_Key: Item_Potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365353064128512
+    m_Key: Item_Pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365353772965888
+    m_Key: Item_Radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365356121776128
+    m_Key: Item_Tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365357531062272
+    m_Key: Item_Watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4051901386514432
+    m_Key: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8182687484272640
+    m_Key: Menu
     m_Metadata:
       m_Items: []
   - m_Id: 4173412650901504
     m_Key: Money
     m_Metadata:
       m_Items: []
-  - m_Id: 4173435908317184
-    m_Key: accept
+  - m_Id: 4054679672512512
+    m_Key: music
     m_Metadata:
       m_Items: []
-  - m_Id: 4173618310209536
-    m_Key: Quest
+  - m_Id: 8353611013611520
+    m_Key: NoticeBoard
     m_Metadata:
       m_Items: []
-  - m_Id: 4173645887758336
-    m_Key: Quest_empty
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4173717362892800
-    m_Key: Quset_Header
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4173777387577344
-    m_Key: Progress
+  - m_Id: 4521209862479872
+    m_Key: NPC_GREET_CITY_BOY
     m_Metadata:
       m_Items: []
   - m_Id: 4175611317641216
@@ -135,100 +207,48 @@ MonoBehaviour:
     m_Key: NPC2
     m_Metadata:
       m_Items: []
-  - m_Id: 4178121440813056
-    m_Key: shop
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4178186880344064
-    m_Key: end
-    m_Metadata:
-      m_Items: []
   - m_Id: 4179966552891392
     m_Key: NPCLawer
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4463865380134912
-    m_Key: QuestNameCollectApple
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4464139041693696
-    m_Key: 'QuestDescCollectApple '
     m_Metadata:
       m_Items: []
   - m_Id: 4466705087520768
     m_Key: OfferLine_Apple
     m_Metadata:
       m_Items: []
-  - m_Id: 4466719549480960
-    m_Key: InProgressLine_Apple
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4466739786997760
-    m_Key: CompleteLine_Apple
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4467742053687296
-    m_Key: QuestName_UseBus
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4467756515647488
-    m_Key: QuestDesc_UseBus
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4467767789936640
-    m_Key: ActionDesc_Travel
-    m_Metadata:
-      m_Items: []
   - m_Id: 4467779437518848
     m_Key: OfferLine_Lawyer
     m_Metadata:
       m_Items: []
-  - m_Id: 4468533573378048
-    m_Key: CompleteLine_Lawyer
+  - m_Id: 4072935170957312
+    m_Key: OfferLine_Mother
     m_Metadata:
       m_Items: []
-  - m_Id: 4521209862479872
-    m_Key: NPC_GREET_CITY_BOY
+  - m_Id: 225914576896
+    m_Key: Play
     m_Metadata:
       m_Items: []
-  - m_Id: 4523525449637888
-    m_Key: Q_LAWYER_TOOLS_NAME
+  - m_Id: 8355603614195712
+    m_Key: PLOT_PLANT_SEED
     m_Metadata:
       m_Items: []
-  - m_Id: 4523555447300096
-    m_Key: Q_LAWYER_TOOLS_DESC
+  - m_Id: 8359171998015488
+    m_Key: PLOT_TILL_SOIL
     m_Metadata:
       m_Items: []
-  - m_Id: 4523589777678336
-    m_Key: Q_TOOLS_REQ_ACTION
+  - m_Id: 4173777387577344
+    m_Key: Progress
     m_Metadata:
       m_Items: []
-  - m_Id: 4524209393819648
-    m_Key: Q_LAWYER_TOOLS_OFFER_1
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4524262640508928
-    m_Key: Q_LAWYER_TOOLS_OFFER_2
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4524305388855296
-    m_Key: Q_LAWYER_TOOLS_PROGRESS
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4524335927582720
-    m_Key: Q_LAWYER_TOOLS_COMPLETE
-    m_Metadata:
-      m_Items: []
-  - m_Id: 4535085714825216
-    m_Key: Q_LAWYER_PLANT_NAME
+  - m_Id: 4535372085125120
+    m_Key: Q_LAWYER_PLANT_COMPLETE
     m_Metadata:
       m_Items: []
   - m_Id: 4535138982486016
     m_Key: Q_LAWYER_PLANT_DESC
     m_Metadata:
       m_Items: []
-  - m_Id: 4535187971956736
-    m_Key: Q_LAWYER_PLANT_REQ_ACT
+  - m_Id: 4535085714825216
+    m_Key: Q_LAWYER_PLANT_NAME
     m_Metadata:
       m_Items: []
   - m_Id: 4535253944164352
@@ -243,8 +263,344 @@ MonoBehaviour:
     m_Key: Q_LAWYER_PLANT_PROGRESS
     m_Metadata:
       m_Items: []
-  - m_Id: 4535372085125120
-    m_Key: Q_LAWYER_PLANT_COMPLETE
+  - m_Id: 4535187971956736
+    m_Key: Q_LAWYER_PLANT_REQ_ACT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524335927582720
+    m_Key: Q_LAWYER_TOOLS_COMPLETE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523555447300096
+    m_Key: Q_LAWYER_TOOLS_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523525449637888
+    m_Key: Q_LAWYER_TOOLS_NAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524209393819648
+    m_Key: Q_LAWYER_TOOLS_OFFER_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524262640508928
+    m_Key: Q_LAWYER_TOOLS_OFFER_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4524305388855296
+    m_Key: Q_LAWYER_TOOLS_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4523589777678336
+    m_Key: Q_TOOLS_REQ_ACTION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173618310209536
+    m_Key: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173645887758336
+    m_Key: Quest_empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6240082966011904
+    m_Key: QuestDesc_MissingChild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467756515647488
+    m_Key: QuestDesc_UseBus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4464139041693696
+    m_Key: 'QuestDescCollectApple '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072872961040384
+    m_Key: QuestName_MissingChild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4467742053687296
+    m_Key: QuestName_UseBus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4463865380134912
+    m_Key: QuestNameCollectApple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1528564736000
+    m_Key: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173717362892800
+    m_Key: Quset_Header
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173256056561664
+    m_Key: Req
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8181894685319168
+    m_Key: Resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4173259005157376
+    m_Key: ReWard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8182555409833984
+    m_Key: 'SaveGame
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366121934577664
+    m_Key: Seed_Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366122601472000
+    m_Key: Seed_Avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366295843004416
+    m_Key: Seed_Carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366298934206464
+    m_Key: Seed_Cornflour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366301081690112
+    m_Key: Seed_Garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366123377418240
+    m_Key: Seed_Lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366124082061312
+    m_Key: Seed_Mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366131799580672
+    m_Key: Seed_Onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366139416436736
+    m_Key: Seed_Orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366142167900160
+    m_Key: Seed_Pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366199181074432
+    m_Key: Seed_Pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366205954875392
+    m_Key: Seed_Potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366292894408704
+    m_Key: Seed_Pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366302155431936
+    m_Key: Seed_Radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366303296282624
+    m_Key: Seed_Tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366304739123200
+    m_Key: Seed_Watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4096596863016960
+    m_Key: sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4055145902956544
+    m_Key: "S\xE9nitivity"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 929848811520
+    m_Key: Setting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4178121440813056
+    m_Key: shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072838513221632
+    m_Key: talk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072907593408512
+    m_Key: Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354768104644608
+    m_Key: TREE_CHOP_SAPLING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354769753006080
+    m_Key: TREE_CHOP_TREE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354775369179136
+    m_Key: TREE_FERTILIZE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354800123961344
+    m_Key: TREE_GROWING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354771531390976
+    m_Key: TREE_HARVEST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354800925073408
+    m_Key: TREE_REGROWING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354773473353728
+    m_Key: TREE_WATER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517416247025664
+    m_Key: Egg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517433921822720
+    m_Key: Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517505657004032
+    m_Key: 'Rock
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517535189098496
+    m_Key: 'Wood
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517556798152704
+    m_Key: Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517577132138496
+    m_Key: FishingPole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517974215286784
+    m_Key: Plow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8518151886004224
+    m_Key: Hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530068331487232
+    m_Key: 'Chicken
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530137541697536
+    m_Key: BigChest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530171230347264
+    m_Key: ChikenCoopLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530222807703552
+    m_Key: ChickenCoop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530481373962240
+    m_Key: Fence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530512512475136
+    m_Key: UpFarm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530540094218240
+    m_Key: Well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533841787412480
+    m_Key: NPC_ResourceMerchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533842886320128
+    m_Key: NPC_ProduceMerchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533844434018304
+    m_Key: NPC_ToolMerchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8682786912133120
+    m_Key: Interact_Sit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8682789114142720
+    m_Key: Interact_OpenBus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8683263246655488
+    m_Key: Interact_Stand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8688878991892480
+    m_Key: Sleep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8688993571889152
+    m_Key: Value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8689064405295104
+    m_Key: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8695852554969088
+    m_Key: 'SaveDay
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8695854190747648
+    m_Key: SaveSlot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700174500028416
+    m_Key: NameNPCMom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700207878299648
+    m_Key: NameNPCBoy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700236500230144
+    m_Key: NameNPCHomeless
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700271837241344
+    m_Key: 'NameNPCLaywer
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9220188437143552
+    m_Key: The Watcher
     m_Metadata:
       m_Items: []
   m_Metadata:

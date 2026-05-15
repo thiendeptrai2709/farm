@@ -18,6 +18,7 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Hệ thống Ngồi")]
     public bool isSitting = false;
     private Chair currentChair;
+    private int currentSeatIndex = -1;
 
     private void Awake()
     {
@@ -173,28 +174,27 @@ public class PlayerInteraction : MonoBehaviour
             ExecuteInteraction(target);
         }
     }
-    public void SitDown(Chair chair)
+    public void SitDown(Chair chair, int seatIndex)
     {
-        if (chair == null || chair.sitPoint == null) return;
+        if (chair == null || chair.sitPoints == null || seatIndex < 0 || seatIndex >= chair.sitPoints.Length) return;
 
         isSitting = true;
         currentChair = chair;
-        chair.isOccupied = true;
+        currentSeatIndex = seatIndex; // Lưu số slot
+        chair.occupiedSeats[seatIndex] = true; // Khóa slot
 
         CharacterController cc = GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
-        
+
         PlayerMovement movement = GetComponent<PlayerMovement>();
         if (movement != null) movement.isActionLocked = true;
 
-        // 2. Giật (Snap) người vào vị trí mặt ghế
-        transform.position = chair.sitPoint.position;
-        transform.rotation = chair.sitPoint.rotation;
+        Transform targetSitPoint = chair.sitPoints[seatIndex];
+        transform.position = targetSitPoint.position;
+        transform.rotation = targetSitPoint.rotation;
 
-        // 3. Chạy Animation ngồi
         if (playerAnimator != null) playerAnimator.SetBool("IsSitting", true);
 
-        // 4. Hiện hướng dẫn đứng lên
         if (InteractionUI.Instance != null)
             InteractionUI.Instance.ShowPrompt(transform, "[E] / [WASD] Đứng lên", false, 0);
     }
@@ -202,16 +202,16 @@ public class PlayerInteraction : MonoBehaviour
     public void StandUp()
     {
         isSitting = false;
-        if (currentChair != null) currentChair.isOccupied = false;
+        if (currentChair != null && currentSeatIndex != -1)
+        {
+            currentChair.LeaveChair(currentSeatIndex); // Nhả đúng cái slot đang ngồi ra
+        }
 
-        // 1. Mở khóa tay chân
         PlayerMovement movement = GetComponent<PlayerMovement>();
         if (movement != null) movement.isActionLocked = false;
 
-        // 2. Tắt Animation ngồi
         if (playerAnimator != null) playerAnimator.SetBool("IsSitting", false);
 
-        // 3. Dịch người ra chỗ thoát để không kẹt vào lưới (Mesh) của ghế
         if (currentChair != null && currentChair.exitPoint != null)
         {
             transform.position = currentChair.exitPoint.position;
@@ -220,10 +220,31 @@ public class PlayerInteraction : MonoBehaviour
         if (cc != null) cc.enabled = true;
 
         currentChair = null;
+        currentSeatIndex = -1;
         if (InteractionUI.Instance != null) InteractionUI.Instance.HidePrompt();
     }
     private bool IsActionable(IInteractable target)
     {
+        PlacedProp placedProp = (target as MonoBehaviour)?.GetComponent<PlacedProp>();
+        if (placedProp != null)
+        {
+            if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+            {
+                ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+                if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Axe)
+                {
+                    Chest chestTarget = placedProp.GetComponent<Chest>();
+                    if (chestTarget != null && !chestTarget.IsEmpty())
+                    {
+                        return false; // Rương còn đồ -> Trả về false -> Cấm vung rìu!
+                    }
+
+                    return true; // Rương rỗng (hoặc là Hàng rào/Lò rèn) -> Cho phép bổ!
+                }
+            }
+            if (!(target is Chest) && !(target is FoodTrough)) return false;
+        }
+
         if (target is FarmPlot plot)
         {
             if (plot.currentState == PlotState.Tilled || plot.currentState == PlotState.Grown) return true;
@@ -323,10 +344,29 @@ public class PlayerInteraction : MonoBehaviour
                     animToPlay = "Digging";
                     autoActionTarget = null;
                 }
-                else if (tool.toolType == ToolType.Axe && target is TreePit)
+                else if (tool.toolType == ToolType.Axe)
                 {
-                    requiresLockAndEvent = true;
-                    animToPlay = "Chopping";
+                    if (target is TreePit)
+                    {
+                        requiresLockAndEvent = true;
+                        animToPlay = "Chopping";
+                    }
+                    else
+                    {
+                        // [MẸO TRÁO MỤC TIÊU]: Nếu đang cầm rìu chĩa vào đồ tự xây
+                        PlacedProp pProp = (target as MonoBehaviour)?.GetComponent<PlacedProp>();
+                        if (pProp != null)
+                        {
+                            requiresLockAndEvent = true;
+                            animToPlay = "Chopping";
+
+                            // Ghi đè: Ép cái target thành PlacedProp để nó chạy hàm Destroy thay vì hàm Mở rương!
+                            target = pProp;
+
+                            // Đập đồ cũng tụt máu rìu
+                            if (InventoryManager.Instance != null) InventoryManager.Instance.DeductEquippedToolDurability(1f);
+                        }
+                    }
                 }
                 else if (tool.toolType == ToolType.FishingRod && target is FishingZone)
                 {

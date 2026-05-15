@@ -75,6 +75,7 @@ public class LoadingManager : MonoBehaviour
                 MarketManager.Instance.SaveShopData(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Chợ vào RAM trước khi chuyển Map!");
             }
+            SaveManager.Instance.SaveAllNPCsToData(currentData);
         }
         // Truyền thẳng cái prefab xuống cho Giai đoạn 2 để nó đẻ Player
         StartCoroutine(LoadAsynchronously(sceneName, prefab));
@@ -104,6 +105,7 @@ public class LoadingManager : MonoBehaviour
 
         // Chờ đến khi Scene mới thực sự hiện ra (Trạng thái IsDone = true)
         yield return new WaitUntil(() => operation.isDone);
+
 
         // ==========================================
         // GIAI ĐOẠN 2: ÉP CAMERA LÀM VIỆC (80% -> 100%)
@@ -254,6 +256,33 @@ public class LoadingManager : MonoBehaviour
         OnPlayerReady?.Invoke();
         yield return null;
         yield return null;
+
+        if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+        {
+            GameData data = SaveManager.Instance.GetCurrentData();
+
+            NPCVillager[] villagers = FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
+            foreach (var v in villagers)
+            {
+                var saved = data.savedNPCs.Find(n => n.npcName == v.gameObject.name);
+                if (saved != null)
+                {
+                    UnityEngine.AI.NavMeshAgent agent = v.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                    if (agent != null) agent.Warp(saved.position);
+                }
+            }
+
+            NPCMerchant[] merchants = FindObjectsByType<NPCMerchant>(FindObjectsSortMode.None);
+            foreach (var m in merchants)
+            {
+                var saved = data.savedNPCs.Find(n => n.npcName == m.gameObject.name);
+                if (saved != null)
+                {
+                    UnityEngine.AI.NavMeshAgent agent = m.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                    if (agent != null) agent.Warp(saved.position);
+                }
+            }
+        }
         yield return new WaitForSeconds(0.3f);
 
         loadingPanel.SetActive(false);

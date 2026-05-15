@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 
 [System.Serializable]
+public class SavedNPCData
+{
+    public string npcName;
+    public Vector3 position;
+}
+[System.Serializable]
 public class SavedConstructionSite
 {
     public string siteID;
@@ -119,7 +125,7 @@ public class GameData
     public List<SavedPropData> savedProps;
     public List<SavedTroughData> savedTroughs;
     public List<SavedPriceMultiplier> savedPrices;
-
+    public List<SavedNPCData> savedNPCs;
     public GameData()
     {
         lastSceneName = "Farm";
@@ -146,6 +152,7 @@ public class GameData
         savedProps = new List<SavedPropData>();
         savedTroughs = new List<SavedTroughData>();
         savedPrices = new List<SavedPriceMultiplier>();
+        savedNPCs = new List<SavedNPCData>();
     }
     [System.Serializable]
     public class SavedPriceMultiplier

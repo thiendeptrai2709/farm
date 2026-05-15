@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 804f64c9d65b4614ea07e766e8965791, type: 3}
   m_Name: FishingPole
   m_EditorClassIdentifier: Assembly-CSharp::ToolItemData
-  displayName: FishingPole
-  icon: {fileID: 21300000, guid: 25da470dde7182d46b32899dbf4747f3, type: 3}
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8517577132138496
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 13d9dffde8a7c2f45be5002d4b97f10b, type: 3}
   itemType: 0
   isStackable: 0
   maxStack: 99
@@ -25,3 +33,6 @@ MonoBehaviour:
   durability: 15
   staminaCost: 5
   toolPrefab: {fileID: 4241650655213185724, guid: 7dfb6c68799fcb64b9d10faac2ba6cf6, type: 3}
+  references:
+    version: 2
+    RefIds: []

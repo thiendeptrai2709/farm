@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using UnityEngine.Localization; // Chức năng: Khai báo thư viện ngôn ngữ
 public class SleepUIManager : MonoBehaviour
 {
     public static SleepUIManager Instance { get; private set; }
@@ -11,6 +11,8 @@ public class SleepUIManager : MonoBehaviour
     public Slider sleepSlider;
     public TextMeshProUGUI sleepTimeText;
 
+
+    public LocalizedString textHours;
     private void Awake()
     {
         // Chức năng: Khởi tạo Singleton
@@ -38,7 +40,8 @@ public class SleepUIManager : MonoBehaviour
     // Chức năng: Cập nhật chữ hiển thị số giờ ngủ
     private void UpdateSleepText(float value)
     {
-        sleepTimeText.text = value.ToString("0") + " Tiếng";
+        string hoursStr = textHours.IsEmpty ? "Tiếng" : textHours.GetLocalizedString();
+        sleepTimeText.text = $"{value.ToString("0")} {hoursStr}";
     }
 
     // Chức năng: Nút xác nhận ngủ
@@ -56,7 +59,16 @@ public class SleepUIManager : MonoBehaviour
         sleepPanel.SetActive(false);
 
     }
+    public void IncreaseSleepTime()
+    {
+        sleepSlider.value += 1f;
+    }
 
+    // Chức năng: Giảm thời gian ngủ đi 1 tiếng
+    public void DecreaseSleepTime()
+    {
+        sleepSlider.value -= 1f;
+    }
     // Chức năng: Nút hủy
     public void CancelSleep()
     {

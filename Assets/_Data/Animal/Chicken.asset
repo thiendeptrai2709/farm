@@ -12,7 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7a7d88aa2f22a64a917f0bbd3284419, type: 3}
   m_Name: Chicken
   m_EditorClassIdentifier: Assembly-CSharp::AnimalData
-  animalName: Chiken
-  icon: {fileID: 21300000, guid: 4824e84ac31b98e4bb60593af81f2237, type: 3}
+  localizedAnimalName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8530068331487232
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 8d40175e55e255649831b48ef9c309ec, type: 3}
   spawnTime: 10
   animalPrefab: {fileID: 8240478364608380899, guid: 096676b7b9feb6b4a8d86d7b1b48a2db, type: 3}
+  references:
+    version: 2
+    RefIds: []

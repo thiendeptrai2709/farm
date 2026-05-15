@@ -12,8 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Res
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  npcName: "Ng\u01B0\u1EDDi bu\xF4n t\xE0i nguy\xEAn"
+  localizedNpcName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8533841787412480
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   merchantMoney: 1984
+  minDailyMoney: 500
+  maxDailyMoney: 2000
   maxShopSlots: 10
   itemsForSale:
   - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
@@ -26,3 +36,6 @@ MonoBehaviour:
   minQuantity: 1
   maxQuantity: 10
   acceptedItemTypesToBuy: 03000000
+  references:
+    version: 2
+    RefIds: []

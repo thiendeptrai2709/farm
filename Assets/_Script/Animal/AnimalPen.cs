@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Localization;
 public class AnimalPen : MonoBehaviour, IInteractable
 {
     [Header("Trạng thái Chuồng")]
@@ -15,6 +15,11 @@ public class AnimalPen : MonoBehaviour, IInteractable
     public List<AnimalMovement> currentAnimals = new List<AnimalMovement>();
 
     public string penID;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString textSpawning;
+    public LocalizedString textBarnFull;
+    public LocalizedString textOpenBuyPanel;
     private void Update()
     {
         // LOGIC ĐẾM NGƯỢC THỜI GIAN
@@ -45,18 +50,25 @@ public class AnimalPen : MonoBehaviour, IInteractable
     public string GetInteractText()
     {
         // 1. Nếu đang đẻ -> Hiện chữ Đang đẻ (Không có nút [E] để bấm)
-        if (isProcessing) return $"Đang đẻ {animalToSpawn.animalName}... ({(int)processTimer}s)";
+        if (isProcessing)
+        {
+            string spawnStr = textSpawning.IsEmpty ? "Đang đẻ" : textSpawning.GetLocalizedString();
+            return $"{spawnStr} {animalToSpawn.animalName}... ({(int)processTimer}s)";
+        }
 
         // 2. Nếu đã full -> Hiện chữ Full (Không có nút [E] để bấm)
-        if (GetAliveAnimalCount() >= GetCurrentMaxCapacity()) return "Chuồng đã full!";
+        if (GetAliveAnimalCount() >= GetCurrentMaxCapacity())
+        {
+            return textBarnFull.IsEmpty ? "Chuồng đã full!" : textBarnFull.GetLocalizedString();
+        }
 
         // 3. Nếu rảnh rỗi và còn chỗ -> Hiện nút tương tác bình thường
-        return "[E] Mở bảng mua vật nuôi";
+        return textOpenBuyPanel.IsEmpty ? "[E] Mở bảng mua vật nuôi" : textOpenBuyPanel.GetLocalizedString();
     }
     public int GetAliveAnimalCount()
     {
-        // Tự động quét và dọn dẹp những con đã chết hoặc bị xóa đi để trả lại Slot trống cho chuồng
-        currentAnimals.RemoveAll(animal => animal == null || animal.currentState == AnimalState.Dead);
+        // Chức năng: Tự động quét và dọn dẹp những con bị xóa đi (nếu có) để trả lại Slot trống cho chuồng
+        currentAnimals.RemoveAll(animal => animal == null);
         return currentAnimals.Count;
     }
     public void Interact()
@@ -114,8 +126,7 @@ public class AnimalPen : MonoBehaviour, IInteractable
         myPenData.animalToSpawnName = (this.animalToSpawn != null && this.animalToSpawn.animalPrefab != null) ? this.animalToSpawn.animalPrefab.name : "";
         myPenData.lastSavedTimeTicks = System.DateTime.Now.Ticks;
 
-        currentAnimals.RemoveAll(animal => animal == null || animal.currentState == AnimalState.Dead);
-
+        currentAnimals.RemoveAll(animal => animal == null);
         foreach (var animal in currentAnimals)
         {
             if (animal != null)

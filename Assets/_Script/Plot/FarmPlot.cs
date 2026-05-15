@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Localization;
 
 // 1. Thêm trạng thái Grown (Đã lớn) vào danh sách
 public enum PlotState { Tilled, Planted, Grown }
@@ -32,6 +33,13 @@ public class FarmPlot : MonoBehaviour, IInteractable
     private Transform playerTransform;
 
     public ParticleSystem waterSplashEffect;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString textPlantSeed;
+    public LocalizedString textWater;
+    public LocalizedString textFertilize;
+    public LocalizedString textGrowing;
+    public LocalizedString textHarvest;
     public void LoadData(FarmPlotData data, SeedItemData seed)
     {
         this.plotID = data.id;
@@ -189,16 +197,30 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
-        if (currentState == PlotState.Tilled) return "[E] Plant Seed";
+        if (currentState == PlotState.Tilled)
+            return textPlantSeed.IsEmpty ? "[E] Plant Seed" : textPlantSeed.GetLocalizedString();
+
         if (currentState == PlotState.Planted)
         {
-            if (CanBeWatered()) return "[E] Water Plant";
-            if (CanBeFertilized()) return "[E] Fertilize";
+            if (CanBeWatered())
+                return textWater.IsEmpty ? "[E] Water Plant" : textWater.GetLocalizedString();
+
+            if (CanBeFertilized())
+                return textFertilize.IsEmpty ? "[E] Fertilize" : textFertilize.GetLocalizedString();
 
             int percent = Mathf.Clamp(Mathf.RoundToInt((growTimer / GetBaseTime()) * 100), 0, 100);
-            return $"Growing... {percent}%";
+            string growStr = textGrowing.IsEmpty ? "Growing..." : textGrowing.GetLocalizedString();
+            return $"{growStr} {percent}%";
         }
-        if (currentState == PlotState.Grown) return $"[E] Harvest {plantedSeed.displayName} (100%)";
+
+        if (currentState == PlotState.Grown)
+        {
+            string harvestStr = textHarvest.IsEmpty ? "[E] Harvest" : textHarvest.GetLocalizedString();
+            // Lấy tên của Nông Sản (yieldItem) thay vì Hạt Giống
+            string cropName = (plantedSeed.yieldItem != null) ? plantedSeed.yieldItem.displayName : "Nông sản";
+            return $"{harvestStr} {cropName} (100%)";
+        }
+
         return "";
     }
     public float GetGrowProgress()

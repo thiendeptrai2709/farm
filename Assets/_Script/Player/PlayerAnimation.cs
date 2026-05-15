@@ -14,10 +14,6 @@ public class PlayerAnimation : MonoBehaviour
     public float dampTime = 0.1f;
     private float lastRotationY;
 
-    [Header("Tinh chỉnh Rơi (Chống giật)")]
-    public float fallTimeout = 0.15f; // Thời gian châm chước (0.15s là chuẩn mực game AAA)
-    private float fallTimeoutDelta;
-
     private bool wasLocked = false;
     private void Start()
     {
@@ -27,7 +23,6 @@ public class PlayerAnimation : MonoBehaviour
         gravityScript = GetComponent<PlayerGravityAndJump>(); // Khởi tạo
 
         lastRotationY = transform.eulerAngles.y;
-        fallTimeoutDelta = fallTimeout; // Nạp đầy bình đếm ngược khi mới vào game
     }
 
     private void Update()
@@ -125,25 +120,8 @@ public class PlayerAnimation : MonoBehaviour
 
     private void HandleJumpAndFallAnimation()
     {
-        // [FIX BỆNH NHẠY CẢM]: Dùng bộ đếm thời gian thay vì tin tưởng mù quáng vào controller.isGrounded
-        if (controller.isGrounded)
-        {
-            fallTimeoutDelta = fallTimeout; // Đang chạm đất -> Nạp đầy thời gian châm chước
-            anim.SetBool("IsGrounded", true);
-        }
-        else
-        {
-            // Vừa hụt chân -> Trừ dần thời gian châm chước
-            if (fallTimeoutDelta >= 0.0f)
-            {
-                fallTimeoutDelta -= Time.deltaTime;
-            }
-            else
-            {
-                // Hết thời gian châm chước mà vẫn chưa chạm đất -> Đích thị là đang rơi tự do rồi!
-                anim.SetBool("IsGrounded", false);
-            }
-        }
+        // Chức năng: Đọc trực tiếp trạng thái chạm đất "đã qua xử lý chống giật" từ lõi Vật lý
+        anim.SetBool("IsGrounded", gravityScript.IsStableGrounded);
 
         // TRUYỀN VẬN TỐC Y VÀO ANIMATOR
         anim.SetFloat("VelocityY", gravityScript.VelocityY);

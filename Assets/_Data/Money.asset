@@ -12,7 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f830dacf03fd5f408dacda861cff1a2, type: 3}
   m_Name: Money
   m_EditorClassIdentifier: Assembly-CSharp::MaterialItemData
-  displayName: Money
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 4173412650901504
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   icon: {fileID: 21300000, guid: a5e15db1384d7b54a9485ae4b9c22cef, type: 3}
   itemType: 3
   isStackable: 1
@@ -20,3 +28,6 @@ MonoBehaviour:
   sellPrice: 0
   buyPrice: 0
   materialCategory: 3
+  references:
+    version: 2
+    RefIds: []

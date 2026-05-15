@@ -60,7 +60,12 @@ public class ChestManager : MonoBehaviour
                     chestScript.chestID = savedChest.chestID;
                     chestScript.prefabID = savedChest.prefabID;
                     chestScript.isBuiltByPlayer = true;
-                    chestScript.LoadSlotsFromSave(savedChest.slots); // Nhét đồ vào rương
+                    chestScript.LoadSlotsFromSave(savedChest.slots);
+
+                    if (PlacedPropManager.Instance != null)
+                    {
+                        PlacedPropManager.Instance.RegisterProp(go, savedChest.prefabID, savedChest.chestID);
+                    }
                 }
             }
             else
@@ -89,7 +94,11 @@ public class ChestManager : MonoBehaviour
         chestScript.chestID = newID;
         chestScript.prefabID = prefabID; // Gắn mác sản phẩm
         chestScript.isBuiltByPlayer = true; // Đóng dấu Hàng tự chế
-
+        if (PlacedPropManager.Instance != null)
+        {
+            // Do Rương quản lý ID riêng, ta truyền luôn `newID` để PlacedProp đồng bộ
+            PlacedPropManager.Instance.RegisterProp(newChest, prefabID, newID);
+        }
         Debug.Log($"Người chơi đã đóng 1 {prefabID} với ID: {newID}");
     }
     public void SaveAllChestsToData(GameData data)

@@ -16,18 +16,18 @@ MonoBehaviour:
   isAutoStoryQuest: 1
   questName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 4072872961040384
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   description:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 6240082966011904
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -35,8 +35,8 @@ MonoBehaviour:
   requiredPreviousQuest: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
   requiredDay: 2
   questType: 0
-  requiredItem: {fileID: 0}
-  requiredAmount: 0
+  requiredItem: {fileID: 11400000, guid: ec21f1b5f412fe743ad86f8d7fb21c0f, type: 2}
+  requiredAmount: 1
   coinReward: 0
   itemReward: {fileID: 0}
   itemRewardAmount: 0
@@ -52,43 +52,27 @@ MonoBehaviour:
     m_LocalVariables: []
   offerLines:
   - m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  - m_TableReference:
-      m_TableCollectionName: 
-    m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 4072935170957312
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   inProgressLines:
   - m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 6238751828140032
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   completeLines:
   - m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
     m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  - m_TableReference:
-      m_TableCollectionName: 
-    m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 6238816651108352
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0

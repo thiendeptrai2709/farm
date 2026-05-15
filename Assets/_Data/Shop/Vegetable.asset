@@ -12,8 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Vegetable
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  npcName: "Ng\u01B0\u1EDDi b\xE1n rau"
+  localizedNpcName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8533842886320128
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   merchantMoney: 2510
+  minDailyMoney: 500
+  maxDailyMoney: 2000
   maxShopSlots: 10
   itemsForSale:
   - item: {fileID: 11400000, guid: 4c359654c2a6f23418b7830a2d11c636, type: 2}
@@ -76,3 +86,6 @@ MonoBehaviour:
   minQuantity: 5
   maxQuantity: 15
   acceptedItemTypesToBuy: 0100000002000000
+  references:
+    version: 2
+    RefIds: []

@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
+using UnityEngine.Localization;
+using UnityEngine.SceneManagement;
 
 public class HammerBuildManager : MonoBehaviour
 {
@@ -15,6 +18,8 @@ public class HammerBuildManager : MonoBehaviour
     public LayerMask groundLayer;
     public LayerMask obstacleLayer;
 
+    public float magneticSnapRange = 1.2f;
+
     // [THÊM MỚI]: Lưới để khóa vị trí (Đồng bộ với FarmingZone)
     [Header("Grid Settings")]
     public float gridSize = 1.2f;
@@ -26,6 +31,12 @@ public class HammerBuildManager : MonoBehaviour
     private GameObject currentHologram;
     private MeshRenderer[] hologramRenderers;
 
+    public TextMeshProUGUI buildHintText; 
+    public string farmSceneName = "Farm";
+
+    [Header("Đa Ngôn Ngữ - Gợi ý xây dựng")]
+    public LocalizedString textPlacingHint;
+    public LocalizedString textOpenMenuHint;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -35,13 +46,17 @@ public class HammerBuildManager : MonoBehaviour
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
+
+        if (buildHintText != null)
+        {
+            buildHintText.text = "";
+        }
     }
 
     private void Update()
     {
         if (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen())
         {
-            // Tránh việc đang bật UI Hammer mà nó bị chặn cất búa
             if (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen()) { /* Bỏ qua */ }
             else return;
         }
@@ -49,6 +64,9 @@ public class HammerBuildManager : MonoBehaviour
         if (InventoryManager.Instance == null || InventoryManager.Instance.selectedHotbarIndex == -1)
         {
             if (isPlacing) CancelPlacement();
+
+            // Cất tay không -> Tắt chữ
+            if (buildHintText != null) buildHintText.text = "";
             return;
         }
 
@@ -56,39 +74,56 @@ public class HammerBuildManager : MonoBehaviour
 
         if (slot.item is ToolItemData tool && tool.toolType == ToolType.Hammer)
         {
-            if (isPlacing && currentHologram != null)
+            // ==========================================
+            // [HỆ THỐNG GỢI Ý THÔNG MINH]
+            // ==========================================
+            if (buildHintText != null && SceneManager.GetActiveScene().name == farmSceneName)
             {
-                HandleHologramPlacement();
-            }
-            else
-            {
-                if (inputHandler.BuildMenuTriggered)
+                if (buildHintText != null && SceneManager.GetActiveScene().name == farmSceneName)
                 {
-                    if (HammerUIManager.Instance != null && !HammerUIManager.Instance.IsOpen())
+                    if (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen())
                     {
-                        // Đang cầm bóng mờ mà bấm B -> Cất bóng mờ đi, mở bảng chọn đồ mới!
-                        if (isPlacing) CancelPlacement();
-
-                        HammerUIManager.Instance.OpenUI(smallPropBlueprints);
+                        buildHintText.text = ""; // Đang bật bảng chọn đồ thì giấu chữ đi cho đỡ vướng
+                    }
+                    else if (isPlacing)
+                    {
+                        // Đang cầm bóng mờ
+                        buildHintText.text = textPlacingHint.IsEmpty ? "[B] Đổi mẫu   |   [Chuột phải/ESC] Hủy" : textPlacingHint.GetLocalizedString();
                     }
                     else
                     {
-                        // 2. Đang bật -> Tắt đi
-                        HammerUIManager.Instance.CloseUI();
+                        // Vừa rút búa ra chưa làm gì
+                        buildHintText.text = textOpenMenuHint.IsEmpty ? "[B] Mở Menu xây dựng" : textOpenMenuHint.GetLocalizedString();
                     }
                 }
-                else if (isPlacing && currentHologram != null)
+            }
+                // ==========================================
+
+                if (inputHandler.BuildMenuTriggered)
+            {
+                if (HammerUIManager.Instance != null && !HammerUIManager.Instance.IsOpen())
                 {
-                    HandleHologramPlacement();
+                    if (isPlacing) CancelPlacement();
+                    HammerUIManager.Instance.OpenUI(smallPropBlueprints);
                 }
+                else if (HammerUIManager.Instance != null)
+                {
+                    HammerUIManager.Instance.CloseUI();
+                }
+            }
+            else if (isPlacing && currentHologram != null)
+            {
+                HandleHologramPlacement();
             }
         }
         else
         {
             if (isPlacing) CancelPlacement();
+
+            // Cất búa cầm Cuốc/Rìu -> Tắt chữ
+            if (buildHintText != null) buildHintText.text = "";
         }
     }
-
     public void StartPlacing(BuildingBlueprint blueprint)
     {
         if (blueprint.prefabToBuild == null) return;
@@ -109,27 +144,32 @@ public class HammerBuildManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
         {
-            // [ĐÃ SỬA]: Học cách tạo lưới của FarmingZone
             Vector3 rawPos = hit.point;
 
-            // Ép tọa độ về các mốc chia hết cho gridSize (vd: 1.2, 2.4, 3.6...)
-            float snappedX = Mathf.Floor(rawPos.x / gridSize) * gridSize + (gridSize / 2f);
-            float snappedZ = Mathf.Floor(rawPos.z / gridSize) * gridSize + (gridSize / 2f);
+            // Đưa vị trí chuột qua bộ lọc Nam Châm. Biến isSnapped sẽ báo true nếu bị hút vào đồ khác.
+            bool isSnapped;
+            Vector3 snappedPos = ApplyMagneticSnap(rawPos, out isSnapped);
 
-            // Gán vị trí đã khóa lưới (Snap to grid)
-            Vector3 snappedPos = new Vector3(snappedX, rawPos.y, snappedZ);
             currentHologram.transform.position = snappedPos;
 
-            // Xoay 90 độ (Xây nhà thì nên xoay 90 độ thay vì 45 độ như trước cho dễ xếp gọn)
-            if (Mouse.current.scroll.ReadValue().y > 0) currentHologram.transform.Rotate(0, 90f, 0);
-            if (Mouse.current.scroll.ReadValue().y < 0) currentHologram.transform.Rotate(0, -90f, 0);
+            // Nếu KHÔNG bị hút nam châm thì mới cho phép lăn chuột xoay góc tự do 15 độ
+            // Nếu BỊ HÚT thì nó phải nằm thẳng hàng với món đồ cũ, cấm xoay!
+            if (!isSnapped)
+            {
+                if (Mouse.current.scroll.ReadValue().y > 0) currentHologram.transform.Rotate(0, 15f, 0);
+                if (Mouse.current.scroll.ReadValue().y < 0) currentHologram.transform.Rotate(0, -15f, 0);
+            }
 
             Vector3 playerPosXZ = new Vector3(transform.position.x, 0, transform.position.z);
             Vector3 targetPosXZ = new Vector3(snappedPos.x, 0, snappedPos.z);
+
             float distanceToTarget = Vector3.Distance(playerPosXZ, targetPosXZ);
             bool inRange = distanceToTarget <= maxBuildRange;
-            bool isClear = CheckPlacementValid(currentHologram.transform.position, currentHologram.transform.rotation);
+
+            // Gọi hàm check va chạm bản Động (Dynamic)
+            bool isClear = CheckPlacementValid(currentHologram);
             bool isValid = inRange && isClear;
+
             UpdateHologramColor(isValid);
 
             if (inputHandler.ClickTriggered && isValid)
@@ -144,11 +184,97 @@ public class HammerBuildManager : MonoBehaviour
         }
     }
 
-    private bool CheckPlacementValid(Vector3 pos, Quaternion rot)
+    // ========================================================
+    // CƠ CHẾ NAM CHÂM THÔNG MINH (TỰ ĐO KÍCH THƯỚC)
+    // ========================================================
+    private Vector3 ApplyMagneticSnap(Vector3 rawPos, out bool isSnapped)
     {
-        // Thu nhỏ hộp va chạm lại một chút so với lưới để đặt 2 cái rương sát nhau không bị báo lỗi đỏ
-        Vector3 boxSize = new Vector3(gridSize * 0.8f, gridSize * 0.8f, gridSize * 0.8f);
-        return !Physics.CheckBox(pos + Vector3.up * (gridSize / 2f), boxSize / 2, rot, obstacleLayer);
+        isSnapped = false;
+
+        // Bắt buộc đồ vật của bạn phải gắn BoxCollider để tính năng này đo được kích thước!
+        BoxCollider holoBox = currentHologram.GetComponentInChildren<BoxCollider>();
+        if (holoBox == null) return rawPos;
+
+        // Quét tìm đồ vật xung quanh trong bán kính 3 mét
+        Collider[] nearbyObstacles = Physics.OverlapSphere(rawPos, magneticSnapRange, obstacleLayer);
+        BoxCollider closestObj = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var col in nearbyObstacles)
+        {
+            if (currentHologram != null && col.gameObject == currentHologram) continue;
+
+            BoxCollider box = col as BoxCollider;
+            if (box == null) continue; // Chỉ hút những đồ có BoxCollider
+
+            float dist = Vector3.Distance(rawPos, col.transform.position);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                closestObj = box;
+            }
+        }
+
+        // Đã tìm thấy một món đồ cũ ở gần
+        if (closestObj != null)
+        {
+            // Lấy KÍCH THƯỚC THẬT (chiều dài, rộng) của cả 2 món đồ
+            Vector3 anchorSize = Vector3.Scale(closestObj.size, closestObj.transform.lossyScale);
+            Vector3 holoSize = Vector3.Scale(holoBox.size, currentHologram.transform.lossyScale);
+
+            Vector3 anchorPos = closestObj.transform.position;
+            Vector3 dir = rawPos - anchorPos;
+
+            // Xác định xem chuột đang nằm ở mặt Cạnh Hông (Trục X) hay mặt Trước Sau (Trục Z) của món đồ cũ
+            float dotX = Vector3.Dot(dir, closestObj.transform.right);
+            float dotZ = Vector3.Dot(dir, closestObj.transform.forward);
+
+            Vector3 snappedPos = anchorPos;
+
+            if (Mathf.Abs(dotX) > Mathf.Abs(dotZ))
+            {
+                // Nối vào Cạnh Hông -> Khoảng cách Khít = Nửa thân cục cũ + Nửa thân cục đang cầm
+                float distanceToKhit = (anchorSize.x / 2f) + (holoSize.x / 2f);
+                snappedPos += closestObj.transform.right * Mathf.Sign(dotX) * distanceToKhit;
+            }
+            else
+            {
+                // Nối vào Trước/Sau
+                float distanceToKhit = (anchorSize.z / 2f) + (holoSize.z / 2f);
+                snappedPos += closestObj.transform.forward * Mathf.Sign(dotZ) * distanceToKhit;
+            }
+
+            // Ép món đồ đang cầm xoay theo y hệt góc của đồ cũ để nối với nhau tạo thành đường thẳng
+            currentHologram.transform.rotation = closestObj.transform.rotation;
+
+            snappedPos.y = rawPos.y; // Chốt lại độ cao mặt đất
+            isSnapped = true;
+            return snappedPos;
+        }
+
+        return rawPos;
+    }
+
+    // ========================================================
+    // KIỂM TRA VA CHẠM THÔNG MINH (TỰ ĐO THEO SIZE MÓN ĐỒ)
+    // ========================================================
+    private bool CheckPlacementValid(GameObject hologram)
+    {
+        BoxCollider box = hologram.GetComponentInChildren<BoxCollider>();
+        if (box == null) return true; // Nếu lỡ quên gắn Collider thì cho đặt tự do
+
+        // Tính kích thước thật
+        Vector3 actualSize = Vector3.Scale(box.size, hologram.transform.lossyScale);
+
+        // Thu nhỏ cái Hộp va chạm ảo xuống còn 90%. 
+        // Bắt buộc phải có dòng này để khi 2 món đồ ghép khít vào nhau 100%, cái hộp va chạm không vô tình liếm sang đồ bên cạnh và báo lỗi Đỏ!
+        Vector3 collisionBoxSize = actualSize * 0.9f;
+
+        // Lấy đúng tâm của BoxCollider (phòng trường hợp cái tâm lệch so với gốc tọa độ)
+        Vector3 center = hologram.transform.TransformPoint(box.center);
+
+        // Trả về True nếu xung quanh không vướng thứ gì
+        return !Physics.CheckBox(center, collisionBoxSize / 2f, hologram.transform.rotation, obstacleLayer);
     }
 
     private void UpdateHologramColor(bool isValid)
@@ -224,7 +350,7 @@ public class HammerBuildManager : MonoBehaviour
         }
     }
 
-    private void CancelPlacement()
+    public void CancelPlacement()
     {
         isPlacing = false;
         blueprintToPlace = null;
@@ -233,6 +359,11 @@ public class HammerBuildManager : MonoBehaviour
         // [THÊM MỚI]: Đặt xong đồ hoặc Hủy bỏ thì phải ép chuột biến mất và khóa lại
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (buildHintText != null)
+        {
+            buildHintText.text = "";
+        }
     }
     private bool HasEnoughMaterials(BuildingBlueprint blueprint)
     {

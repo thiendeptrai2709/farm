@@ -84,8 +84,9 @@ public class PlayerInputHandler : MonoBehaviour
         }
         // 3. XỬ LÝ LĂN CHUỘT KHI ĐANG CHƠI (Không cuộn khi mở Balo)
         bool isPlacingBuilding = (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing());
+        bool isHammerUIOpen = (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen());
 
-        if (!isPlacingBuilding)
+        if (!isPlacingBuilding && !isHammerUIOpen)
         {
             InventoryManager.Instance.ScrollHotbar(ScrollValue);
         }

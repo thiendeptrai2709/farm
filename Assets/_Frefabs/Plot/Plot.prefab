@@ -112,9 +112,64 @@ MonoBehaviour:
   seedSprout: {fileID: 2575332047242933858}
   wateringCanItem: {fileID: 11400000, guid: 5487a6909ee4e62439c1ce70981f8b12, type: 2}
   fertilizerItem: {fileID: 11400000, guid: 359eb4ee6dc50cb40bf54512b74ff5fb, type: 2}
+  plotID: 
+  plantedSeed: {fileID: 0}
+  growTimer: 0
+  matureCropObject: {fileID: 0}
+  currentHarvestCount: 0
   needWaterIcon: {fileID: 4756203893155357920}
+  isWatered: 0
+  isFertilized: 0
   iconVisibleDistance: 20
   waterSplashEffect: {fileID: 6793377231561067602}
+  textPlantSeed:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8355603614195712
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textWater:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354773473353728
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textFertilize:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354775369179136
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textGrowing:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354800123961344
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textHarvest:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8354771531390976
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!65 &1557120284249960410
 BoxCollider:
   m_ObjectHideFlags: 0

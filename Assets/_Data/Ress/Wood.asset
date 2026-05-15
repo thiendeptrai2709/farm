@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f830dacf03fd5f408dacda861cff1a2, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: Assembly-CSharp::MaterialItemData
-  displayName: Wood
-  icon: {fileID: 21300000, guid: 56ba82a13b36379439051932900fc87f, type: 3}
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8517535189098496
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 052588ebeb19d074dbf9fe5f969629bb, type: 3}
   itemType: 3
   isStackable: 1
   maxStack: 36
   sellPrice: 10
   buyPrice: 12
+  materialCategory: 0
+  references:
+    version: 2
+    RefIds: []

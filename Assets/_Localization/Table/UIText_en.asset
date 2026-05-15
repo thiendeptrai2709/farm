@@ -247,6 +247,360 @@ MonoBehaviour:
     m_Localized: Very good. At this rate, the farm will be back in business soon.
     m_Metadata:
       m_Items: []
+  - m_Id: 4072872961040384
+    m_Localized: Shadows of the Forest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4072935170957312
+    m_Localized: Please help me! My son wandered into the forest and hasn't returned.
+      Please find him!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6238751828140032
+    m_Localized: Have you found my son yet? Every second feels like an eternity...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6238816651108352
+    m_Localized: So he went that way? Thank you... at least now I know he's still
+      out there. Please, you have to bring him back!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6240082966011904
+    m_Localized: Where could he have gone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8181894685319168
+    m_Localized: 'Resume '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8182555409833984
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8182687484272640
+    m_Localized: Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8353255609262080
+    m_Localized: '[E] Sleep'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8353611013611520
+    m_Localized: '[E] View Market Board'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354768104644608
+    m_Localized: '[E] Chop Sapling'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354769753006080
+    m_Localized: '[E] Chop Tree'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354771531390976
+    m_Localized: '[E] Harvest'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354773473353728
+    m_Localized: '[E] Water Plant'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354775369179136
+    m_Localized: '[E] Fertilize'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354800123961344
+    m_Localized: Growing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8354800925073408
+    m_Localized: Regrowing Fruits...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8355603614195712
+    m_Localized: '[E] Plant Seed'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8359171998015488
+    m_Localized: '[E] Till Soil'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8359881682640896
+    m_Localized: '[E] Open Design Table'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360119877165056
+    m_Localized: Spawning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360122188226560
+    m_Localized: Barn is full!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360123572346880
+    m_Localized: '[E] Open Animal Shop'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360657817624576
+    m_Localized: '[B] Change Model | [R-Click/ESC] Cancel'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8360667791679488
+    m_Localized: '[B] Open Build Menu'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365339327782912
+    m_Localized: Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365340518965248
+    m_Localized: Avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365342834221056
+    m_Localized: Carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365343505309696
+    m_Localized: Cornflour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365344176398336
+    m_Localized: Garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365344881041408
+    m_Localized: Lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365345615044608
+    m_Localized: Mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365346827198464
+    m_Localized: Onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365349981315072
+    m_Localized: Orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365350782427136
+    m_Localized: Pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365351524818944
+    m_Localized: Pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365352330125312
+    m_Localized: Potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365353064128512
+    m_Localized: Pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365353772965888
+    m_Localized: Radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365356121776128
+    m_Localized: Tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8365357531062272
+    m_Localized: Watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366121934577664
+    m_Localized: Apple Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366122601472000
+    m_Localized: Avocado Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366295843004416
+    m_Localized: Carrot Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366298934206464
+    m_Localized: 'Cornflour Seed '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366301081690112
+    m_Localized: Garlic Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366123377418240
+    m_Localized: Lemon Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366124082061312
+    m_Localized: Mango Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366131799580672
+    m_Localized: Onion Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366139416436736
+    m_Localized: Orange Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366142167900160
+    m_Localized: Pear Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366199181074432
+    m_Localized: Pineapple Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366205954875392
+    m_Localized: Potato Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366292894408704
+    m_Localized: Pumpkin Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366302155431936
+    m_Localized: Radish Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366303296282624
+    m_Localized: Tomato Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8366304739123200
+    m_Localized: Watermelon Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517416247025664
+    m_Localized: Egg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517433921822720
+    m_Localized: Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517505657004032
+    m_Localized: Rock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517535189098496
+    m_Localized: Wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517556798152704
+    m_Localized: Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517577132138496
+    m_Localized: Fishing Rod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8517974215286784
+    m_Localized: Hoe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8518151886004224
+    m_Localized: Hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530068331487232
+    m_Localized: Chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530137541697536
+    m_Localized: Large Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530171230347264
+    m_Localized: Coop Level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530222807703552
+    m_Localized: Chicken Coop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530481373962240
+    m_Localized: Fence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530512512475136
+    m_Localized: Farm Upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8530540094218240
+    m_Localized: Well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533841787412480
+    m_Localized: Resource Merchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533842886320128
+    m_Localized: Vegetable Merchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8533844434018304
+    m_Localized: Tool Merchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8682789114142720
+    m_Localized: '[E] Open Bus Schedule'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8682786912133120
+    m_Localized: '[E] Sit'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8683263246655488
+    m_Localized: '[E] Stand'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8688878991892480
+    m_Localized: Sleep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8688993571889152
+    m_Localized: Hours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8689064405295104
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8695852554969088
+    m_Localized: Day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8695854190747648
+    m_Localized: Slot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700174500028416
+    m_Localized: Mary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700207878299648
+    m_Localized: Toby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700236500230144
+    m_Localized: Mr. Harrison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700271837241344
+    m_Localized: Silas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9220188437143552
+    m_Localized: The Watcher
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

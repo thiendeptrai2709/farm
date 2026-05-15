@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba51c60c975bf604f89b3b882e19e808, type: 3}
   m_Name: Radish
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableItemData
-  displayName: Radish
-  icon: {fileID: 21300000, guid: 2bbf58d7c0369e74789230ac38f59702, type: 3}
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8365353772965888
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 6380c3e6ae74f544fa2cfda292e87010, type: 3}
   itemType: 2
   isStackable: 1
   maxStack: 36
@@ -22,3 +30,6 @@ MonoBehaviour:
   healthRestore: 0
   hungerRestore: 10
   thirstRestore: 7
+  references:
+    version: 2
+    RefIds: []

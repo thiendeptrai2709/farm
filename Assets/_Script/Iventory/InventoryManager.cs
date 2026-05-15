@@ -109,7 +109,7 @@ public class InventoryManager : MonoBehaviour
 
         if (amountToAdd < initialAmount)
         {
-            if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
+            //if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
         }
 
         if (amountToAdd > 0)
@@ -173,7 +173,10 @@ public class InventoryManager : MonoBehaviour
             if (slot.item == null && amountLeft > 0)
             {
                 slot.item = itemToAdd;
-                int amountForNewSlot = Mathf.Min(amountLeft, itemToAdd.maxStack);
+
+                int actualMaxStack = itemToAdd.isStackable ? itemToAdd.maxStack : 1;
+                int amountForNewSlot = Mathf.Min(amountLeft, actualMaxStack);
+
                 slot.amount = amountForNewSlot;
                 amountLeft -= amountForNewSlot;
 
@@ -877,8 +880,8 @@ public class InventoryManager : MonoBehaviour
 
         if (amountLeft <= 0) return true;
 
-        // 2. Tính số ô rỗng cần thiết
-        int emptySlotsNeeded = Mathf.CeilToInt((float)amountLeft / itemToAdd.maxStack);
+        int actualMaxStack = itemToAdd.isStackable ? itemToAdd.maxStack : 1;
+        int emptySlotsNeeded = Mathf.CeilToInt((float)amountLeft / actualMaxStack);
         int emptySlotsAvailable = 0;
 
         // [ĐÃ SỬA]: Xóa dòng quét ô rỗng của hotbarSlots đi! 

@@ -33,6 +33,11 @@ public class PauseMenuManager : MonoBehaviour
                 // [ĐÃ THÊM]: Nếu đang mở Setting thì bấm ESC sẽ lùi lại bảng Pause
                 CloseSettings();
             }
+            // Chức năng: Ưu tiên kiểm tra xem có đang cầm bóng mờ xây dựng không, có thì cất đi
+            else if (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing())
+            {
+                HammerBuildManager.Instance.CancelPlacement();
+            }
             else
             {
                 TogglePause();

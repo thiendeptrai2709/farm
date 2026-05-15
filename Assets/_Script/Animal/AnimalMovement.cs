@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 
 // [ĐÃ THÊM]: Trạng thái Jumping
-public enum AnimalState { Wander, FindFood, Starving, Jumping, Held, Dead }
+public enum AnimalState { Wander, FindFood, Starving, Jumping, Held}
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class AnimalMovement : MonoBehaviour, IInteractable
@@ -14,9 +14,7 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     public float maxHunger = 100f;
     public float currentHunger;
     public float hungerDrainRate = 1f;
-    public float starveTimeLimit = 30f;
-    private float starveTimer;
-    private float searchCooldown = 0f; // [THÊM MỚI]: Thời gian nghỉ giữa các lần quét đồ ăn
+    private float searchCooldown = 0f;
 
     [Header("Cài đặt đi dạo")]
     public float wanderRadius = 10f;
@@ -46,7 +44,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     public float produceInterval = 60f; // Mấy giây đẻ 1 lần?
     private float produceTimer;
 
-    private bool isDying = false;
 
     private Rigidbody[] boneRigidbodies;
     private Collider[] boneColliders;
@@ -65,7 +62,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     private void Awake()
     {
         currentHunger = maxHunger;
-        starveTimer = starveTimeLimit;
         produceTimer = produceInterval;
     }
     void Start()
@@ -93,8 +89,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
 
     void Update()
     {
-        if (currentState == AnimalState.Dead) return;
-
         // 2. [ĐÃ CHUYỂN LÊN ĐÂY]: Cho phép đếm giờ kêu cục tác ngay cả khi ĐANG BỊ BẾ
         HandleRandomSound();
 
@@ -152,26 +146,24 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     {
         if (productPrefab == null) return;
 
-        produceTimer -= Time.deltaTime;
-        if (produceTimer <= 0)
+        // Chức năng: Cần có thức ăn trong bụng mới kích hoạt quá trình sản xuất
+        if (currentHunger > 0)
         {
-            produceTimer = produceInterval;
+            produceTimer -= Time.deltaTime;
+            if (produceTimer <= 0)
+            {
+                produceTimer = produceInterval;
 
-            // Tính toán vị trí đẻ (Rớt ra phía sau đuôi con gà 1 chút cho tự nhiên)
-            Vector3 spawnPos = transform.position - transform.forward * 0.5f;
+                Vector3 spawnPos = transform.position - transform.forward * 0.5f;
 
+                boneRigidbodies = GetComponentsInChildren<Rigidbody>();
+                boneColliders = GetComponentsInChildren<Collider>();
 
-            boneRigidbodies = GetComponentsInChildren<Rigidbody>();
-            boneColliders = GetComponentsInChildren<Collider>();
+                ToggleRagdoll(false);
+                spawnPos.y += 0.5f;
 
-            // 2. Lúc còn sống -> Tắt vật lý của xương đi để Animator điều khiển
-            ToggleRagdoll(false);
-            // Nhấc lên 1 xíu để nó rớt xuống cho đẹp
-            spawnPos.y += 0.5f;
-
-            // Đẻ ra cục đồ!
-            Instantiate(productPrefab, spawnPos, Quaternion.identity);
-            Debug.Log("Gà vừa đẻ ra 1 cục đồ!");
+                Instantiate(productPrefab, spawnPos, Quaternion.identity);
+            }
         }
     }
     private void ToggleRagdoll(bool isRagdollActive)
@@ -199,7 +191,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     }
     public string GetInteractText()
     {
-        if (currentState == AnimalState.Dead) return "";
 
         // [THÊM ĐIỀU KIỆN]: Kiểm tra xem tay rảnh không. Đang cầm đồ thì ẩn luôn nút E
         if (PlayerEquipment.Instance != null && !PlayerEquipment.Instance.IsHandEmpty())
@@ -215,7 +206,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     }
     public void Interact()
     {
-        if (currentState == AnimalState.Dead) return;
 
         // [THÊM ĐIỀU KIỆN]: Tay đang bận cầm vũ khí/cuốc/rìu thì đá văng lệnh bấm E
         if (PlayerEquipment.Instance != null && !PlayerEquipment.Instance.IsHandEmpty())
@@ -276,29 +266,30 @@ public class AnimalMovement : MonoBehaviour, IInteractable
 
         // 5. Trở về trạng thái đi dạo bình thường
         currentState = AnimalState.Wander;
-        starveTimer = starveTimeLimit; // Reset time chết đói cho công bằng
         SetNewDestination();
     }
     private void HandleHunger()
     {
-        // Giảm thời gian chờ quét đồ ăn
         if (searchCooldown > 0) searchCooldown -= Time.deltaTime;
 
         if (currentHunger > 0)
         {
             currentHunger -= hungerDrainRate * Time.deltaTime;
 
-            // [ĐÃ SỬA LỖI GIẬT GIẬT]: Chỉ cho phép tìm đồ ăn nếu Cooldown đã hết
             if (currentHunger <= 30f && currentState == AnimalState.Wander && searchCooldown <= 0f)
             {
                 currentState = AnimalState.FindFood;
                 targetCrop = null;
             }
         }
-        else if (currentState != AnimalState.Starving && currentState != AnimalState.Jumping)
+        else
         {
-            currentState = AnimalState.Starving;
-            if (agent.enabled) agent.ResetPath();
+            // Chức năng: Khi cạn thức ăn, đứng tại chỗ đói và khóa việc giảm số lượng thức ăn dưới mức âm
+            currentHunger = 0;
+            if (currentState != AnimalState.FindFood && currentState != AnimalState.Jumping)
+            {
+                currentState = AnimalState.Starving;
+            }
         }
     }
 
@@ -377,7 +368,6 @@ public class AnimalMovement : MonoBehaviour, IInteractable
     private void FinishEating()
     {
         currentHunger = maxHunger;
-        starveTimer = starveTimeLimit;
         targetCrop = null;
         targetTrough = null;
         currentState = AnimalState.Wander;
@@ -516,46 +506,12 @@ public class AnimalMovement : MonoBehaviour, IInteractable
 
     private void HandleStarvingState()
     {
-        // Nếu đang trong quá trình hấp hối rồi thì KHÔNG GỌI LẠI NỮA
-        if (isDying) return;
-
-        starveTimer -= Time.deltaTime;
-        if (starveTimer <= 0)
+        // Chức năng: Liên tục thử quét tìm thức ăn lại sau thời gian chờ
+        if (searchCooldown <= 0f)
         {
-            StartCoroutine(DieRoutine());
+            currentState = AnimalState.FindFood;
         }
     }
-
-    private System.Collections.IEnumerator DieRoutine()
-    {
-        isDying = true;
-        currentState = AnimalState.Dead;
-
-        // 1. Tắt AI đi bộ
-        if (agent.enabled) agent.enabled = false;
-        if (animator != null) animator.enabled = false;
-
-        if (animalCollider != null)
-        {
-            animalCollider.enabled = true;   // Bắt buộc phải bật để hứng mặt đất
-            animalCollider.isTrigger = false; // Biến thành vật rắn đập vào đất
-        }
-
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb == null) rb = gameObject.AddComponent<Rigidbody>(); // Chưa có thì code tự gắn luôn
-
-        rb.isKinematic = false; // Nhả trọng lực
-        rb.useGravity = true;
-
-        // Đẩy 1 lực ngẫu nhiên cho nó văng nhẹ/ngã lăn quay ra
-        Vector3 randomTorque = new Vector3(Random.Range(-50f, 50f), Random.Range(-50f, 50f), Random.Range(-50f, 50f));
-        rb.AddTorque(randomTorque, ForceMode.Impulse);
-
-        // 3. Chờ 10 giây
-        yield return new WaitForSeconds(10f);
-        Destroy(gameObject);
-    }
-
     void SetNewDestination()
     {
         if (!agent.enabled) return;
