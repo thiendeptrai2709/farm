@@ -53,6 +53,8 @@ public class FishingZone : MonoBehaviour, IInteractable
     private float lastInteractTime = 0f;
     private PlayerInputHandler playerInput;
 
+    public FishingLocation thisLocation = FishingLocation.Farm;
+
     private void Start()
     {
         if (auditionPanel != null) auditionPanel.SetActive(false);
@@ -331,18 +333,40 @@ public class FishingZone : MonoBehaviour, IInteractable
             }
         }
 
-        // 2. CỘNG CÁ VÀO BALO
+        // 2. LỌC CÁ THEO ĐIỀU KIỆN (MAP, THỜI TIẾT, THỜI GIAN)
         if (availableFish != null && availableFish.Length > 0)
         {
             List<FishItemData> possibleFish = new List<FishItemData>();
+            List<FishItemData> fallbackFish = new List<FishItemData>(); // Phương án dự phòng nếu xui xẻo
+
             foreach (var fish in availableFish)
             {
-                if (fish.tier == tier) possibleFish.Add(fish);
+                // Kiểm tra xem con cá này có thỏa mãn điều kiện Môi trường không
+                if (IsFishSpawnable(fish))
+                {
+                    if (fish.tier == tier) possibleFish.Add(fish);     // Trúng đúng Tier thì nhét vào danh sách chính
+                    if (fish.tier == FishTier.Common) fallbackFish.Add(fish); // Lưu tạm cá Common làm dự phòng
+                }
             }
 
+            FishItemData caughtFish = null;
+
+            // Nếu tìm thấy cá đúng điều kiện và đúng Tier
             if (possibleFish.Count > 0)
             {
-                FishItemData caughtFish = possibleFish[Random.Range(0, possibleFish.Count)];
+                caughtFish = possibleFish[Random.Range(0, possibleFish.Count)];
+            }
+            // [CƠ CHẾ AN TOÀN]: Nếu ông quay trúng Tier Epic, nhưng cá Epic duy nhất lại chỉ xuất hiện lúc trời Mưa (mà hiện tại đang Nắng)
+            // -> Hệ thống sẽ đền bù cho ông một con cá Common hợp lệ thay vì báo lỗi.
+            else if (fallbackFish.Count > 0)
+            {
+                caughtFish = fallbackFish[Random.Range(0, fallbackFish.Count)];
+                Debug.LogWarning($"Không tìm thấy cá {tier} nào hợp điều kiện thời tiết/map hiện tại. Đền bù cá {FishTier.Common}");
+            }
+
+            // 3. TẶNG CÁ VÀO TÚI
+            if (caughtFish != null)
+            {
                 InventoryManager.Instance.AddItem(caughtFish, 1);
                 if (NotificationManager.Instance != null)
                 {
@@ -351,9 +375,47 @@ public class FishingZone : MonoBehaviour, IInteractable
             }
             else
             {
-                Debug.LogWarning($"Lỗi: Không tìm thấy Data cá nào thuộc Tier {tier} trong mảng availableFish!");
+                Debug.LogWarning("Hồ câu này không có con cá nào hợp lệ với thời tiết hiện tại để câu!");
             }
         }
+    }
+    private bool IsFishSpawnable(FishItemData fish)
+    {
+        // 1. Kiểm tra Khu Vực
+        bool locationMatch = fish.allowedLocations.Contains(FishingLocation.Any) || fish.allowedLocations.Contains(thisLocation);
+        if (!locationMatch) return false;
+
+        // 2. Kiểm tra Thời Tiết (Lấy dữ liệu từ WeatherManager nếu có)
+        // Lưu ý: Giả định WeatherManager có biến currentWeather và enum WeatherState
+        if (fish.requiredWeather != SpawnWeather.Any)
+        {
+            // Tạm dùng reflection hoặc check null để tránh lỗi nếu ông chưa có WeatherManager
+            bool isRaining = false;
+            if (WeatherManager.Instance != null)
+            {
+                // Nếu WeatherState của ông là enum, nhớ ép kiểu cho đúng, ở đây tớ lấy "Raining" làm ví dụ như file DayNightSystem của ông
+                isRaining = (WeatherManager.Instance.currentWeather.ToString() == "Raining");
+            }
+
+            if (fish.requiredWeather == SpawnWeather.RainyOnly && !isRaining) return false;
+            if (fish.requiredWeather == SpawnWeather.SunnyOnly && isRaining) return false;
+        }
+
+        // 3. Kiểm tra Thời Gian (Lấy dữ liệu từ TimeSystem)
+        if (fish.requiredTime != SpawnTime.Any)
+        {
+            TimeSystem timeSys = FindFirstObjectByType<TimeSystem>();
+            if (timeSys != null)
+            {
+                // Giống logic ban đêm của DayNightSystem (từ 18h tối đến 6h sáng)
+                bool isNight = timeSys.hour < 6f || timeSys.hour >= 18f;
+
+                if (fish.requiredTime == SpawnTime.DayOnly && isNight) return false;
+                if (fish.requiredTime == SpawnTime.NightOnly && !isNight) return false;
+            }
+        }
+
+        return true; // Qua được hết 3 vòng gửi xe thì được xuất hiện!
     }
 
     private FishTier GetRandomTierBySuccess(int nac)

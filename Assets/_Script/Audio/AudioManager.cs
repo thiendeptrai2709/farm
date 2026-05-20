@@ -108,4 +108,38 @@ public class AudioManager : MonoBehaviour
         loopSource.mute = isMuted;
         AudioListener.pause = isMuted;
     }
+    public float GetSFXVolume()
+    {
+        return sfxVolume;
+    }
+    public void PlaySFXAtPosition(string name, Vector3 position)
+    {
+        if (isMuted) return;
+        if (sfxDictionary.TryGetValue(name, out AudioData data))
+        {
+            // 1. Tạo một GameObject ảo tại đúng vị trí của con vật/NPC
+            GameObject tempAudioObj = new GameObject("TempAudio_3D_" + name);
+            tempAudioObj.transform.position = position;
+
+            // 2. Gắn cái loa (AudioSource) vào cục ảo đó
+            AudioSource tempSource = tempAudioObj.AddComponent<AudioSource>();
+            tempSource.clip = data.clip;
+            tempSource.volume = data.volume * sfxVolume;
+            tempSource.pitch = data.pitch * Random.Range(0.9f, 1.1f);
+
+            // 3. THẦN CHÚ BIẾN THÀNH 3D (0 là 2D, 1 là 3D hoàn toàn)
+            tempSource.spatialBlend = 1f;
+
+            // 4. Cài đặt khoảng cách nghe (Có thể chỉnh sửa thông số này)
+            tempSource.minDistance = 2f;  // Dưới 2 mét nghe to nhất
+            tempSource.maxDistance = 20f; // Quá 20 mét thì tịt, không nghe thấy gì
+            tempSource.rolloffMode = AudioRolloffMode.Linear;
+
+            // 5. Phát tiếng kêu
+            tempSource.Play();
+
+            // 6. Lệnh cho cái loa này "tự sát" sau khi phát xong để không làm nặng máy
+            Destroy(tempAudioObj, data.clip.length);
+        }
+    }
 }

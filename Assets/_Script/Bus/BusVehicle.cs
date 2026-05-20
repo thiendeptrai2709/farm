@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class BusVehicle : MonoBehaviour, IInteractable
 {
     [Header("Cài đặt Di chuyển")]
@@ -9,19 +10,29 @@ public class BusVehicle : MonoBehaviour, IInteractable
     public Transform exitPoint;
     public float driveSpeed = 10f;
 
+    [Header("Tương tác Mặt đất (Bám đường)")]
+    [Tooltip("Khoảng cách từ tâm xe xuống gầm xe (để xe không bị lún)")]
+    public float rideHeight = 1.2f;
+    public LayerMask groundLayer; // Nhớ ra ngoài Inspector chọn layer mặt đất (Terrain/Road) cho biến này
+
     [Header("Thành phần 3D")]
     public GameObject busModel;
     public Collider busCollider;
 
-    [Header("Cài đặt Chờ")]
+    [Header("Trục Bánh Xe (Chỉ kéo Transform của Mesh)")]
+    // KHÔNG dùng WheelCollider nữa, chỉ kéo cái hình ảnh 3D của bánh xe vào đây
+    public Transform frontLeftWheel;
+    public Transform frontRightWheel;
+    public Transform rearLeftWheel;
+    public Transform rearRightWheel;
+    public float wheelRadius = 0.5f; // Bán kính bánh xe để tính tốc độ lăn
+
+    [Header("Cài đặt Chờ & Âm thanh")]
     public float maxWaitTime = 10f;
     private float idleTimer = 0f;
-
-    [Header("Cài đặt Âm thanh 3D")]
     public AudioClip engineClip;
     public AudioClip brakeClip;
     public AudioClip hornClip;
-
     private AudioSource busAudio;
 
     private enum BusState { Hidden, Inbound, AtStop, Outbound }
@@ -30,19 +41,13 @@ public class BusVehicle : MonoBehaviour, IInteractable
     private string targetScene = "";
     private string targetSpawnID = "";
 
-    public Rigidbody rb;
-    public float maxMotorTorque = 1500f;
-    public float maxSteerAngle = 30f;
-    public float brakeForce = 3000f;
-    public float stopDistance = 1.5f;
+    private Rigidbody rb;
 
-    // ── CenterOfMass: kéo vào GameObject con có Y = -0.5 (xem hướng dẫn D) ──
-    public Transform centerOfMass;
-
-    public WheelCollider frontLeftW, frontRightW, rearLeftW, rearRightW;
-    public Transform frontLeftT, frontRightT, rearLeftT, rearRightT;
-
-
+    [Header("Tối ưu hóa đường dốc (Xe dáng dài)")]
+    [Tooltip("Khoảng cách từ tâm xe ra đầu xe để bắn tia laser trước")]
+    public float frontOffset = 3f;
+    [Tooltip("Khoảng cách từ tâm xe ra đuôi xe để bắn tia laser sau")]
+    public float rearOffset = 3f;
 
     private void Awake()
     {
@@ -51,119 +56,122 @@ public class BusVehicle : MonoBehaviour, IInteractable
         busAudio.rolloffMode = AudioRolloffMode.Linear;
         busAudio.minDistance = 5f;
         busAudio.maxDistance = 50f;
+
+        rb = GetComponent<Rigidbody>();
+        // ÉP CHẾT VẬT LÝ: Xe bây giờ là bất khả chiến bại, không gì tông bay được nó
+        rb.isKinematic = true;
+        rb.useGravity = false;
     }
 
     private void Start()
     {
-        if (rb == null) rb = GetComponent<Rigidbody>();
-        if (rb != null && centerOfMass != null)
-        {
-            rb.centerOfMass = centerOfMass.localPosition;
-        }
-
         ResetBus();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
+        if (busAudio != null && AudioManager.Instance != null)
+        {
+            busAudio.volume = AudioManager.Instance.GetSFXVolume();
+        }
+
         switch (currentState)
         {
             case BusState.Inbound:
-                MoveBus(stopPoint.position, BusState.AtStop);
+                MoveBusAndSnapToGround(stopPoint.position, BusState.AtStop);
                 break;
             case BusState.Outbound:
-                MoveBus(exitPoint.position, BusState.Hidden);
+                MoveBusAndSnapToGround(exitPoint.position, BusState.Hidden);
                 break;
             case BusState.AtStop:
+                idleTimer += Time.deltaTime;
+                if (idleTimer >= maxWaitTime)
+                {
+                    StartDrivingOut();
+                }
                 break;
         }
     }
 
-    // Xử lý thời gian chờ
-    private void Update()
+    private void MoveBusAndSnapToGround(Vector3 targetWaypoint, BusState nextState)
     {
-        if (currentState == BusState.AtStop)
+        // 1. Chỉ lấy hướng X và Z để tìm đường đi
+        Vector3 flatTarget = new Vector3(targetWaypoint.x, transform.position.y, targetWaypoint.z);
+        Vector3 moveDir = (flatTarget - transform.position).normalized;
+
+        float distanceToTarget = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetWaypoint.x, targetWaypoint.z));
+
+        if (distanceToTarget < 0.5f)
         {
-            idleTimer += Time.deltaTime;
-            if (idleTimer >= maxWaitTime)
-            {
-                StartDrivingOut();
-            }
-        }
-
-        UpdateWheelPoses();
-    }
-
-    private void MoveBus(Vector3 target, BusState nextState)
-    {
-        // Sử dụng khoảng cách 3D để tính toán chính xác khi lên dốc
-        Vector3 currentPos = transform.position;
-        float dist = Vector3.Distance(currentPos, target);
-
-        if (dist < 0.5f)
-        {
-            // Kiểm tra trạng thái isKinematic trước khi gán vận tốc
-            if (!rb.isKinematic)
-            {
-                rb.linearVelocity = Vector3.zero;
-            }
             currentState = nextState;
-
             if (currentState == BusState.AtStop) OnArrived();
             if (currentState == BusState.Hidden) ResetBus();
+            return;
         }
-        else
-        {
-            Vector3 moveDir = (target - transform.position).normalized;
-            rb.linearVelocity = moveDir * driveSpeed;
 
-            if (moveDir != Vector3.zero)
-            {
-                // Lấy góc xoay hướng về đích
-                Vector3 euler = Quaternion.LookRotation(moveDir).eulerAngles;
-                // Ép cứng trục Z (Roll) về 0 để xe không bao giờ bị lật nghiêng sang hai bên
-                Quaternion targetRot = Quaternion.Euler(euler.x, euler.y, 0f);
-                // Dùng Time.fixedDeltaTime vì hàm này được gọi trong FixedUpdate
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRot, Time.fixedDeltaTime * 5f));
-            }
+        // 2. Tính toán vị trí tịnh tiến tiếp theo (Tạm tính trên mặt phẳng)
+        Vector3 newPosition = transform.position + moveDir * driveSpeed * Time.deltaTime;
+
+        // 3. TÍNH TOÁN 2 ĐIỂM KHẢO SÁT: ĐẦU XE VÀ ĐUÔI XE
+        Vector3 frontCheckPos = newPosition + moveDir * frontOffset;
+        Vector3 rearCheckPos = newPosition - moveDir * rearOffset;
+
+        // Khởi tạo các biến lưu tọa độ mặt đất dưới đầu và đuôi xe
+        Vector3 groundFrontPoint = frontCheckPos;
+        Vector3 groundRearPoint = rearCheckPos;
+        Vector3 combinedNormal = Vector3.up;
+
+        bool frontHitSuccess = Physics.Raycast(frontCheckPos + Vector3.up * 5f, Vector3.down, out RaycastHit frontHit, 10f, groundLayer);
+        bool rearHitSuccess = Physics.Raycast(rearCheckPos + Vector3.up * 5f, Vector3.down, out RaycastHit rearHit, 10f, groundLayer);
+
+        // Nếu cả trước và sau đều chạm đất (Trường hợp đang đi trên dốc)
+        if (frontHitSuccess && rearHitSuccess)
+        {
+            groundFrontPoint = frontHit.point;
+            groundRearPoint = rearHit.point;
+
+            // Lấy trung bình cộng pháp tuyến của cả 2 điểm để tính độ nghiêng trái/phải
+            combinedNormal = (frontHit.normal + rearHit.normal).normalized;
+
+            // Chiều cao của xe bằng trung bình cộng chiều cao của đầu và đuôi
+            newPosition.y = (groundFrontPoint.y + groundRearPoint.y) / 2f + rideHeight;
+
+            // Hướng tiến của xe chạy dọc theo đường nối từ điểm đất phía sau lên điểm đất phía trước
+            Vector3 slopeForwardDirection = (groundFrontPoint - groundRearPoint).normalized;
+
+            // Ép xe xoay theo độ dốc dọc thân xe và độ nghiêng của mặt đường
+            Quaternion targetRotation = Quaternion.LookRotation(slopeForwardDirection, combinedNormal);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 8f);
         }
+        else if (frontHitSuccess) // Phòng hờ chỉ có đầu xe chạm đất
+        {
+            newPosition.y = frontHit.point.y + rideHeight;
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir, frontHit.normal);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 8f);
+        }
+
+        // Cập nhật vị trí chuẩn cuối cùng sau khi đã tính dốc
+        transform.position = newPosition;
+
+        // 4. Quay bánh xe giả lập theo tốc độ thật
+        RotateWheelsVisually();
     }
 
-    private void UpdateWheelPoses()
+    private void RotateWheelsVisually()
     {
-        UpdateWheelPose(frontLeftW, frontLeftT);
-        UpdateWheelPose(frontRightW, frontRightT);
-        UpdateWheelPose(rearLeftW, rearLeftT);
-        UpdateWheelPose(rearRightW, rearRightT);
+        // Công thức tính số độ quay: (Tốc độ / Bán kính) * Chuyển đổi sang Độ
+        float rotationAmount = (driveSpeed / wheelRadius) * Mathf.Rad2Deg * Time.deltaTime;
+
+        if (frontLeftWheel) frontLeftWheel.Rotate(Vector3.right, rotationAmount, Space.Self);
+        if (frontRightWheel) frontRightWheel.Rotate(Vector3.right, rotationAmount, Space.Self);
+        if (rearLeftWheel) rearLeftWheel.Rotate(Vector3.right, rotationAmount, Space.Self);
+        if (rearRightWheel) rearRightWheel.Rotate(Vector3.right, rotationAmount, Space.Self);
     }
 
-    private void UpdateWheelPose(WheelCollider col, Transform meshTransform)
-    {
-        if (col == null || meshTransform == null) return;
-        col.GetWorldPose(out Vector3 pos, out Quaternion rot);
-        meshTransform.position = pos;
-        meshTransform.rotation = rot;
-    }
+    // ==========================================
+    // CÁC HÀM LOGIC CŨ (Đã được dọn dẹp lại cho mượt)
+    // ==========================================
 
-    private void OnDrawGizmos()
-    {
-        if (startPoint != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(startPoint.position, 0.5f);
-            Gizmos.DrawRay(startPoint.position, startPoint.forward * 3f);
-        }
-        if (stopPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(stopPoint.position, 0.5f);
-        }
-        if (exitPoint != null)
-        {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(exitPoint.position, 0.5f);
-        }
-    }
     public void StartDrivingIn(string destinationScene, string spawnID)
     {
         if (currentState == BusState.Inbound || currentState == BusState.Outbound) return;
@@ -181,9 +189,6 @@ public class BusVehicle : MonoBehaviour, IInteractable
         busModel.SetActive(true);
         if (busCollider != null) busCollider.enabled = false;
 
-        // Cho phép xe chịu tác động vật lý để lăn bánh
-        if (rb != null) rb.isKinematic = false;
-
         idleTimer = 0f;
         currentState = BusState.Inbound;
         PlayEngineSound();
@@ -191,9 +196,6 @@ public class BusVehicle : MonoBehaviour, IInteractable
 
     private void OnArrived()
     {
-        // Khóa chết xe bằng isKinematic khi đã đến bến, người chơi đẩy thoải mái không xê dịch
-        if (rb != null) rb.isKinematic = true;
-
         if (busCollider != null) busCollider.enabled = true;
         busAudio.Stop();
         if (brakeClip) busAudio.PlayOneShot(brakeClip);
@@ -231,10 +233,6 @@ public class BusVehicle : MonoBehaviour, IInteractable
     private void StartDrivingOut()
     {
         if (busCollider != null) busCollider.enabled = false;
-
-        // Mở khóa vật lý để xe chạy ra khỏi bến
-        if (rb != null) rb.isKinematic = false;
-
         currentState = BusState.Outbound;
         PlayEngineSound();
     }
@@ -248,6 +246,7 @@ public class BusVehicle : MonoBehaviour, IInteractable
             busAudio.Play();
         }
     }
+
     private void ResetBus()
     {
         currentState = BusState.Hidden;
@@ -263,17 +262,13 @@ public class BusVehicle : MonoBehaviour, IInteractable
             if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
         }
 
-        if (rb != null)
-        {
-            // Xóa vận tốc trước khi bật isKinematic
-            if (!rb.isKinematic)
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-            }
-            rb.isKinematic = true;
-        }
-
         if (busAudio != null) busAudio.Stop();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (startPoint != null) { Gizmos.color = Color.cyan; Gizmos.DrawWireSphere(startPoint.position, 0.5f); }
+        if (stopPoint != null) { Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(stopPoint.position, 0.5f); }
+        if (exitPoint != null) { Gizmos.color = Color.magenta; Gizmos.DrawWireSphere(exitPoint.position, 0.5f); }
     }
 }

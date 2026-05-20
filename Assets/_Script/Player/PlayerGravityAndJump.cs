@@ -26,7 +26,7 @@ public class PlayerGravityAndJump : MonoBehaviour
     public bool JustJumped { get; private set; }
     public bool IsStableGrounded { get; private set; }
 
-    public float stickToGroundForce = -8f; // Tăng lực hút xuống để bám dốc tốt hơn
+    public float stickToGroundForce = -20f; // Tăng lực hút xuống để bám dốc tốt hơn
     public float groundedGraceTime = 0.1f; // Thời gian châm chước trước khi coi là đang rơi thật
     private float groundedGraceCounter;
 
@@ -50,10 +50,10 @@ public class PlayerGravityAndJump : MonoBehaviour
         // --- [ĐÃ SỬA] CẢM BIẾN DÒ MẶT ĐẤT BẰNG RAYCAST ---
         bool grounded = controller.isGrounded;
 
-        // Nếu bộ đệm Unity báo lơ lửng, bắn tia laser từ gót chân xuống để check lại cho chắc ăn
         if (!grounded)
         {
-            grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 0.3f);
+            Vector3 sphereCenter = new Vector3(controller.bounds.center.x, controller.bounds.min.y + controller.radius, controller.bounds.center.z);
+            grounded = Physics.SphereCast(sphereCenter, controller.radius * 0.9f, Vector3.down, out RaycastHit hit, 0.4f);
         }
 
         isGrounded = grounded;

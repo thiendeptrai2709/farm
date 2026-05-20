@@ -1999,7 +1999,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimation
   dampTime: 0.1
-  fallTimeout: 0.15
 --- !u!143 &2895149879746396634
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2022,8 +2021,8 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.0001
-  m_MinMoveDistance: 0.001
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &355052223789210879
 MonoBehaviour:
@@ -2179,8 +2178,32 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 128
+  magneticSnapRange: 1.2
   gridSize: 1.2
   maxBuildRange: 6
+  buildHintText: {fileID: 0}
+  farmSceneName: Farm
+  textPlacingHint:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textOpenMenuHint:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &4945580228865125342
 MonoBehaviour:
   m_ObjectHideFlags: 0

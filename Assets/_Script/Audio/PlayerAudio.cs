@@ -12,6 +12,7 @@ public class PlayerAudio : MonoBehaviour
     private PlayerInputHandler inputHandler;
     private PlayerMovement playerMovement;
     private CharacterController controller;
+    private PlayerGravityAndJump gravityScript;
 
     private void Start()
     {
@@ -19,7 +20,7 @@ public class PlayerAudio : MonoBehaviour
         inputHandler = GetComponentInParent<PlayerInputHandler>();
         playerMovement = GetComponentInParent<PlayerMovement>();
         controller = GetComponentInParent<CharacterController>();
-
+        gravityScript = GetComponentInParent<PlayerGravityAndJump>();
         // Ép timer về 0 để ngay khi vừa bấm phím di chuyển là kêu tiếng đầu tiên luôn
         stepTimer = 0f;
     }
@@ -35,9 +36,8 @@ public class PlayerAudio : MonoBehaviour
             return;
         }
 
-        // 2. CHỐT CHẠM ĐẤT:
-        // Đang nhảy hoặc rơi tự do thì ngắt đồng hồ, không phát tiếng
-        if (controller != null && !controller.isGrounded)
+        bool isStableGrounded = gravityScript != null ? gravityScript.IsStableGrounded : (controller != null && controller.isGrounded);
+        if (!isStableGrounded)
         {
             return;
         }

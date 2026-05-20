@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: FishName_vi
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: vi
+  m_SharedData: {fileID: 11400000, guid: 8abfb9f671922ad448ec1b2b41583619, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1111218905088
+    m_Localized: "C\xE1 R\xF4 \u0110\u1ED3ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070912
+    m_Localized: "C\xE1 Ch\xE9p"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070913
+    m_Localized: "C\xE1 Tr\xEA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070914
+    m_Localized: "C\xE1 M\xE8"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265216
+    m_Localized: "C\xE1 Di\u1EBFc"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265217
+    m_Localized: "C\xE1 L\xF3c Nh\u1ECF"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265218
+    m_Localized: "C\xE1 C\u1EDD Non"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265219
+    m_Localized: "C\xE1 Su\u1ED1i"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265220
+    m_Localized: "C\xE1 L\u0103ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265221
+    m_Localized: "C\xE1 H\u1ED3i N\xFAi"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265222
+    m_Localized: "C\xE1 Tr\u1EAFm \u0110en"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265223
+    m_Localized: "C\xE1 Ch\xECnh"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265224
+    m_Localized: "C\xE1 Nheo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265225
+    m_Localized: "C\xE1 Ng\u1EF1a S\xF4ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265226
+    m_Localized: "C\xE1 \u0110u\xF4i \u0110\u1ECF"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265227
+    m_Localized: "C\xE1 H\u1EAFc Kim"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265228
+    m_Localized: "C\xE1 \xC1nh Tr\u0103ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265229
+    m_Localized: "C\xE1 Koi Ho\xE0ng Gia"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265230
+    m_Localized: "C\xE1 B\u0103ng Lam"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265231
+    m_Localized: "C\xE1 H\u1ED5 S\xF4ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265232
+    m_Localized: "C\xE1 \u0110\u1ED9c Nh\xE3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265233
+    m_Localized: "C\xE1 Ma H\u1ED3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265234
+    m_Localized: "C\xE1 R\u1ED3ng Lam"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265235
+    m_Localized: "C\xE1 Thi\xEAn H\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265236
+    m_Localized: "C\xE1 \xC1nh Sao"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265237
+    m_Localized: "C\xE1 B\xF3ng T\u1ED1i"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265238
+    m_Localized: "Leviathan H\u1ED3 S\xE2u"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265239
+    m_Localized: "C\xE1 Long V\u01B0\u01A1ng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265240
+    m_Localized: "C\xE1 H\u1ED3n R\u1EEBng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265241
+    m_Localized: "C\xE1 M\u1EB7t Tr\u0103ng C\u1ED5 \u0110\u1EA1i"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265242
+    m_Localized: "C\xE1 Th\u1EA7n Tho\u1EA1i"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

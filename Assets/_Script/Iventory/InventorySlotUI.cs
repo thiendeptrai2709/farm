@@ -117,13 +117,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (highlightOutline != null)
         {
+            // Trả lại logic gốc: Cứ trùng index được chọn trên hotbar là hiện viền đỏ, không phân biệt đồ ăn hay công cụ
             bool isSelected = (storageType == StorageType.Hotbar && slotIndex == InventoryManager.Instance.selectedHotbarIndex);
-
-            if (slot != null && slot.item is ConsumableItemData)
-            {
-                isSelected = false;
-            }
-
             highlightOutline.SetActive(isSelected);
         }
     }
@@ -148,7 +143,22 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // 1. CHUỘT PHẢI: Ăn / Dùng đồ
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            InventoryManager.Instance.ConsumeItem(storageType, slotIndex);
+            // Chỉ cho phép ăn từ trên Hotbar, nếu ăn từ trong Balo chính thì báo lỗi (hoặc tùy game của ông)
+            if (storageType == StorageType.Hotbar)
+            {
+                // Bắt hệ thống chuyển viền đỏ (chọn tay) sang ô này trước
+                InventoryManager.Instance.UseHotbarSlot(slotIndex);
+
+                // Sau đó kiểm tra xem nếu đang cầm đúng ô đó rồi thì ra lệnh ăn (như cách bấm phím số lần 2)
+                if (InventoryManager.Instance.selectedHotbarIndex == slotIndex)
+                {
+                    InventoryManager.Instance.ConsumeItem(storageType, slotIndex);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Chỉ có thể ăn đồ vật khi đặt trên thanh Hotbar!");
+            }
             return;
         }
 

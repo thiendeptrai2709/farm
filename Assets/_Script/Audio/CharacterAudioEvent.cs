@@ -25,6 +25,12 @@ public class CharacterAudioEvent : MonoBehaviour
     {
         if (footstepClip != null)
         {
+            // [ĐÃ THÊM]: Lấy mức âm lượng hiện tại của game ngay trước khi dậm chân
+            if (AudioManager.Instance != null)
+            {
+                audioSource.volume = AudioManager.Instance.GetSFXVolume();
+            }
+
             // Chỉ phát đúng 1 cái clip m ném vào
             audioSource.PlayOneShot(footstepClip);
         }

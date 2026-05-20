@@ -56,6 +56,30 @@ public class PlayerInputHandler : MonoBehaviour
 
         ScrollValue = controls.Player.HotbarScroll.ReadValue<Vector2>().y;
 
+        if (ClickTriggered && InventoryManager.Instance != null && !InventoryManager.Instance.isEating)
+        {
+            // Kiểm tra xem có đang mở UI nào đè lên game không (tránh click xuyên UI)
+            bool isUIOpen = (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen()) ||
+                            (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen()) ||
+                            (BusUI.Instance != null && BusUI.Instance.IsOpen());
+
+            if (!isUIOpen)
+            {
+                int currentHotbarIndex = InventoryManager.Instance.selectedHotbarIndex;
+                if (currentHotbarIndex != -1)
+                {
+                    InventorySlot currentSlot = InventoryManager.Instance.hotbarSlots[currentHotbarIndex];
+
+                    // Nếu đang cầm ĐỒ ĂN trên tay thì kích hoạt lệnh nhai luôn!
+                    if (currentSlot.item is ConsumableItemData)
+                    {
+                        InventoryManager.Instance.ConsumeItem(StorageType.Hotbar, currentHotbarIndex);
+                        ClickTriggered = false; // Triệt tiêu Click ngay lập tức để tránh vung cuốc/rìu ở file khác
+                    }
+                }
+            }
+        }
+
         bool canChangeItem = (playerMovement == null || !playerMovement.isActionLocked);
         if (Keyboard.current != null)
         {
@@ -85,8 +109,8 @@ public class PlayerInputHandler : MonoBehaviour
         // 3. XỬ LÝ LĂN CHUỘT KHI ĐANG CHƠI (Không cuộn khi mở Balo)
         bool isPlacingBuilding = (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing());
         bool isHammerUIOpen = (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen());
-
-        if (!isPlacingBuilding && !isHammerUIOpen)
+        bool isBusUIOpen = (BusUI.Instance != null && BusUI.Instance.IsOpen());
+        if (!isPlacingBuilding && !isHammerUIOpen && !isBusUIOpen)
         {
             InventoryManager.Instance.ScrollHotbar(ScrollValue);
         }

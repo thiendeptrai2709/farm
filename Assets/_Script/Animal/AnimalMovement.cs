@@ -70,6 +70,12 @@ public class AnimalMovement : MonoBehaviour, IInteractable
         animator = GetComponentInChildren<Animator>();
         animalCollider = GetComponent<Collider>();
 
+        if (currentState == AnimalState.Held && transform.parent == null)
+        {
+            Debug.LogWarning($"[Bug Fix] Con {gameObject.name} bị kẹt trạng thái bế, đang tiến hành reset!");
+            currentState = AnimalState.Wander; // Ép về đi dạo
+            if (animalCollider != null) animalCollider.enabled = true; // Bật lại vật lý
+        }
         startPosition = transform.position;
 
         agent.speed = 1.5f;
@@ -89,6 +95,12 @@ public class AnimalMovement : MonoBehaviour, IInteractable
 
     void Update()
     {
+
+        if (localAudioSource != null && AudioManager.Instance != null)
+        {
+            localAudioSource.volume = AudioManager.Instance.GetSFXVolume();
+        }
+
         // 2. [ĐÃ CHUYỂN LÊN ĐÂY]: Cho phép đếm giờ kêu cục tác ngay cả khi ĐANG BỊ BẾ
         HandleRandomSound();
 

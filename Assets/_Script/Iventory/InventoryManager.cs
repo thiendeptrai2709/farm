@@ -423,27 +423,33 @@ public class InventoryManager : MonoBehaviour
     public void ScrollHotbar(float scrollDelta)
     {
         if (PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked) return;
+        if (isEating) return;
         if (Mathf.Abs(scrollDelta) < 0.1f) return;
-        if (selectedHotbarIndex == -1)
+
+        int targetIndex = selectedHotbarIndex;
+
+        if (targetIndex == -1)
         {
-            selectedHotbarIndex = scrollDelta > 0 ? maxHotbarSlots - 1 : 0;
+            targetIndex = scrollDelta > 0 ? maxHotbarSlots - 1 : 0;
         }
         else
         {
             if (scrollDelta > 0)
             {
-                selectedHotbarIndex--;
-                if (selectedHotbarIndex < 0) selectedHotbarIndex = maxHotbarSlots - 1;
+                targetIndex--;
+                if (targetIndex < 0) targetIndex = maxHotbarSlots - 1;
             }
             else if (scrollDelta < 0)
             {
-                selectedHotbarIndex++;
-                if (selectedHotbarIndex >= maxHotbarSlots) selectedHotbarIndex = 0;
+                targetIndex++;
+                if (targetIndex >= maxHotbarSlots) targetIndex = 0;
             }
         }
 
-        OnInventoryChanged?.Invoke();
+        // Ép gọi hàm này khi cuộn chuột để đồng bộ hóa logic viền đỏ với phím số
+        UseHotbarSlot(targetIndex);
     }
+
     public void CancelPendingConsume()
     {
         if (isEating)
@@ -465,19 +471,10 @@ public class InventoryManager : MonoBehaviour
 
         if (list[index].item is ConsumableItemData consumable)
         {
-            if (selectedHotbarIndex != -1)
-            {
-                selectedHotbarIndex = -1;
-                Debug.Log("Đã cất vũ khí vào túi để chuẩn bị ăn!");
-                OnInventoryChanged?.Invoke();
-            }
-
             isEating = true;
-            // Lưu lại vị trí món đồ đang chuẩn bị ăn
             pendingConsumeType = type;
             pendingConsumeIndex = index;
 
-            // Bóp còi cho Animator bắt đầu diễn!
             OnConsumeAnimationStart?.Invoke();
         }
         else
@@ -516,37 +513,36 @@ public class InventoryManager : MonoBehaviour
     public void UseHotbarSlot(int index)
     {
         if (PlayerMovement.Instance != null && PlayerMovement.Instance.isActionLocked) return;
+        if (isEating) return;
         if (index < 0 || index >= maxHotbarSlots) return;
 
         InventorySlot slot = hotbarSlots[index];
 
-        // ==========================================
-        // 1. ƯU TIÊN KIỂM TRA ĐỒ ĂN TRƯỚC 
-        // (Dù đang sáng viền hay không, cứ là đồ ăn thì bấm vào là nhai luôn)
-        // ==========================================
-        if (slot.item is ConsumableItemData)
-        {
-            ConsumeItem(StorageType.Hotbar, index);
-            return; // Đã gọi lệnh ăn thì thoát hàm, không chạy xuống dưới nữa
-        }
-
-        // ==========================================
-        // 2. NẾU KHÔNG PHẢI ĐỒ ĂN (Vũ khí, Công cụ, Rỗng...)
-        // ==========================================
+        // Nếu bấm lại đúng ô đang chọn (Viền đỏ đang ở đây)
         if (selectedHotbarIndex == index)
         {
-            // Bấm lại đúng ô đang cầm -> Cất tay không
-            CancelPendingConsume();
-            selectedHotbarIndex = -1;
-            Debug.Log("Đã cất đồ. Đang rảnh tay!");
+            // Bấm lần 2 vào Đồ ăn -> Ăn!
+            if (slot.item is ConsumableItemData)
+            {
+                ConsumeItem(StorageType.Hotbar, index);
+                Debug.Log($"[Hành động] Đang ăn: {slot.item.displayName}");
+            }
+            // Bấm lần 2 vào Công cụ/Hạt giống/Ô rỗng -> Cất tay không!
+            else
+            {
+                CancelPendingConsume();
+                selectedHotbarIndex = -1;
+                Debug.Log("Đã cất đồ. Đang rảnh tay!");
+            }
         }
+        // Nếu chọn sang một ô mới hoàn toàn
         else
         {
-            // Bấm sang ô mới -> Cầm đồ lên
             CancelPendingConsume();
             selectedHotbarIndex = index;
             string itemName = slot.item != null ? slot.item.displayName : "Tay không";
-            Debug.Log($"Đang cầm: {itemName} ở ô số {index + 1}");
+            Debug.Log($"Đang chọn: {itemName} ở ô số {index + 1}");
+            // (Đã xóa đoạn tự động ăn ở đây, nên đồ ăn sẽ chỉ được cầm trên tay chứ không bị ăn mất)
         }
 
         OnInventoryChanged?.Invoke();

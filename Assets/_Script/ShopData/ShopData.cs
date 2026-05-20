@@ -44,8 +44,15 @@ public class ShopData : ScriptableObject
     public int minQuantity = 1;    // Số lượng ít nhất mỗi món
     public int maxQuantity = 10;   // Số lượng nhiều nhất mỗi món
 
-    [Header("Danh sách thu mua (Họ mua của mình)")]
-    public List<ItemType> acceptedItemTypesToBuy;
+    public bool CanBuyItemFromPlayer(ItemData itemPlayerWantsToSell)
+    {
+        // Quét xem món đồ người chơi muốn bán có nằm trong danh sách hàng tiệm này bán không
+        if (possibleItemsToSell != null && possibleItemsToSell.Contains(itemPlayerWantsToSell))
+        {
+            return true; // Có bán -> Chịu mua lại
+        }
+        return false; // Không bán món này -> Từ chối thu mua
+    }
 
     public void GenerateDailyInventory()
     {

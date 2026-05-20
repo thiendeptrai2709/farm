@@ -85,4 +85,12 @@ public class PlayerPickupManager : MonoBehaviour
 
         Debug.Log("Đã thả vật nuôi xuống đất!");
     }
+    private void OnDisable()
+    {
+        if (IsHoldingAnimal())
+        {
+            DropAnimal();
+            Debug.Log("Hệ thống tự động thả vật nuôi để dọn rác bộ nhớ!");
+        }
+    }
 }

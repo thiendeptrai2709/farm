@@ -181,6 +181,11 @@ public class LoadingManager : MonoBehaviour
                 {
                     InventoryManager.Instance.LoadInventoryData(data);
                 }
+                if (BusUI.Instance != null && data.unlockedBusStops != null)
+                {
+                    BusUI.Instance.discoveredStops = new System.Collections.Generic.List<string>(data.unlockedBusStops);
+                }
+
                 if (TimeManager.Instance != null)
                 {
                     TimeManager.Instance.LoadSavedDay(data.daysInGame);

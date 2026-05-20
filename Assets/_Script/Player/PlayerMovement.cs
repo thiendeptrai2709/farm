@@ -111,6 +111,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 targetDirection = transform.right * input.x + transform.forward * input.y;
         Vector3 targetVelocity = targetDirection.normalized * currentSpeed;
 
+
         // ==========================================
         // [ĐÃ SỬA]: Lấy biến IsStableGrounded từ gravityScript để kiểm tra
         // ==========================================
@@ -118,7 +119,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (isStableGrounded)
         {
-            // Đang chạm đất -> Gán tốc độ thực tế bằng tốc độ phím bấm ngay lập tức
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, controller.height / 2f + 0.5f))
+            {
+                targetVelocity = Vector3.ProjectOnPlane(targetVelocity, hit.normal).normalized * targetVelocity.magnitude;
+            }
+
+            // Gán vận tốc mục tiêu vào đà di chuyển hiện tại
             currentMomentum = targetVelocity;
         }
         else

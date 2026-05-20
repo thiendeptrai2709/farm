@@ -5,7 +5,7 @@ public class BusStop : MonoBehaviour, IInteractable
 {
     public BusVehicle myBus;
     public LocalizedString interactText; // Chức năng: Lưu trữ key đa ngôn ngữ
-
+    public string stationRoutingData;
     public string GetInteractText()
     {
         // Chức năng: Trả về văn bản đã dịch hoặc văn bản mặc định nếu chưa gán key

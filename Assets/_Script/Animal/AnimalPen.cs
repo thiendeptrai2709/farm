@@ -146,13 +146,6 @@ public class AnimalPen : MonoBehaviour, IInteractable
         }
         Debug.Log($"[AnimalPen {penID}] Đã lưu {myPenData.savedAnimals.Count} con vật.");
     }
-    private void Start()
-    {
-        if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
-        {
-            LoadAnimalData(SaveManager.Instance.GetCurrentData());
-        }
-    }
     public void LoadAnimalData(GameData data)
     {
         foreach (var animal in currentAnimals)

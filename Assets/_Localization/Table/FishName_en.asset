@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: FishName_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 8abfb9f671922ad448ec1b2b41583619, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1111218905088
+    m_Localized: Climbing Perch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070912
+    m_Localized: Carp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070913
+    m_Localized: Catfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070914
+    m_Localized: Silver Carp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265216
+    m_Localized: Crucian Carp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265217
+    m_Localized: Snakehead Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265218
+    m_Localized: Young Sailfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265219
+    m_Localized: Stream Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265220
+    m_Localized: Hemibagrus Catfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265221
+    m_Localized: Mountain Salmon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265222
+    m_Localized: Black Carp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265223
+    m_Localized: Eel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265224
+    m_Localized: Giant Catfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265225
+    m_Localized: River Seahorse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265226
+    m_Localized: Redtail Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265227
+    m_Localized: Black Gold Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265228
+    m_Localized: Moonlight Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265229
+    m_Localized: Royal Koi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265230
+    m_Localized: Blue Ice Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265231
+    m_Localized: River Tiger Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265232
+    m_Localized: One-Eyed Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265233
+    m_Localized: Phantom Lake Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265234
+    m_Localized: Azure Dragon Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265235
+    m_Localized: Galaxy Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265236
+    m_Localized: Starshine Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265237
+    m_Localized: Shadow Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265238
+    m_Localized: Deep Lake Leviathan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265239
+    m_Localized: Dragon King Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265240
+    m_Localized: Forest Spirit Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265241
+    m_Localized: Ancient Moon Fish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265242
+    m_Localized: Mythic Fish
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

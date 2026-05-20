@@ -120,12 +120,11 @@ public class SaveManager : MonoBehaviour
         if (FarmingZone.Instance != null)
         {
             FarmingZone.Instance.SaveAllPlots(currentData);
+
+            currentData.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
         }
         else
-        {
-            
-            if (currentData.lastSceneName != "Farm")
-                currentData.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
+        {  
         }
         ConstructionSite[] allSites = UnityEngine.Object.FindObjectsByType<ConstructionSite>(FindObjectsSortMode.None);
         foreach (var site in allSites)
@@ -163,6 +162,10 @@ public class SaveManager : MonoBehaviour
 
         SaveAllNPCsToData(currentData);
 
+        if (BusUI.Instance != null)
+        {
+            currentData.unlockedBusStops = new System.Collections.Generic.List<string>(BusUI.Instance.discoveredStops);
+        }
         string path = GetSaveFilePath(currentSlot);
         string json = JsonUtility.ToJson(currentData, true);
         File.WriteAllText(path, json);
@@ -190,6 +193,12 @@ public class SaveManager : MonoBehaviour
         if (MarketManager.Instance != null)
         {
             MarketManager.Instance.LoadShopData(currentData);
+        }
+        if (BusUI.Instance != null && currentData.unlockedBusStops != null)
+        {
+            // Nếu là mảng trống thì BusUI sẽ tự động gọi UnlockDefaultRoutes (nếu ông viết logic đó ở Awake)
+            // Cứ cắm thẳng dữ liệu từ file Save đè vào list hiện tại
+            BusUI.Instance.discoveredStops = new System.Collections.Generic.List<string>(currentData.unlockedBusStops);
         }
         StartAutoSave();
     }

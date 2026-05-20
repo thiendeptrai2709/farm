@@ -21,27 +21,28 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  merchantMoney: 2080
+  merchantMoney: 868
   minDailyMoney: 500
   maxDailyMoney: 2000
   maxShopSlots: 10
   itemsForSale:
   - item: {fileID: 11400000, guid: f08604279aa25a1458384a1fe3d43a4b, type: 2}
-    currentQuantity: 5
+    currentQuantity: 6
   - item: {fileID: 11400000, guid: 3059eaaaa487da04cb63c3b1c4857a2f, type: 2}
-    currentQuantity: 1
+    currentQuantity: 10
   - item: {fileID: 11400000, guid: 0975cdcf99196f945baf46845bf9d9cb, type: 2}
-    currentQuantity: 1
+    currentQuantity: 8
   - item: {fileID: 11400000, guid: 503cffc127bfd94429020312b951d5d9, type: 2}
-    currentQuantity: 9
+    currentQuantity: 7
   possibleItemsToSell:
   - {fileID: 11400000, guid: f08604279aa25a1458384a1fe3d43a4b, type: 2}
   - {fileID: 11400000, guid: 3059eaaaa487da04cb63c3b1c4857a2f, type: 2}
   - {fileID: 11400000, guid: 0975cdcf99196f945baf46845bf9d9cb, type: 2}
   - {fileID: 11400000, guid: 503cffc127bfd94429020312b951d5d9, type: 2}
+  - {fileID: 11400000, guid: 5487a6909ee4e62439c1ce70981f8b12, type: 2}
+  - {fileID: 11400000, guid: 359eb4ee6dc50cb40bf54512b74ff5fb, type: 2}
   minQuantity: 1
   maxQuantity: 10
-  acceptedItemTypesToBuy: 00000000
   references:
     version: 2
     RefIds: []

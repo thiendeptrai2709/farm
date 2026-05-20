@@ -338,61 +338,100 @@ public class ShopUIManager : MonoBehaviour
     }
     public bool TryAddTradeItemFromShiftClick(ItemData item, int amount, out int originalAmountLeft)
     {
-        originalAmountLeft = amount; // Khởi tạo lượng đồ còn lại (ban đầu là tất cả)
+        originalAmountLeft = amount; // Khởi tạo lượng đồ còn lại
 
-        // Kiểm tra xem NPC có mua đồ này không
         if (item == MarketManager.Instance.coinItem) return false;
-        if (currentShop != null && !currentShop.acceptedItemTypesToBuy.Contains(item.itemType))
+
+        // Dùng hàm kiểm tra chuẩn từ ShopData
+        if (currentShop != null && !currentShop.CanBuyItemFromPlayer(item))
         {
             Debug.LogWarning($"{currentShop.npcName} không mua loại hàng này!");
             return false;
         }
+
         if (!sellTabContent.gameObject.activeSelf)
         {
             SwitchToSellTab();
         }
-        int pricePerUnit = MarketManager.Instance.GetCurrentBuyPrice(item); // Note: Should probably be GetCurrentSellPrice(item) based on MarketManager structure, but assuming you use BuyPrice for now.
 
-        // 1. Ưu tiên cộng dồn vào ô TradingSlot đang có sẵn đồ cùng loại
-        foreach (TradingSlotUI slot in tradeSlots)
+        int pricePerUnit = MarketManager.Instance.GetCurrentSellPrice(item);
+        bool itemAdded = false; // Đánh dấu xem có nhét thành công món nào lên bàn không
+
+        // ==============================================================
+        // 1. NẾU ĐỒ ĐƯỢC XẾP CHỒNG: Ưu tiên nhét vào ô đang có sẵn đồ cùng loại
+        // ==============================================================
+        if (item.isStackable)
         {
-            if (slot.currentItem == item)
+            foreach (TradingSlotUI slot in tradeSlots)
             {
-                // Trading slots usually don't have maxStack limits in games unless specified. 
-                // We'll assume they can hold whatever you shift-click, or we just add it.
-                slot.currentAmount += originalAmountLeft;
-                slot.totalValue = pricePerUnit * slot.currentAmount;
-                slot.UpdateVisuals(); // Make sure UpdateVisuals() in TradingSlotUI is PUBLIC
-                UpdateTotalSellValue();
+                // Tìm thấy ô có cùng món đồ VÀ ô đó chưa chạm ngưỡng maxStack
+                if (slot.currentItem == item && slot.currentAmount < item.maxStack)
+                {
+                    // Tính xem ô này còn "nuốt" thêm được bao nhiêu cục nữa
+                    int spaceLeft = item.maxStack - slot.currentAmount;
+                    int amountToAdd = Mathf.Min(originalAmountLeft, spaceLeft);
 
-                originalAmountLeft = 0;
+                    slot.currentAmount += amountToAdd;
+                    slot.totalValue = pricePerUnit * slot.currentAmount;
+                    slot.UpdateVisuals();
 
-                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
-                
-                return true;
+                    originalAmountLeft -= amountToAdd; // Trừ đi số lượng vừa nhét
+                    itemAdded = true;
+
+                    // Nếu đã nhét hết sạch đồ trên tay -> Hoàn thành!
+                    if (originalAmountLeft <= 0)
+                    {
+                        UpdateTotalSellValue();
+                        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+                        return true;
+                    }
+                }
             }
         }
 
-        // 2. Nếu không có ô nào trùng loại, tìm ô TradingSlot trống đầu tiên
+        // ==============================================================
+        // 2. TÌM Ô TRỐNG ĐỂ NHÉT TIẾP (Nếu đồ chưa hết, hoặc đồ không cho xếp chồng)
+        // ==============================================================
         foreach (TradingSlotUI slot in tradeSlots)
         {
             if (slot.currentItem == null)
             {
+                // Nếu cho xếp chồng -> Nhét tối đa maxStack. Nếu KHÔNG cho xếp -> Chỉ nhét 1 cái.
+                int amountToAdd = item.isStackable ? Mathf.Min(originalAmountLeft, item.maxStack) : 1;
+
                 slot.currentItem = item;
-                slot.currentAmount = originalAmountLeft;
+                slot.currentAmount = amountToAdd;
                 slot.totalValue = pricePerUnit * slot.currentAmount;
-                slot.UpdateVisuals(); // Make sure UpdateVisuals() in TradingSlotUI is PUBLIC
-                UpdateTotalSellValue();
+                slot.UpdateVisuals();
 
-                originalAmountLeft = 0;
+                originalAmountLeft -= amountToAdd;
+                itemAdded = true;
 
-                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
-
-                return true;
+                if (originalAmountLeft <= 0)
+                {
+                    UpdateTotalSellValue();
+                    if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+                    return true;
+                }
             }
         }
 
-        // Không còn ô trống trên bàn giao dịch
+        // ==============================================================
+        // 3. NẾU CHẠY ĐẾN ĐÂY MÀ VẪN CÒN ĐỒ (Bàn giao dịch không còn chỗ trống)
+        // ==============================================================
+        if (itemAdded)
+        {
+            // Đã nhét được một phần, nhưng bàn bị đầy giữa chừng
+            UpdateTotalSellValue();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
+            Debug.LogWarning("Bàn giao dịch đã đầy, một số đồ bị giữ lại trong Balo!");
+
+            // Vẫn trả về true để Balo biết là đã chuyển được 1 phần, 
+            // và Balo sẽ tự lấy biến originalAmountLeft để cập nhật lại số dư
+            return true;
+        }
+
+        // Không nhét được bất cứ thứ gì lên bàn
         Debug.LogWarning("Bàn giao dịch đã đầy!");
         return false;
     }

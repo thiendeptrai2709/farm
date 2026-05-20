@@ -45,7 +45,9 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
 
             // KIỂM TRA LUẬT LỆ: Cấm bán Tiền và NPC phải chịu mua món này
             if (item == MarketManager.Instance.coinItem) return;
-            if (!currentShop.acceptedItemTypesToBuy.Contains(item.itemType))
+
+            // [ĐÃ SỬA]: Dùng hàm kiểm tra mới
+            if (!currentShop.CanBuyItemFromPlayer(item))
             {
                 Debug.LogWarning($"{currentShop.npcName} không mua loại hàng này!");
                 return;
@@ -93,19 +95,20 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         {
             ClearSlot();
             ShopUIManager.Instance.UpdateTotalSellValue();
-        }
-        else
-        {
-            Debug.LogWarning("Balo đầy, không thể cất lại đồ!"); // Thường ít xảy ra vì lúc nãy rút đồ ra đã tạo ô trống rồi
-        }
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlaySFX("Item_Drop"); // Dùng lại tiếng thả đồ cho đồng bộ
+
+            // [ĐÃ SỬA]: Dọn dẹp code gọi âm thanh cho chuẩn logic
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX("Item_Drop");
+            }
         }
         else
         {
             Debug.LogWarning("Balo đầy, không thể cất lại đồ!");
-            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Error");
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX("UI_Error");
+            }
         }
     }
 

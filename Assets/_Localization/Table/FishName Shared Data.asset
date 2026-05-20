@@ -1,0 +1,152 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: FishName Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: FishName
+  m_TableCollectionNameGuidString: 8abfb9f671922ad448ec1b2b41583619
+  m_Entries:
+  - m_Id: 1111218905088
+    m_Key: Fish_ClimbingPerch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070912
+    m_Key: Fish_Carp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070913
+    m_Key: Fish_Catfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111244070914
+    m_Key: Fish_SilverCarp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265216
+    m_Key: Fish_CrucianCarp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265217
+    m_Key: Fish_Snakehead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265218
+    m_Key: Fish_YoungSailfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265219
+    m_Key: Fish_StreamFish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265220
+    m_Key: Fish_Hemibagrus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265221
+    m_Key: Fish_MountainSalmon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265222
+    m_Key: Fish_BlackCarp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265223
+    m_Key: Fish_Eel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265224
+    m_Key: Fish_GiantCatfish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265225
+    m_Key: Fish_RiverSeahorse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265226
+    m_Key: Fish_Redtail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265227
+    m_Key: Fish_BlackGold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265228
+    m_Key: Fish_Moonlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265229
+    m_Key: Fish_RoyalKoi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265230
+    m_Key: Fish_BlueIce
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265231
+    m_Key: Fish_RiverTiger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265232
+    m_Key: Fish_OneEyed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265233
+    m_Key: Fish_PhantomLake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265234
+    m_Key: Fish_AzureDragon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265235
+    m_Key: Fish_Galaxy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265236
+    m_Key: Fish_Starshine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265237
+    m_Key: Fish_Shadow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265238
+    m_Key: Fish_Leviathan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265239
+    m_Key: Fish_DragonKing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265240
+    m_Key: Fish_ForestSpirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265241
+    m_Key: Fish_AncientMoon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1111248265242
+    m_Key: Fish_Mythic
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 130024291203284992
+  references:
+    version: 2
+    RefIds:
+    - rid: 130024291203284992
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1779201494361

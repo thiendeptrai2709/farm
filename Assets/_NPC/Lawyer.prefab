@@ -305,6 +305,8 @@ GameObject:
   - component: {fileID: 4001372661466881212}
   - component: {fileID: 5171280471610731801}
   - component: {fileID: 3643904091275088164}
+  - component: {fileID: 4801685072367408805}
+  - component: {fileID: -4285626557595713204}
   m_Layer: 7
   m_Name: Lawyer
   m_TagString: Untagged
@@ -386,19 +388,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1241e9792543fa64c8d02b202b02ac81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCVillager
-  npcName: "Lu\u1EADt S\u01B0"
+  interactTextNormal:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  localizedNpcName:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   greetingSound: Villager_Hello
   defaultDialogues:
-  - "Ch\xE0o c\u1EADu"
-  - "Ch\u1EAFc h\u1EB3n c\u1EADu l\xE0 con trai duy nh\u1EA5t c\u1EE7a Richard \u0111\xFAng
-    kh\xF4ng ?"
-  - "B\u1ED1 c\u1EADu \u0111\xE3 \u0111\u1EC3 l\u1EA1i m\u1ED9t di ch\xFAc v\xE0
-    t\xF4i bi\u1EBFt t\u1EA1i sao c\u1EADu l\u1EA1i \u1EDF \u0111\xE2y !"
-  - "H\xE3y \u0111\u1EBFn n\xF4ng tr\u1EA1i c\u1EE7a b\u1ED1 c\u1EADu \u0111i, t\xF4i
-    c\xF3 v\xE0i th\u1EE9 mu\u1ED1n cho c\u1EADu xem !"
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   questLine:
   - {fileID: 11400000, guid: 83e53537336d3904d8c841d14658e06d, type: 2}
   secretStoryQuest: {fileID: 11400000, guid: 2a14727ec11203a4490a9a5a22e992fd, type: 2}
+  disableAfterQuestCompleted: {fileID: 0}
   schedule:
     workStartTime: 0
     workEndTime: 24
@@ -410,7 +455,13 @@ MonoBehaviour:
   maxWaitTime: 5
   sitPoint: {fileID: 0}
   standPoint: {fileID: 0}
+  minSitTime: 5
+  maxSitTime: 15
   npcAnimator: {fileID: 0}
+  lookRadius: 5
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &5171280471610731801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,6 +499,116 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!82 &4801685072367408805
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928250437015310768}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &-4285626557595713204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928250437015310768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc37ca7996d27d9419f18d726488453a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAudioEvent
+  footstepClip: {fileID: 8300000, guid: ce9f205e7df440544a17845da959555d, type: 3}
 --- !u!1 &1948298325076861980
 GameObject:
   m_ObjectHideFlags: 0

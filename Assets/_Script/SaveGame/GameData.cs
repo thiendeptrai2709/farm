@@ -92,6 +92,9 @@ public class SavedTroughData
     public List<SavedSlotData> slots = new List<SavedSlotData>();
 }
 
+
+
+
 [System.Serializable]
 public class GameData
 {
@@ -126,6 +129,7 @@ public class GameData
     public List<SavedTroughData> savedTroughs;
     public List<SavedPriceMultiplier> savedPrices;
     public List<SavedNPCData> savedNPCs;
+    public List<string> unlockedBusStops;
     public GameData()
     {
         lastSceneName = "Farm";
@@ -153,6 +157,7 @@ public class GameData
         savedTroughs = new List<SavedTroughData>();
         savedPrices = new List<SavedPriceMultiplier>();
         savedNPCs = new List<SavedNPCData>();
+        unlockedBusStops = new List<string>();
     }
     [System.Serializable]
     public class SavedPriceMultiplier

@@ -5,34 +5,47 @@ public class TutorialLawyer : MonoBehaviour
 {
     public enum LawyerLocation { TownBusStop, FarmEntrance }
 
-    [Header("Cài đặt Vị trí của Luật Sư này")]
+    [Header("Cài đặt Vị trí của Luật Sư")]
     public LawyerLocation myLocation;
 
-    [Header("ID Nhiệm vụ Hướng dẫn (Từ QuestData)")]
+    [Header("ID Nhiệm vụ (Để check điều kiện)")]
     public string townTutorialQuestID = "Tut_Town";
     public string farmTutorialQuestID = "Tut_Farm";
 
     private bool hasCheckedVisibility = false;
 
+    private NavMeshAgent myAgent;
+    private NPCVillager myVillager;
+
+    // --- BIẾN KỊCH BẢN ---
+    private Transform hiddenSitPoint;
+    private bool hasWalkedToChair = false;
+    private bool isCurrentlyTalking = false;
+
+    // [ĐÃ THÊM]: Bộ đếm giờ để chống "Chớp UI"
+    private float closeTimer = 0f;
+
     private void Start()
     {
-        // ==========================================
-        // 1. ÉP BUỘC ĐỨNG IM BẰNG CODE (Khỏi lo cài sai Inspector)
-        // ==========================================
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        if (agent != null)
+        myAgent = GetComponent<NavMeshAgent>();
+        myVillager = GetComponent<NPCVillager>();
+
+        if (myLocation == LawyerLocation.TownBusStop)
         {
-            agent.isStopped = true; // Khóa NavMesh
+            if (myAgent != null) myAgent.isStopped = true;
+            if (myVillager != null) myVillager.canWander = false;
+        }
+        else if (myLocation == LawyerLocation.FarmEntrance)
+        {
+            // [ĐÃ SỬA]: Chỉ cất cái ghế vào biến tạm chứ không xóa ngay tại Start,
+            // phải đợi QuestManager nạp xong dữ liệu từ file Save rồi mới quyết định.
+            if (myVillager != null)
+            {
+                hiddenSitPoint = myVillager.sitPoint;
+                myVillager.canWander = false;
+            }
         }
 
-        NPCVillager villagerScript = GetComponent<NPCVillager>();
-        if (villagerScript != null)
-        {
-            villagerScript.canWander = false; // Cấm đi dạo
-        }
-
-        // [ĐÃ SỬA]: Gọi thẳng hàm check ngay lập tức ở Frame 0. 
-        // Game sẽ dọn dẹp thằng Luật sư trước khi hình ảnh kịp xuất hiện lên màn hình!
         CheckVisibility();
     }
 
@@ -45,12 +58,10 @@ public class TutorialLawyer : MonoBehaviour
 
         if (myLocation == LawyerLocation.TownBusStop)
         {
-            // Đã nói chuyện ở Thị trấn xong -> Tắt NPC ở bến xe
             if (townDone) gameObject.SetActive(false);
         }
         else if (myLocation == LawyerLocation.FarmEntrance)
         {
-            // NPC ở Nông trại CHỈ XUẤT HIỆN khi: Đã xong Town VÀ chưa xong Farm
             if (!townDone || farmDone) gameObject.SetActive(false);
         }
         hasCheckedVisibility = true;
@@ -63,24 +74,81 @@ public class TutorialLawyer : MonoBehaviour
         if (!hasCheckedVisibility)
         {
             CheckVisibility();
-            if (!gameObject.activeSelf) return; // Nếu check xong mà bị tàng hình thì thoát Update luôn
-        }
-        // Quét liên tục xem Quest đã được NPCVillager âm thầm hoàn thành chưa
-        if (myLocation == LawyerLocation.TownBusStop && QuestManager.Instance.completedQuests.Contains(townTutorialQuestID))
-        {
-            // Phải đợi người chơi bấm tắt bảng thoại đi thì NPC mới được phép biến mất
-            if (DialogueUIManager.Instance != null && !DialogueUIManager.Instance.IsOpen())
+
+            // [ĐÃ THÊM]: Xử lý khôi phục lại cái ghế khi người chơi Load/Reload lại game
+            if (myLocation == LawyerLocation.FarmEntrance && myVillager != null)
             {
-                Debug.Log("Luật sư Thị trấn: Tôi đi trước về Nông trại đợi cậu nhé!");
-                gameObject.SetActive(false); // Có thể chèn thêm Particle Effect khói bùm 1 cái ở đây
+                // Nếu file danh sách đã xong có chứa Quest xe bus (nghĩa là ông đã trả Quest trước khi thoát game)
+                if (QuestManager.Instance.completedQuests.Contains(townTutorialQuestID))
+                {
+                    hasWalkedToChair = true;
+                    myVillager.sitPoint = hiddenSitPoint; // Trả lại ghế luôn để NPCVillager tự kích hoạt logic ngồi
+                }
+                else
+                {
+                    myVillager.sitPoint = null; // Nếu chưa làm xong Quest xe bus thì mới thực sự giấu ghế
+                }
             }
+
+            if (!gameObject.activeSelf) return;
         }
-        else if (myLocation == LawyerLocation.FarmEntrance && QuestManager.Instance.completedQuests.Contains(farmTutorialQuestID))
+        // =====================================
+        // 2. KỊCH BẢN NÔNG TRẠI
+        // =====================================
+        else if (myLocation == LawyerLocation.FarmEntrance)
         {
-            if (DialogueUIManager.Instance != null && !DialogueUIManager.Instance.IsOpen())
+            if (!hasWalkedToChair && DialogueUIManager.Instance != null)
             {
-                Debug.Log("Luật sư Nông trại: Xong việc, tôi về thành phố đây!");
-                gameObject.SetActive(false);
+                bool isUIOpenWithMe = DialogueUIManager.Instance.IsOpen() && (DialogueUIManager.Instance.currentVillager == myVillager);
+
+                if (isUIOpenWithMe)
+                {
+                    isCurrentlyTalking = true;
+                    closeTimer = 0f; // Bảng đang mở thì liên tục reset đồng hồ về 0
+                }
+                else if (isCurrentlyTalking)
+                {
+                    // [BẢN VÁ LỖI CHỚP UI]: Bảng vừa tắt, bắt đầu đếm giờ
+                    closeTimer += Time.deltaTime;
+
+                    // Nếu bảng tắt liên tục quá 0.5 giây (Tức là ông đã bấm X hoặc nói xong hẳn)
+                    if (closeTimer >= 0.5f)
+                    {
+                        isCurrentlyTalking = false; // Chốt là kết thúc hội thoại
+
+                        // Kiểm tra xem đã trả nhiệm vụ xe bus chưa
+                        bool isBusQuestDone = QuestManager.Instance.completedQuests.Contains(townTutorialQuestID);
+
+                        if (isBusQuestDone)
+                        {
+                            hasWalkedToChair = true;
+
+                            // 1. Trả lại cái ghế
+                            if (myVillager != null)
+                            {
+                                myVillager.sitPoint = hiddenSitPoint;
+                            }
+
+                            // 2. Ép bước đi ngay lập tức ra ghế
+                            if (myAgent != null && myAgent.isOnNavMesh && hiddenSitPoint != null)
+                            {
+                                myAgent.isStopped = false;
+                                myAgent.SetDestination(hiddenSitPoint.position);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // =====================================
+            // 3. HOÀN THÀNH QUEST NÔNG TRẠI -> BIẾN MẤT
+            // =====================================
+            if (QuestManager.Instance.completedQuests.Contains(farmTutorialQuestID))
+            {
+                if (DialogueUIManager.Instance != null && !DialogueUIManager.Instance.IsOpen())
+                {
+                    gameObject.SetActive(false);
+                }
             }
         }
     }

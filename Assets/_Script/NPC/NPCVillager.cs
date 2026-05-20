@@ -44,7 +44,9 @@ public class NPCVillager : MonoBehaviour, IInteractable
     [Tooltip("Nếu kéo 1 điểm (Transform) vào đây, NPC sẽ không đi dạo nữa mà ra thẳng đây ngồi tới tối.")]
     public Transform sitPoint;
     public Transform standPoint;
-
+    public float minSitTime = 5f; // Thời gian ngồi nghỉ tối thiểu (ghế động)
+    public float maxSitTime = 15f; // Thời gian ngồi nghỉ tối đa (ghế động)
+    private float dynamicSitTimer = 0f;
 
     [Header("Thành phần AI")]
     public Animator npcAnimator;
@@ -112,6 +114,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (isInitialized) return;
 
+        // Kiểm tra điều kiện ẩn NPC theo nhiệm vụ
         if (disableAfterQuestCompleted != null && QuestManager.Instance != null)
         {
             if (QuestManager.Instance.GetQuestStatus(disableAfterQuestCompleted) == QuestStatus.Completed)
@@ -122,16 +125,9 @@ public class NPCVillager : MonoBehaviour, IInteractable
             }
         }
 
-        if (wanderCenter == null && sitPoint == null)
-        {
-            GameObject tempCenter = new GameObject(npcName + "_TempWanderCenter");
-            tempCenter.transform.position = transform.position;
-            wanderCenter = tempCenter.transform;
-        }
-
         if (homePoint == null)
         {
-            Debug.LogError($"[NPC] Cảnh báo: {npcName} chưa được gắn vị trí nhà (homePoint) trên Inspector!");
+            Debug.LogError($"[NPC] {npcName} THIẾU HOMEPOINT! NPC sẽ đứng im để tránh lỗi.");
             isInitialized = true;
             return;
         }
@@ -140,24 +136,24 @@ public class NPCVillager : MonoBehaviour, IInteractable
         if (timeSys != null && agent != null)
         {
             float currentTime = timeSys.hour;
-            bool isDayTime = currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime;
+            // ÉP KIỂM TRA: Nếu giờ hệ thống chưa chạy (bằng 0), hãy coi như đang trong giờ làm việc để NPC ra ngoài
+            bool isDayTime = (currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime) || currentTime == 0;
 
             if (isDayTime)
             {
+               
                 if (sitPoint != null)
                 {
-                    agent.Warp(sitPoint.position);
-                    // [ĐÃ SỬA LỖI]: Truyền đúng biến sitPoint vào hàm
-                    SnapToSitPoint(sitPoint);
+                    agent.Warp(homePoint.position);
                 }
-                else
+                else if (wanderCenter != null)
                 {
                     agent.Warp(wanderCenter.position);
                 }
-
                 isSleeping = false;
                 isGoingHome = false;
                 SetNPCVisibility(true);
+
             }
             else
             {
@@ -267,7 +263,19 @@ public class NPCVillager : MonoBehaviour, IInteractable
     // ==========================================
     private void HandleSitting()
     {
-        if (isCurrentlySitting) return;
+        if (isCurrentlySitting)
+        {
+            // Nếu KHÔNG CÓ chỗ ngồi cố định (nghĩa là đang ngồi ghế động tìm được)
+            if (sitPoint == null && currentDynamicChair != null)
+            {
+                dynamicSitTimer -= Time.deltaTime;
+                if (dynamicSitTimer <= 0f)
+                {
+                    StandUpFromSitPoint();
+                }
+            }
+            return;
+        }
 
         if (sitCooldownTimer > 0)
         {
@@ -289,6 +297,12 @@ public class NPCVillager : MonoBehaviour, IInteractable
         if (Vector2.Distance(npcPosXZ, sitPosXZ) < 0.5f)
         {
             SnapToSitPoint(targetSitPoint);
+
+            // Thiết lập đồng hồ đếm ngược nếu đây là ghế động
+            if (sitPoint == null)
+            {
+                dynamicSitTimer = Random.Range(minSitTime, maxSitTime);
+            }
         }
         else if (agent.enabled && !agent.pathPending)
         {
