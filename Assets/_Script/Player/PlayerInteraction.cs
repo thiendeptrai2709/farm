@@ -52,27 +52,28 @@ public class PlayerInteraction : MonoBehaviour
         pendingInteractable = null;
         pendingBuildSite = null;
 
-        // ==========================================
-        // [ĐÃ SỬA]: LUÔN MỞ KHÓA CHÂN TRƯỚC TIÊN CHO CHẮC CÚ!
-        // ==========================================
         PlayerMovement movement = GetComponent<PlayerMovement>();
         if (movement != null) movement.isActionLocked = false;
 
         // KIỂM TRA XEM CÓ AUTO LÀM TIẾP KHÔNG
         if (autoActionTarget != null)
         {
-            MonoBehaviour targetMono = autoActionTarget as MonoBehaviour;
-            if (targetMono != null && targetMono.gameObject.activeInHierarchy)
+            bool isValid = false;
+
+            // Nếu là Object thật trên Scene thì check xem nó có đang bật không
+            if (autoActionTarget is MonoBehaviour targetMono)
             {
-                if (IsActionable(autoActionTarget))
-                {
-                    
-                    ExecuteInteraction(autoActionTarget);
-                }
-                else
-                {
-                    autoActionTarget = null;
-                }
+                isValid = targetMono.gameObject.activeInHierarchy;
+            }
+            // Nếu là Object ảo (như cây rừng) thì luôn hợp lệ để tiếp tục
+            else
+            {
+                isValid = true;
+            }
+
+            if (isValid && IsActionable(autoActionTarget))
+            {
+                ExecuteInteraction(autoActionTarget);
             }
             else
             {
@@ -86,10 +87,21 @@ public class PlayerInteraction : MonoBehaviour
         if (pendingInteractable != null)
         {
             MonoBehaviour targetMono = pendingInteractable as MonoBehaviour;
-            if (targetMono != null && targetMono.gameObject.activeInHierarchy)
+
+            // Nếu nó là Object thật trên màn hình (như Luống đất, Cây trồng 4 ô, Rương...)
+            if (targetMono != null)
+            {
+                if (targetMono.gameObject.activeInHierarchy)
+                {
+                    pendingInteractable.Interact();
+                }
+            }
+            // Nếu nó là Object ảo thuần C# (như Cây trên Terrain)
+            else
             {
                 pendingInteractable.Interact();
             }
+
             pendingInteractable = null;
         }
         if (pendingBuildSite != null)
@@ -247,8 +259,32 @@ public class PlayerInteraction : MonoBehaviour
 
         if (target is FarmPlot plot)
         {
+            bool isHoldingHoe = false;
+            if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+            {
+                ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+                if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Hoe) isHoldingHoe = true;
+            }
+
+            if (isHoldingHoe) return true; // Cầm cuốc là luôn được phép tương tác (để xóa bỏ)
             if (plot.currentState == PlotState.Tilled || plot.currentState == PlotState.Grown) return true;
             if (plot.currentState == PlotState.Planted) return plot.CanBeWatered() || plot.CanBeFertilized();
+            return false;
+        }
+        else if (target is TerrainTreeInteractable virtualTree)
+        {
+            if (TerrainTreeManager.Instance != null && !TerrainTreeManager.Instance.IsTreeAlive(virtualTree.treeIndex))
+            {
+                return false;
+            }
+
+            bool isHoldingAxe = false;
+            if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+            {
+                ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+                if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Axe) isHoldingAxe = true;
+            }
+            return isHoldingAxe; // Chỉ được tương tác nếu đang cầm Rìu
         }
         else if (target is TreePit pit)
         {
@@ -338,7 +374,7 @@ public class PlayerInteraction : MonoBehaviour
             ItemData holdingItem = InventoryManager.Instance.hotbarSlots[selectedIndex].item;
             if (holdingItem is ToolItemData tool)
             {
-                if (tool.toolType == ToolType.Hoe && target is FarmingZone)
+                if (tool.toolType == ToolType.Hoe && (target is FarmingZone || target is FarmPlot))
                 {
                     requiresLockAndEvent = true;
                     animToPlay = "Digging";
@@ -346,7 +382,7 @@ public class PlayerInteraction : MonoBehaviour
                 }
                 else if (tool.toolType == ToolType.Axe)
                 {
-                    if (target is TreePit)
+                    if (target is TreePit || target is TerrainTreeInteractable)
                     {
                         requiresLockAndEvent = true;
                         animToPlay = "Chopping";

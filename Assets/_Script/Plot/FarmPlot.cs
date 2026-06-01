@@ -40,6 +40,7 @@ public class FarmPlot : MonoBehaviour, IInteractable
     public LocalizedString textFertilize;
     public LocalizedString textGrowing;
     public LocalizedString textHarvest;
+    public LocalizedString textRemovePlot;
     public void LoadData(FarmPlotData data, SeedItemData seed)
     {
         this.plotID = data.id;
@@ -197,6 +198,18 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
+        bool isHoldingHoe = false;
+        if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+        {
+            ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+            if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Hoe) isHoldingHoe = true;
+        }
+
+        if (isHoldingHoe)
+        {
+            return textRemovePlot.IsEmpty ? "[E] Remove Plot" : textRemovePlot.GetLocalizedString();
+        }
+
         if (currentState == PlotState.Tilled)
             return textPlantSeed.IsEmpty ? "[E] Plant Seed" : textPlantSeed.GetLocalizedString();
 
@@ -233,6 +246,19 @@ public class FarmPlot : MonoBehaviour, IInteractable
     }
     public void Interact()
     {
+        bool isHoldingHoe = false;
+        if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+        {
+            ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+            if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Hoe) isHoldingHoe = true;
+        }
+
+        if (isHoldingHoe)
+        {
+            RemovePlot();
+            return;
+        }
+
         if (currentState == PlotState.Tilled)
         {
             if (FarmPlotUIManager.Instance != null) FarmPlotUIManager.Instance.OpenPlotUI(this);
@@ -243,6 +269,18 @@ public class FarmPlot : MonoBehaviour, IInteractable
             else if (CanBeFertilized()) FertilizePlant();
         }
         else if (currentState == PlotState.Grown) Harvest();
+    }
+    private void RemovePlot()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.DeductEquippedToolDurability(1f);
+        }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Hoe_Hit");
+        }
+        Destroy(gameObject);
     }
 
     public void PlantSeedSuccess(SeedItemData seedPlanted)

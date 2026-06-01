@@ -23,6 +23,7 @@ public class PlayerInputHandler : MonoBehaviour
     public bool JournalTriggered { get; private set; }
     public bool EscTriggered { get; private set; }
 
+    public event Action OnTrashActionTriggered;
     public event Action OnSplitActionTriggered;
     private void Awake()
     {
@@ -105,6 +106,10 @@ public class PlayerInputHandler : MonoBehaviour
         if (controls.Player.Split.WasPressedThisFrame())
         {
             OnSplitActionTriggered?.Invoke();
+        }
+        if (controls.Player.TrashItem.WasPressedThisFrame()) // NHỚ ĐẶT TÊN TRONG INPUT SYSTEM LÀ TrashItem
+        {
+            OnTrashActionTriggered?.Invoke();
         }
         // 3. XỬ LÝ LĂN CHUỘT KHI ĐANG CHƠI (Không cuộn khi mở Balo)
         bool isPlacingBuilding = (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing());

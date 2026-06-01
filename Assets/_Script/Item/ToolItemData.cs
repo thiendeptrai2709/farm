@@ -23,7 +23,6 @@ public class ToolItemData : ItemData
     [Header("Chỉ số Chiến đấu / Khai thác")]
     public float baseDamage = 10f;  // Sát thương gốc chém vào quái/cây
     public float durability = 100f; // Độ bền (Tương lai làm mẻ rìu)
-    public float staminaCost = 5f;  // Thể lực tiêu hao mỗi nhát chém
 
     [Header("Mô hình hiển thị trên tay")]
     public GameObject toolPrefab;   // Cái VỎ BỌC (Wrapper) hôm trước mình làm

@@ -17,10 +17,11 @@ public class InteractionUI : MonoBehaviour
 
     [Tooltip("Giới hạn độ cao TỐI ĐA của chữ. Tránh việc chữ bay lên nóc với các công trình to như Nhà Kho!")]
     public float maxHeightLimit = 2.5f;
+    public bool alwaysOnTop = true;
 
     private Transform currentTargetTransform;
     private Camera mainCamera;
-    private Transform playerTransform; 
+    private Transform playerTransform;
     private Vector3 dynamicOffset;
     private Collider[] targetColliders;
     private Vector3 lockedLocalOffset;
@@ -40,6 +41,30 @@ public class InteractionUI : MonoBehaviour
 
         promptPanel.SetActive(false);
         if (progressBar != null) progressBar.gameObject.SetActive(false);
+
+        if (alwaysOnTop)
+        {
+            Graphic[] uiGraphics = promptPanel.GetComponentsInChildren<Graphic>(true);
+            foreach (Graphic g in uiGraphics)
+            {
+                if (g is TextMeshProUGUI tmp)
+                {
+                    // Cách chuẩn cho TextMeshPro: Đổi sang Shader Overlay chuyên dụng
+                    Material newMat = new Material(tmp.fontMaterial);
+                    Shader overlayShader = Shader.Find("TextMeshPro/Distance Field Overlay");
+                    if (overlayShader != null) newMat.shader = overlayShader;
+                    tmp.fontMaterial = newMat;
+                }
+                else
+                {
+                    // Ép các ảnh UI khác (Image, Slider...) bỏ qua kiểm tra độ sâu
+                    Material mat = new Material(g.material);
+                    mat.SetInt("unity_GUIZTestMode", 8);
+                    g.material = mat;
+                }
+            }
+        }
+
     }
     private void LateUpdate()
     {
@@ -141,3 +166,5 @@ public class InteractionUI : MonoBehaviour
         if (progressBar != null) progressBar.gameObject.SetActive(false);
     }
 }
+
+

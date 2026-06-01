@@ -43,10 +43,6 @@ public class QuestData : ScriptableObject
     public LocalizedString[] inProgressLines;
     public LocalizedString[] completeLines;
 
-    // ==========================================
-    // CÁC HÀM HỖ TRỢ CHUYỂN ĐỔI (Đảm bảo logic cũ không lỗi)
-    // ==========================================
-
     public string GetQuestName() => questName.GetLocalizedString();
     public string GetDescription() => description.GetLocalizedString();
     public string GetActionDescription() => actionDescription.GetLocalizedString();

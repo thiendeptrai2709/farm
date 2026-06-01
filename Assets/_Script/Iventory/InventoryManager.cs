@@ -39,8 +39,11 @@ public class InventoryManager : MonoBehaviour
     public event Action OnInventoryChanged;
     public event Action<bool> OnChestToggled;
     public event Action OnConsumeAnimationStart;
-
     private StorageType pendingConsumeType;
+
+    public bool isBaloFull { get; private set; } = false;
+
+
     private int pendingConsumeIndex = -1;
     public bool isEating = false;
     private float lastConsumeTime = 0f;
@@ -55,8 +58,21 @@ public class InventoryManager : MonoBehaviour
 
         for (int i = 0; i < maxHotbarSlots; i++) hotbarSlots.Add(new InventorySlot(null, 0, -1f));
         for (int i = 0; i < maxInventorySlots; i++) inventorySlots.Add(new InventorySlot(null, 0, -1f));
-    }
 
+        OnInventoryChanged += UpdateBaloFullState;
+    }
+    private void UpdateBaloFullState()
+    {
+        isBaloFull = true;
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.item == null)
+            {
+                isBaloFull = false;
+                break;
+            }
+        }
+    }
     private void Start()
     {
 
@@ -541,8 +557,6 @@ public class InventoryManager : MonoBehaviour
             CancelPendingConsume();
             selectedHotbarIndex = index;
             string itemName = slot.item != null ? slot.item.displayName : "Tay không";
-            Debug.Log($"Đang chọn: {itemName} ở ô số {index + 1}");
-            // (Đã xóa đoạn tự động ăn ở đây, nên đồ ăn sẽ chỉ được cầm trên tay chứ không bị ăn mất)
         }
 
         OnInventoryChanged?.Invoke();

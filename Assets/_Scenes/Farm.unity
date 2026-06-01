@@ -2524,7 +2524,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1514467253100086091, guid: 6fb6efd4417fc9d4e8b67fd2acb5a89d, type: 3}
       propertyPath: m_Name
-      value: Roadside Billboard 2
+      value: NoticeBoard
       objectReference: {fileID: 0}
     - target: {fileID: 1514467253100086091, guid: 6fb6efd4417fc9d4e8b67fd2acb5a89d, type: 3}
       propertyPath: m_Layer
@@ -18829,34 +18829,7 @@ MonoBehaviour:
   timeBetweenRounds: 1
   minBiteTime: 5
   maxBiteTime: 7
-  auditionPanel: {fileID: 7772788650539849248}
-  arrowSlots:
-  - {fileID: 9160667765677432215}
-  - {fileID: 5820997355560081323}
-  - {fileID: 2008348937174765320}
-  - {fileID: 3221829000711967518}
-  - {fileID: 3135001805945126969}
-  upSprite: {fileID: 21300000, guid: 0c830f34fa702d84a9786a9740186963, type: 3}
-  downSprite: {fileID: 21300000, guid: 60543be98b18e94439b2e2a67aae367f, type: 3}
-  leftSprite: {fileID: 21300000, guid: a4a40bf300cd09d429fda74afa457a03, type: 3}
-  rightSprite: {fileID: 21300000, guid: 8cfc3be0827dfcb4584b460907d7a761, type: 3}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  successColor: {r: 0, g: 1, b: 0, a: 1}
-  tierPanel: {fileID: 6478053996285816105}
-  tierHighlights:
-  - {fileID: 5882641813003178319}
-  - {fileID: 2907552051373956049}
-  - {fileID: 7261264713754250783}
-  - {fileID: 5253919386175070195}
-  tierLockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  tierUnlockedColor: {r: 1, g: 0.33649415, b: 0.015686274, a: 1}
-  availableFish:
-  - {fileID: 11400000, guid: 1e61cfe13684c0c49a2db14f0b91ed43, type: 2}
-  - {fileID: 11400000, guid: d63bb4a8409b23f4a97d112536f2bf11, type: 2}
-  - {fileID: 11400000, guid: ac86da6d7ca5fc8418f7a596263f7e27, type: 2}
-  - {fileID: 11400000, guid: dc52daf8a4c521248a79e3fb4f13358f, type: 2}
-  - {fileID: 11400000, guid: 2883c7de5f264ef42aaa1bbf1e3379f1, type: 2}
-  timerSlider: {fileID: 6799190494814903613}
+  availableFish: []
   waterSurfacePoint: {fileID: 1541906986}
   genericFishPrefab: {fileID: 1550040073213679509, guid: cb50ec8b05a3b2343a1c6ba1f3bafb3f, type: 3}
   splashEffectPrefab: {fileID: 5220794433372882574, guid: 6400ed2cbb4ea4949bbdbcc24680ac64, type: 3}
@@ -18864,6 +18837,63 @@ MonoBehaviour:
   baseSequenceLength: 4
   baseTimeLimit: 3
   thisLocation: 1
+  locInteractNeedRod:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193527920877568
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  locCastRod:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193531435704320
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  locCancelFishing:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193532173901824
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  locRound:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193533511884800
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  locPrepareRound:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193588478238720
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  locInventoryFull:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 13193593981165568
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!65 &1541906983
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20420,6 +20450,10 @@ PrefabInstance:
       propertyPath: myLocation
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5171280471610731801, guid: bce082c1f353a4549adfc760a7be1d05, type: 3}
+      propertyPath: farmTutorialQuestID
+      value: tool
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21323,8 +21357,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000024795532, y: 0}
-  m_SizeDelta: {x: 1384.2, y: 797.86}
+  m_AnchoredPosition: {x: -0.000024795532, y: 23.843}
+  m_SizeDelta: {x: 1384.2, y: 750.17}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1744233022
 MonoBehaviour:

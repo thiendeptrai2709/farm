@@ -601,6 +601,42 @@ MonoBehaviour:
     m_Localized: The Watcher
     m_Metadata:
       m_Items: []
+  - m_Id: 11778676124213248
+    m_Localized: Unstuck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193527920877568
+    m_Localized: Fishing Zone (Requires Fishing Rod)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193530798170112
+    m_Localized: Fishing rod is broken!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193531435704320
+    m_Localized: '[E] Cast Rod'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193532173901824
+    m_Localized: '[E] Cancel'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193533511884800
+    m_Localized: ROUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193588478238720
+    m_Localized: Get ready for round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193593981165568
+    m_Localized: Inventory full, cannot hold fish!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15254157553229824
+    m_Localized: Fish Merchant
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

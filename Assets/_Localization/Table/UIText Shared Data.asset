@@ -603,6 +603,42 @@ MonoBehaviour:
     m_Key: The Watcher
     m_Metadata:
       m_Items: []
+  - m_Id: 11778676124213248
+    m_Key: Unstuck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193527920877568
+    m_Key: Interact_NeedRod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193530798170112
+    m_Key: Interact_RodBroken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193531435704320
+    m_Key: Interact_CastRod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193532173901824
+    m_Key: Interact_CancelFishing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193533511884800
+    m_Key: UI_FishingRound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193588478238720
+    m_Key: UI_FishingPrepareRound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193593981165568
+    m_Key: Notify_InventoryFullFishing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15254157553229824
+    m_Key: NPC_Fish
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

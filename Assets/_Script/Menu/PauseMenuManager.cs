@@ -12,6 +12,7 @@ public class PauseMenuManager : MonoBehaviour
     private bool hasSaved = false;
     private bool isAttemptingToQuit = false;
     public GameObject settingsPanel;
+
     private void Start()
     {
         // Đảm bảo ẩn bảng cài đặt khi mới bắt đầu
@@ -213,5 +214,35 @@ public class PauseMenuManager : MonoBehaviour
     private void ExecuteQuitGame()
     {
         Application.Quit();
+    }
+    public void UnstuckPlayer()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            CharacterController cc = playerObj.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            // ==========================================
+            // [ĐÃ SỬA] TỰ ĐỘNG TÍNH TOÁN VỊ TRÍ TELE
+            // ==========================================
+            // Lấy vị trí hiện tại, lùi về phía sau lưng nhân vật 2 mét (-forward * 2)
+            Vector3 autoTeleportPos = playerObj.transform.position - (playerObj.transform.forward * 2f);
+
+            // Nhấc nhân vật lên cao 1.5 mét để đảm bảo không bị kẹt gầm đất/đá
+            autoTeleportPos.y += 1.5f;
+
+            // Áp dụng tọa độ mới
+            playerObj.transform.position = autoTeleportPos;
+
+            if (cc != null) cc.enabled = true;
+
+            Debug.Log("[Hệ thống] Đã tự động lùi Player lại 2 mét để thoát kẹt!");
+            ResumeGame();
+        }
+        else
+        {
+            Debug.LogWarning("Không tìm thấy Player trong Scene!");
+        }
     }
 }

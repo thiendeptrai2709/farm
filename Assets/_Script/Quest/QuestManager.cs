@@ -181,7 +181,14 @@ public class QuestManager : MonoBehaviour
             foreach (string id in data.activeQuestIDs)
             {
                 QuestData q = allQuestsDatabase.Find(x => x != null && x.questID == id);
-                if (q != null) activeQuests.Add(q);
+                if (q != null)
+                {
+                    activeQuests.Add(q);
+                }
+                else
+                {
+                    Debug.LogError($"[QuestManager] LỖI NGHIÊM TRỌNG: Nhiệm vụ ID '{id}' đã được lưu trong file Save, nhưng KHÔNG TÌM THẤY trong allQuestsDatabase! Hãy kiểm tra và kéo file ScriptableObject của nhiệm vụ này vào danh sách của QuestManager.");
+                }
             }
         }
 

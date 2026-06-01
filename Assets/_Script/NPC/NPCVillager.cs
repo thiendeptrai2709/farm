@@ -197,8 +197,6 @@ public class NPCVillager : MonoBehaviour, IInteractable
                 wasTalkingToPlayer = false;
                 sitCooldownTimer = 1.5f;
             }
-
-            if (agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
             UpdateRoutine();
         }
 
@@ -413,6 +411,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         if (agent.enabled)
         {
+            agent.isStopped = false;
             agent.SetDestination(targetPos);
         }
     }

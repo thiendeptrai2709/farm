@@ -18,6 +18,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public Slider durabilitySlider; // Kéo nguyên cái Slider vào đây
     public Image durabilityFillImage; // Kéo object "Fill" (nằm trong Slider) vào đây để nó tự đổi màu
 
+    [Header("Đánh dấu Tier Cá")]
+    public Image tierMarkerImage;
+
     // Các biến nhận diện gốc gác của ô này
     public StorageType storageType;
     public int slotIndex;
@@ -37,6 +40,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (playerInput != null)
         {
             playerInput.OnSplitActionTriggered += TrySplitItem;
+            playerInput.OnTrashActionTriggered += TryTrashItem;
         }
     }
     private void OnDestroy()
@@ -44,6 +48,23 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (playerInput != null)
         {
             playerInput.OnSplitActionTriggered -= TrySplitItem;
+            playerInput.OnTrashActionTriggered -= TryTrashItem;
+        }
+    }
+    private void TryTrashItem()
+    {
+        // Nếu chuột đang trỏ vào ô này VÀ ô này có đồ
+        if (isHovered)
+        {
+            ItemData currentItem = GetItemData(storageType, slotIndex);
+            if (currentItem != null && currentItem != MarketManager.Instance.coinItem) // Không cho vứt Tiền
+            {
+                // Gọi Bảng xác nhận lên
+                if (TrashUIManager.Instance != null)
+                {
+                    TrashUIManager.Instance.ShowConfirmPanel(storageType, slotIndex, currentItem);
+                }
+            }
         }
     }
     private void TrySplitItem()
@@ -109,6 +130,24 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 // Tắt thanh máu nếu không phải là Tool
                 if (durabilityContainer != null) durabilityContainer.SetActive(false);
             }
+            if (tierMarkerImage != null)
+            {
+                if (slot.item is FishItemData fish)
+                {
+                    tierMarkerImage.gameObject.SetActive(true);
+                    tierMarkerImage.color = GetColorFromTier(fish.tier);
+                }
+                else if (slot.item is ToolItemData toolItem)
+                {
+                    // Hiển thị màu sắc theo cấp độ của công cụ (Đá, Đồng, Sắt, Vàng)
+                    tierMarkerImage.gameObject.SetActive(true);
+                    tierMarkerImage.color = GetColorFromToolTier(toolItem.toolTier);
+                }
+                else
+                {
+                    tierMarkerImage.gameObject.SetActive(false);
+                }
+            }
         }
         else
         {
@@ -131,6 +170,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         // Nhớ ẩn thanh máu khi ô đồ trống rỗng
         if (durabilityContainer != null) durabilityContainer.SetActive(false);
+
+        if (tierMarkerImage != null) tierMarkerImage.gameObject.SetActive(false);
     }
 
     // ==========================================
@@ -322,6 +363,29 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (ItemTooltipUI.Instance != null)
         {
             ItemTooltipUI.Instance.StopHover();
+        }
+    }
+    private Color GetColorFromTier(FishTier tier)
+    {
+        switch (tier)
+        {
+            case FishTier.Common: return Color.white;
+            case FishTier.Uncommon: return new Color(0.2f, 1f, 0.2f); // Xanh lá
+            case FishTier.Rare: return new Color(0.2f, 0.6f, 1f); // Xanh dương
+            case FishTier.Epic: return new Color(0.8f, 0.2f, 1f); // Tím
+            case FishTier.Legendary: return new Color(1f, 0.8f, 0.2f); // Vàng
+            default: return Color.white;
+        }
+    }
+    private Color GetColorFromToolTier(int tier)
+    {
+        switch (tier)
+        {
+            case 1: return new Color(0.5f, 0.5f, 0.5f);     // Tier 1: Cấp Đá (Màu xám)
+            case 2: return new Color(0.8f, 0.4f, 0.15f);    // Tier 2: Cấp Đồng (Màu nâu cam)
+            case 3: return new Color(0.75f, 0.75f, 0.8f);   // Tier 3: Cấp Sắt (Màu bạc sáng)
+            case 4: return new Color(1f, 0.85f, 0f);        // Tier 4: Cấp Vàng (Màu vàng óng)
+            default: return Color.white;
         }
     }
 }

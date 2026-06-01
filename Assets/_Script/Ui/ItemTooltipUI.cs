@@ -173,7 +173,10 @@ public class ItemTooltipUI : MonoBehaviour
             if (consumable.healthRestore > 0)
                 builder.AppendLine($"Restores Health: +{consumable.healthRestore}");
         }
-
+        else if (item is FishItemData fish)
+        {
+            builder.AppendLine($"{fish.tier.ToString()}");
+        }
         return builder.ToString();
     }
 }

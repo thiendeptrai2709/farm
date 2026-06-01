@@ -9,36 +9,33 @@ public class ShopSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     public Image icon;
     public TextMeshProUGUI priceText;
 
+    // [ĐÃ THÊM]: Ảnh hiển thị màu cấp độ (Tier)
+    public Image tierMarkerImage;
+
     [HideInInspector] public ItemData currentItem;
     [HideInInspector] public bool isBuyMode = true;
 
     private int itemPrice;
-
-    // [ĐÃ THÊM]: Tham chiếu đến "Gói hàng" chứa số lượng của NPC
     private ShopInventoryItem currentShopItemRef;
-
     private StorageType itemStorageType;
     private int itemSlotIndex;
 
-    // Hàm Setup cho Tab MUA (Dùng ShopInventoryItem)
     public void SetupBuySlot(ShopInventoryItem shopItem, int price)
     {
-        // [CHỐT CHẶN CHỐNG LỖI NULL]: Nếu NPC có 12 ô nhưng chỉ có 10 món, 2 ô thừa sẽ bị truyền vào giá trị null.
         if (shopItem == null || shopItem.item == null)
         {
-            ClearSlot(); // Dọn dẹp sạch sẽ ô này thành ô rỗng tàng hình
-            return;      // THOÁT HÀM NGAY LẬP TỨC để chống lỗi Null dòng bên dưới!
+            ClearSlot();
+            return;
         }
 
         currentShopItemRef = shopItem;
-        currentItem = shopItem.item; // Lấy dữ liệu Item gốc để hiện ảnh/tooltip
+        currentItem = shopItem.item;
         isBuyMode = true;
         itemPrice = price;
 
         UpdateVisuals();
     }
 
-    // Hàm Setup cho Tab BÁN (Dùng ItemData như cũ)
     public void SetupSellSlot(ItemData item, int price, StorageType sType, int sIndex)
     {
         currentShopItemRef = null;
@@ -58,25 +55,47 @@ public class ShopSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             icon.sprite = currentItem.icon;
             icon.enabled = true;
 
-            // [ĐÃ SỬA]: Kiểm tra xem phải đang ở Tab Mua và có bị hết hàng không?
             if (isBuyMode && currentShopItemRef != null && currentShopItemRef.currentQuantity <= 0)
             {
-                // HẾT HÀNG: Ảnh tối đi, chữ báo đỏ
-                icon.color = new Color(0.3f, 0.3f, 0.3f, 0.8f); // Màu xám đen, hơi mờ
-                priceText.text = "<color=#FF5555>Sold Out</color>"; // Hoặc ghi "Hết hàng"
+                icon.color = new Color(0.3f, 0.3f, 0.3f, 0.8f);
+                priceText.text = "<color=#FF5555>Sold Out</color>";
             }
             else
             {
-                // CÒN HÀNG (Hoặc đang ở Tab Bán): Ảnh sáng bình thường
                 icon.color = Color.white;
                 priceText.text = isBuyMode ? $"<color=#55FF55>{itemPrice}G</color>" : $"<color=#FFD700>+{itemPrice}G</color>";
             }
 
             priceText.enabled = true;
+
+            // [ĐÃ THÊM]: Cập nhật màu sắc Tier
+            UpdateTierVisuals();
         }
         else
         {
             ClearSlot();
+        }
+    }
+
+    // [ĐÃ THÊM]: Hàm xử lý màu Tier
+    private void UpdateTierVisuals()
+    {
+        if (tierMarkerImage != null)
+        {
+            if (currentItem is FishItemData fish)
+            {
+                tierMarkerImage.gameObject.SetActive(true);
+                tierMarkerImage.color = GetColorFromTier(fish.tier);
+            }
+            else if (currentItem is ToolItemData toolItem)
+            {
+                tierMarkerImage.gameObject.SetActive(true);
+                tierMarkerImage.color = GetColorFromToolTier(toolItem.toolTier);
+            }
+            else
+            {
+                tierMarkerImage.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -88,6 +107,9 @@ public class ShopSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         icon.enabled = false;
         priceText.text = "";
         priceText.enabled = false;
+
+        // Nhớ ẩn Tier Marker khi ô trống
+        if (tierMarkerImage != null) tierMarkerImage.gameObject.SetActive(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -98,19 +120,17 @@ public class ShopSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         {
             if (isBuyMode)
             {
-                // [ĐÃ SỬA]: Hết lỗi! Giờ không mua thẳng nữa mà gọi Bảng Popup lên
                 if (currentShopItemRef.currentQuantity > 0)
                 {
                     ShopUIManager.Instance.ShowBuyPopup(currentShopItemRef, itemPrice);
                 }
                 else
                 {
-                    Debug.Log("Món này đã hết hàng!"); // (Tương lai có thể làm chữ Sold Out mờ đi)
+                    Debug.Log("Món này đã hết hàng!");
                 }
             }
             else
             {
-                // BÁN (Tạm giữ nguyên code click bán thẳng, bài sau mình sẽ làm bàn giao dịch 5 ô)
                 bool success = MarketManager.Instance.TrySellItem(currentItem, itemPrice, ShopUIManager.Instance.currentShop, itemStorageType, itemSlotIndex);
                 if (success) ShopUIManager.Instance.RefreshUI();
             }
@@ -129,5 +149,33 @@ public class ShopSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     public void OnPointerExit(PointerEventData eventData)
     {
         if (ItemTooltipUI.Instance != null) ItemTooltipUI.Instance.StopHover();
+    }
+
+    // ==========================================
+    // BỘ HÀM CHUYỂN ĐỔI MÀU TIER
+    // ==========================================
+    private Color GetColorFromTier(FishTier tier)
+    {
+        switch (tier)
+        {
+            case FishTier.Common: return Color.white;
+            case FishTier.Uncommon: return new Color(0.2f, 1f, 0.2f);
+            case FishTier.Rare: return new Color(0.2f, 0.6f, 1f);
+            case FishTier.Epic: return new Color(0.8f, 0.2f, 1f);
+            case FishTier.Legendary: return new Color(1f, 0.8f, 0.2f);
+            default: return Color.white;
+        }
+    }
+
+    private Color GetColorFromToolTier(int tier)
+    {
+        switch (tier)
+        {
+            case 1: return new Color(0.5f, 0.5f, 0.5f);
+            case 2: return new Color(0.8f, 0.4f, 0.15f);
+            case 3: return new Color(0.75f, 0.75f, 0.8f);
+            case 4: return new Color(1f, 0.85f, 0f);
+            default: return Color.white;
+        }
     }
 }

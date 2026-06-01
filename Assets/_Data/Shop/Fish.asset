@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
+  m_Name: Fish
+  m_EditorClassIdentifier: Assembly-CSharp::ShopData
+  localizedNpcName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 15254157553229824
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  merchantMoney: 1984
+  minDailyMoney: 500
+  maxDailyMoney: 2000
+  maxShopSlots: 10
+  itemsForSale: []
+  possibleItemsToSell:
+  - {fileID: 11400000, guid: cc8489fd381d3634fa58086d7e39aca3, type: 2}
+  - {fileID: 11400000, guid: 84a497b49bc60f64387375faa3ed7f88, type: 2}
+  - {fileID: 11400000, guid: cec247c8463909b4981bd3eda9507949, type: 2}
+  - {fileID: 11400000, guid: 474e5aa6ea0404e45a45fac2a31d9321, type: 2}
+  - {fileID: 11400000, guid: 1275622e2a7692c438098f5903b0f51e, type: 2}
+  - {fileID: 11400000, guid: a1c1c05f26be2f1458bb275d5dbe9990, type: 2}
+  - {fileID: 11400000, guid: 8eeefd20dc9f90b4d8b3a9184692c52b, type: 2}
+  - {fileID: 11400000, guid: 37f5b6a41e7eae44eb9e148da2898cfa, type: 2}
+  - {fileID: 11400000, guid: 6a516b6bf16609a4d9826f6d7e72b224, type: 2}
+  - {fileID: 11400000, guid: d99f941c8e665b14aa14fa930548ef5f, type: 2}
+  - {fileID: 11400000, guid: 6e228d9b3458f3a42b3a86458dddd73b, type: 2}
+  - {fileID: 11400000, guid: ebe2b190ccc3ed240b3348d846c96cdb, type: 2}
+  - {fileID: 11400000, guid: 5af0f2f2488fd8b41bffba0fb6d04e7b, type: 2}
+  - {fileID: 11400000, guid: 9d333e33e41058845bc19c3a5c80a4ef, type: 2}
+  - {fileID: 11400000, guid: 99814633cfd52734cadc1a22fd268ce7, type: 2}
+  - {fileID: 11400000, guid: fdf4a92329f957541aa5e9dc334a0c01, type: 2}
+  - {fileID: 11400000, guid: 68cb599444ead774289de86e42572c09, type: 2}
+  - {fileID: 11400000, guid: 5d0011689a5d75d4588e48732ada1a1c, type: 2}
+  - {fileID: 11400000, guid: 8ecd343f01cb0c54aba93f613dfdd557, type: 2}
+  - {fileID: 11400000, guid: 4dd0181cc6b57bc44b4d5f40295f5b68, type: 2}
+  - {fileID: 11400000, guid: 238194f49a1301e4595658d4ff64ac65, type: 2}
+  - {fileID: 11400000, guid: fcb7e43650cadf745966b9950360477c, type: 2}
+  - {fileID: 11400000, guid: 6fc9955d438ed5b40ab5926f5bee0463, type: 2}
+  minQuantity: 1
+  maxQuantity: 10
+  references:
+    version: 2
+    RefIds: []

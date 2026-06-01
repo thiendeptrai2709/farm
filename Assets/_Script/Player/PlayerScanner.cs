@@ -44,6 +44,18 @@ public class PlayerScanner : MonoBehaviour
         foreach (var hit in hitColliders)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
+
+            // --- TÍCH HỢP CHẶT RỪNG TERRAIN ---
+            if (interactable == null && hit.GetComponent<Terrain>() != null && TerrainTreeManager.Instance != null)
+            {
+                // Hỏi quản lý rừng xem có cây nào quanh điểm quét không
+                int treeIndex = TerrainTreeManager.Instance.GetClosestTreeIndex(checkPosition, interactRadius + 1.0f);
+                if (treeIndex != -1)
+                {
+                    interactable = TerrainTreeManager.Instance.GetTreeInteractable(treeIndex, checkPosition);
+                }
+            }
+
             if (interactable != null)
             {
                 if (interactable is FarmingZone)
@@ -58,8 +70,24 @@ public class PlayerScanner : MonoBehaviour
                     }
                     continue;
                 }
+                Vector3 closestSurfacePoint;
+                if (interactable is TerrainTreeInteractable virtualTree && TerrainTreeManager.Instance != null)
+                {
+                    TerrainData tData = TerrainTreeManager.Instance.targetTerrain.terrainData;
+                    Vector3 treePos = tData.treeInstances[virtualTree.treeIndex].position;
+                    closestSurfacePoint = Vector3.Scale(treePos, tData.size) + TerrainTreeManager.Instance.targetTerrain.transform.position;
+                }
+                // 2. Lưới bảo vệ: Tránh lỗi API với TerrainCollider hoặc lưới Mesh không lồi (non-convex)
+                else if (hit is TerrainCollider || (hit is MeshCollider mc && !mc.convex))
+                {
+                    closestSurfacePoint = hit.ClosestPointOnBounds(checkPosition);
+                }
+                // 3. Vật thể 3D cơ bản (Box, Sphere...) thì dùng hàm cũ bình thường
+                else
+                {
+                    closestSurfacePoint = hit.ClosestPoint(checkPosition);
+                }
 
-                Vector3 closestSurfacePoint = hit.ClosestPoint(checkPosition);
                 Vector3 directionToTarget = (closestSurfacePoint - checkPosition).normalized;
                 directionToTarget.y = 0;
                 Vector3 forward = transform.forward;
@@ -109,8 +137,22 @@ public class PlayerScanner : MonoBehaviour
         string interactText = currentTarget.GetInteractText();
         if (!string.IsNullOrEmpty(interactText))
         {
-            MonoBehaviour targetObj = currentTarget as MonoBehaviour;
-            if (targetObj != null && InteractionUI.Instance != null)
+            Transform promptTarget = null;
+
+            // Nếu là vật thể thật thì lấy Transform của nó
+            if (currentTarget is MonoBehaviour mono)
+            {
+                promptTarget = mono.transform;
+            }
+            // Nếu là cây ảo, kéo điểm neo tàng hình tới gốc cây
+            else if (currentTarget is TerrainTreeInteractable virtualTree && TerrainTreeManager.Instance != null)
+            {
+                Vector3 treePos = TerrainTreeManager.Instance.GetTreeWorldPosition(virtualTree.treeIndex);
+                TerrainTreeManager.Instance.dummyTreeTarget.position = treePos + new Vector3(0, 1.5f, 0); // Nhích lên 1.5m cho vừa mắt
+                promptTarget = TerrainTreeManager.Instance.dummyTreeTarget;
+            }
+
+            if (promptTarget != null && InteractionUI.Instance != null)
             {
                 bool isGrowing = false;
                 float progress = 0f;
@@ -132,7 +174,7 @@ public class PlayerScanner : MonoBehaviour
                 }
                 else
                 {
-                    InteractionUI.Instance.ShowPrompt(targetObj.transform, interactText, isGrowing, progress);
+                    InteractionUI.Instance.ShowPrompt(promptTarget.transform, interactText, isGrowing, progress);
                 }
             }
         }

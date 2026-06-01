@@ -622,6 +622,42 @@ MonoBehaviour:
     m_Localized: "Ng\u01B0\u1EDDi Canh R\u1EEBng "
     m_Metadata:
       m_Items: []
+  - m_Id: 11778676124213248
+    m_Localized: "Tho\xE1t k\u1EB9t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193527920877568
+    m_Localized: "Khu v\u1EF1c C\xE2u c\xE1 (C\u1EA7n c\u1EA7m C\u1EA7n C\xE2u)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193530798170112
+    m_Localized: "C\u1EA7n c\xE2u \u0111\xE3 h\u1ECFng!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193531435704320
+    m_Localized: "[E] Qu\u0103ng c\u1EA7n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193532173901824
+    m_Localized: "[E] H\u1EE7y c\xE2u"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193533511884800
+    m_Localized: "HI\u1EC6P"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193588478238720
+    m_Localized: "Chu\u1EA9n b\u1ECB hi\u1EC7p"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13193593981165568
+    m_Localized: "Balo \u0111\u1EA7y, kh\xF4ng th\u1EC3 ch\u1EE9a c\xE1!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15254157553229824
+    m_Localized: "Ng\u01B0\u1EDDi bu\xF4n c\xE1"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -103,6 +103,7 @@ public class SaveManager : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.SaveInventoryData(currentData);
+            currentData.selectedHotbarIndex = InventoryManager.Instance.selectedHotbarIndex;
         }
         ChestManager currentMapChestManager = UnityEngine.Object.FindFirstObjectByType<ChestManager>();
         if (currentMapChestManager != null)
@@ -116,6 +117,10 @@ public class SaveManager : MonoBehaviour
         if (MarketManager.Instance != null)
         {
             MarketManager.Instance.SaveShopData(currentData);
+        }
+        if (SkeletonQuestManager.Instance != null)
+        {
+            SkeletonQuestManager.Instance.SaveQuestData(currentData);
         }
         if (FarmingZone.Instance != null)
         {
@@ -199,6 +204,10 @@ public class SaveManager : MonoBehaviour
             // Nếu là mảng trống thì BusUI sẽ tự động gọi UnlockDefaultRoutes (nếu ông viết logic đó ở Awake)
             // Cứ cắm thẳng dữ liệu từ file Save đè vào list hiện tại
             BusUI.Instance.discoveredStops = new System.Collections.Generic.List<string>(currentData.unlockedBusStops);
+        }
+        if (SkeletonQuestManager.Instance != null)
+        {
+            SkeletonQuestManager.Instance.LoadQuestData(currentData);
         }
         StartAutoSave();
     }

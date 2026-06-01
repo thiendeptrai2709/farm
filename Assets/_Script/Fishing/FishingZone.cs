@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.Localization;
 public class FishingZone : MonoBehaviour, IInteractable
 {
     public enum FishingState { NotFishing, WaitingForBite, PlayingMiniGame, WaitingNextRound, Pulling }
@@ -16,30 +16,17 @@ public class FishingZone : MonoBehaviour, IInteractable
     public float minBiteTime = 3f;
     public float maxBiteTime = 6f;
 
-    [Header("Giao diện UI Audition")]
-    public GameObject auditionPanel;
-    public Image[] arrowSlots;
-    public Sprite upSprite, downSprite, leftSprite, rightSprite;
-    public Color normalColor = Color.white;
-    public Color successColor = Color.green;
-
-    [Header("Giao diện UI Nấc (Tier Panel)")]
-    public GameObject tierPanel;
-    public Image[] tierHighlights;
-    public Color tierLockedColor = Color.gray;
-    public Color tierUnlockedColor = Color.yellow;
-
-    public FishItemData[] availableFish;
-    public Slider timerSlider;
+    [Header("Dữ liệu Cá của Hồ này")]
+    public List<FishItemData> availableFish = new List<FishItemData>();
 
     [Header("Hiệu ứng bắt cá (Visuals)")]
-    public Transform waterSurfacePoint;    // Điểm mặt nước (Cá sẽ nhảy lên từ đây)
+    public Transform waterSurfacePoint;    // Điểm mặt nước (Cá nhảy lên từ đây)
     public GameObject genericFishPrefab;   // Model 3D con cá mặc định
-    public GameObject splashEffectPrefab;  // (Tùy chọn) Hiệu ứng hạt nước bắn lên
+    public GameObject splashEffectPrefab;  // Hiệu ứng bọt nước
     public float fishFlyDuration = 1.0f;
 
     [Header("Cài đặt Độ khó Gốc (DDA)")]
-    public int baseSequenceLength = 4;       // Nút mặc định (Mới quăng cần)
+    public int baseSequenceLength = 4;       // Số nút mặc định
     public float baseTimeLimit = 3f;         // Thời gian mặc định
 
     private int currentSequenceLength;
@@ -52,21 +39,22 @@ public class FishingZone : MonoBehaviour, IInteractable
     private float timer = 0f;
     private float lastInteractTime = 0f;
     private PlayerInputHandler playerInput;
-
+    private bool isFishLoaded = false;
     public FishingLocation thisLocation = FishingLocation.Farm;
 
-    private void Start()
-    {
-        if (auditionPanel != null) auditionPanel.SetActive(false);
-        if (tierPanel != null) tierPanel.SetActive(false);
-        if (timerSlider != null) timerSlider.gameObject.SetActive(false);
-    }
+    [Header("Cài đặt Ngôn ngữ (Localization)")]
+    public LocalizedString locInteractNeedRod; // "Khu vực Câu cá (Cần cầm Cần Câu)"
+    public LocalizedString locCastRod;         // "[E] Quăng cần"
+    public LocalizedString locCancelFishing;   // "[E] Hủy câu"
+    public LocalizedString locRound;           // "HIỆP"
+    public LocalizedString locPrepareRound;    // "Chuẩn bị hiệp"
+    public LocalizedString locInventoryFull;
 
     private void Update()
     {
         if (currentState == FishingState.NotFishing)
         {
-            if (tierPanel != null && tierPanel.activeSelf) tierPanel.SetActive(false);
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(false);
         }
 
         if (currentState == FishingState.WaitingForBite)
@@ -74,11 +62,15 @@ public class FishingZone : MonoBehaviour, IInteractable
             timer -= Time.deltaTime;
             if (timer <= 0)
             {
-                Animator playerAnim = FindAnyObjectByType<PlayerInteraction>().playerAnimator;
-                if (playerAnim != null) playerAnim.SetTrigger("StruggleFish");
+                PlayerInteraction pInteraction = FindAnyObjectByType<PlayerInteraction>();
+                if (pInteraction != null && pInteraction.playerAnimator != null)
+                {
+                    // Chức năng: Reset trigger cũ trước khi gán trigger mới để chống dồn lệnh animation
+                    pInteraction.playerAnimator.ResetTrigger("StartFishing");
+                    pInteraction.playerAnimator.SetTrigger("StruggleFish");
+                }
 
                 if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Bite");
-
                 if (AudioManager.Instance != null) AudioManager.Instance.PlayLoopSFX("Reel_Struggle");
 
                 StartRound();
@@ -92,7 +84,7 @@ public class FishingZone : MonoBehaviour, IInteractable
         else if (currentState == FishingState.PlayingMiniGame)
         {
             timer -= Time.deltaTime;
-            if (timerSlider != null) timerSlider.value = timer;
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.UpdateTimer(timer);
 
             if (timer <= 0)
             {
@@ -115,40 +107,27 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     private void StartRound()
     {
-        // [ĐÃ SỬA]: Chốt chặn an toàn cho UI. Nếu panel chỉ có 6 ô mà code đòi 7 nút thì khóa về 6
-        if (arrowSlots != null && currentSequenceLength > arrowSlots.Length)
+        if (FishingUIManager.Instance != null && currentSequenceLength > FishingUIManager.Instance.GetMaxArrowSlots())
         {
-            currentSequenceLength = arrowSlots.Length;
+            currentSequenceLength = FishingUIManager.Instance.GetMaxArrowSlots();
         }
 
         currentRound++;
         currentState = FishingState.PlayingMiniGame;
-        timer = currentTimeLimit; // Dùng thời gian HIỆN TẠI
+        timer = currentTimeLimit;
         currentInputIndex = 0;
         targetSequence.Clear();
 
-        for (int i = 0; i < currentSequenceLength; i++) // Đẻ nút theo độ khó HIỆN TẠI
+        for (int i = 0; i < currentSequenceLength; i++)
         {
             targetSequence.Add((ArrowKey)Random.Range(0, 4));
         }
 
-        if (auditionPanel != null) auditionPanel.SetActive(true);
-        if (timerSlider != null)
+        if (FishingUIManager.Instance != null)
         {
-            timerSlider.gameObject.SetActive(true);
-            timerSlider.maxValue = currentTimeLimit;
-            timerSlider.value = currentTimeLimit;
-        }
-
-        for (int i = 0; i < arrowSlots.Length; i++)
-        {
-            if (i < currentSequenceLength)
-            {
-                arrowSlots[i].gameObject.SetActive(true);
-                arrowSlots[i].color = normalColor;
-                arrowSlots[i].sprite = GetSpriteForArrow(targetSequence[i]);
-            }
-            else arrowSlots[i].gameObject.SetActive(false);
+            FishingUIManager.Instance.ToggleAuditionPanel(true);
+            FishingUIManager.Instance.ToggleTimer(true, currentTimeLimit, currentTimeLimit);
+            FishingUIManager.Instance.SetupArrows(currentSequenceLength, targetSequence);
         }
     }
 
@@ -156,8 +135,7 @@ public class FishingZone : MonoBehaviour, IInteractable
     {
         if (pressedKey == targetSequence[currentInputIndex])
         {
-            if (arrowSlots.Length > currentInputIndex && arrowSlots[currentInputIndex] != null)
-                arrowSlots[currentInputIndex].color = successColor;
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.MarkArrowSuccess(currentInputIndex);
 
             currentInputIndex++;
             if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("UI_Click");
@@ -176,44 +154,34 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     private void RoundFinished(bool wonRound)
     {
-        
         if (wonRound)
         {
             successCount++;
-            UpdateTierUI();
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.UpdateTierUI(successCount);
 
-            // [LOGIC MỚI - KHI THẮNG]: 
-            // Ưu tiên tăng nút lên tối đa 5 trước. Đạt 5 nút rồi thì mới bắt đầu rút thời gian.
             if (currentSequenceLength < 5)
             {
-                currentSequenceLength++; // Tăng thêm 1 nút
-                // Thời gian giữ nguyên
+                currentSequenceLength++;
             }
             else
             {
-                // Đã đạt max 5 nút -> Bắt đầu ép thời gian (tối thiểu 1.5s)
                 currentTimeLimit = Mathf.Clamp(currentTimeLimit - 0.5f, 1.5f, 5f);
             }
-
             Debug.Log($"[THẮNG] Cân bằng -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
         }
         else
         {
-            // [LOGIC MỚI - KHI THUA]: 
-            // Nhả dần độ khó ra. Ưu tiên trả lại thời gian trước, nếu thời gian đã ở mức gốc rồi thì mới trừ bớt nút.
             if (currentTimeLimit < baseTimeLimit)
             {
-                // Trả lại 0.5s thời gian (tối đa bằng mức gốc)
                 currentTimeLimit = Mathf.Clamp(currentTimeLimit + 0.5f, 1.5f, baseTimeLimit);
             }
             else
             {
-                // Trừ đi 1 nút (tối thiểu là 3 nút cho dễ)
                 currentSequenceLength = Mathf.Clamp(currentSequenceLength - 1, 3, 5);
             }
-
             Debug.Log($"[THUA] Cân bằng -> Nút: {currentSequenceLength}, Giờ: {currentTimeLimit}s");
         }
+
         if (currentRound >= maxRounds)
         {
             EndFishing();
@@ -222,42 +190,30 @@ public class FishingZone : MonoBehaviour, IInteractable
         {
             currentState = FishingState.WaitingNextRound;
             timer = timeBetweenRounds;
-            if (auditionPanel != null) auditionPanel.SetActive(false);
-            if (timerSlider != null) timerSlider.gameObject.SetActive(false);
+            if (FishingUIManager.Instance != null)
+            {
+                FishingUIManager.Instance.ToggleAuditionPanel(false);
+                FishingUIManager.Instance.ToggleTimer(false);
+            }
         }
     }
 
-    private void UpdateTierUI()
-    {
-        if (tierHighlights == null || tierHighlights.Length < 4) return;
-
-        for (int i = 0; i < tierHighlights.Length; i++)
-        {
-            if (i <= successCount)
-                tierHighlights[i].color = tierUnlockedColor;
-            else
-                tierHighlights[i].color = tierLockedColor;
-        }
-    }
     private IEnumerator SpawnAndFlyFishRoutine()
     {
         if (waterSurfacePoint == null || genericFishPrefab == null) yield break;
 
-        // 1. Tạo hiệu ứng bọt nước (Nếu có)
         if (splashEffectPrefab != null)
         {
             GameObject splash = Instantiate(splashEffectPrefab, waterSurfacePoint.position, Quaternion.identity);
-            Destroy(splash, 2f); // Bọt nước tự tan sau 2s
+            Destroy(splash, 2f);
         }
 
-        // 2. Spawn Model con cá ra
         GameObject fish = Instantiate(genericFishPrefab, waterSurfacePoint.position, Quaternion.identity);
         Transform playerTransform = FindAnyObjectByType<PlayerMovement>().transform;
 
         float elapsed = 0f;
         Vector3 startPos = waterSurfacePoint.position;
 
-        // 3. Cho cá bay vòng cung (Parabola) vào mặt player
         while (elapsed < fishFlyDuration)
         {
             if (fish == null) break;
@@ -265,42 +221,51 @@ public class FishingZone : MonoBehaviour, IInteractable
             elapsed += Time.deltaTime;
             float t = elapsed / fishFlyDuration;
 
-            // Tính điểm đến (Vào ngực nhân vật)
             Vector3 targetPos = playerTransform.position + Vector3.up * 1.5f;
 
-            // Tính toán đường cong Parabola (Nhô cao lên 2 mét rồi rớt xuống)
             Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
             currentPos.y += Mathf.Sin(t * Mathf.PI) * 2.0f;
 
             fish.transform.position = currentPos;
-
-            // Xoay vòng vòng lộn nhào cho sinh động
             fish.transform.Rotate(Vector3.right * 500 * Time.deltaTime);
 
-            yield return null; // Đợi 1 frame
+            yield return null;
         }
 
-        // 4. Bay tới tay người chơi thì tự biến mất
         if (fish != null) Destroy(fish);
-
     }
+
     private void EndFishing()
     {
         if (AudioManager.Instance != null) AudioManager.Instance.StopLoopSFX();
 
-        if (auditionPanel != null) auditionPanel.SetActive(false);
-        if (timerSlider != null) timerSlider.gameObject.SetActive(false);
+        if (FishingUIManager.Instance != null)
+        {
+            FishingUIManager.Instance.ToggleAuditionPanel(false);
+            FishingUIManager.Instance.ToggleTimer(false);
+        }
 
         Animator playerAnim = FindAnyObjectByType<PlayerInteraction>().playerAnimator;
         currentState = FishingState.Pulling;
 
-        // TỔNG KẾT SAU 3 HIỆP
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.DeductEquippedToolDurability(1f);
+        }
+
         if (successCount == 0)
         {
             Debug.Log("NẤC 0: Tạch toàn tập. Chuyển sang Anim Trượt!");
-            if (playerAnim != null) playerAnim.SetTrigger("MissFish");
+            if (playerAnim != null)
+            {
+                // Chức năng: Xóa lệnh giằng co cá để chuyển mượt mà sang anim trượt
+                playerAnim.ResetTrigger("StruggleFish");
+                playerAnim.SetTrigger("MissFish");
+            }
 
             if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Fail");
+
+            StartCoroutine(ResetFishingStateRoutine(1.5f));
         }
         else
         {
@@ -309,68 +274,82 @@ public class FishingZone : MonoBehaviour, IInteractable
 
             ProcessCatch(caughtTier);
             StartCoroutine(SpawnAndFlyFishRoutine());
-            if (playerAnim != null) playerAnim.SetTrigger("CatchFish");
+            if (playerAnim != null)
+            {
+                // Chức năng: Xóa lệnh giằng co cá để chuyển mượt mà sang anim lôi cá
+                playerAnim.ResetTrigger("StruggleFish");
+                playerAnim.SetTrigger("CatchFish");
+            }
 
             if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Fish_Catch");
 
-
+            StartCoroutine(ResetFishingStateRoutine(fishFlyDuration + 0.5f));
         }
+    }
+
+    private IEnumerator ResetFishingStateRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        currentState = FishingState.NotFishing;
+        if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(false);
+        if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = false;
+        if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(false);
     }
 
     private void ProcessCatch(FishTier tier)
     {
         if (InventoryManager.Instance == null) return;
-
-        // 1. TRỪ ĐỘ BỀN CẦN CÂU
-        int selectedIndex = InventoryManager.Instance.selectedHotbarIndex;
-        if (selectedIndex != -1)
+        if (availableFish != null && availableFish.Count > 0)
         {
-            InventorySlot slot = InventoryManager.Instance.hotbarSlots[selectedIndex];
-            if (slot.item is ToolItemData tool && tool.toolType == ToolType.FishingRod)
-            {
-                slot.currentDurability -= 1;
-                Debug.Log($"Cần câu trừ 1 độ bền. Còn lại: {slot.currentDurability}");
-            }
-        }
-
-        // 2. LỌC CÁ THEO ĐIỀU KIỆN (MAP, THỜI TIẾT, THỜI GIAN)
-        if (availableFish != null && availableFish.Length > 0)
-        {
-            List<FishItemData> possibleFish = new List<FishItemData>();
-            List<FishItemData> fallbackFish = new List<FishItemData>(); // Phương án dự phòng nếu xui xẻo
-
-            foreach (var fish in availableFish)
-            {
-                // Kiểm tra xem con cá này có thỏa mãn điều kiện Môi trường không
-                if (IsFishSpawnable(fish))
-                {
-                    if (fish.tier == tier) possibleFish.Add(fish);     // Trúng đúng Tier thì nhét vào danh sách chính
-                    if (fish.tier == FishTier.Common) fallbackFish.Add(fish); // Lưu tạm cá Common làm dự phòng
-                }
-            }
-
             FishItemData caughtFish = null;
+            FishTier currentSearchTier = tier;
 
-            // Nếu tìm thấy cá đúng điều kiện và đúng Tier
-            if (possibleFish.Count > 0)
+            while ((int)currentSearchTier >= 0)
             {
-                caughtFish = possibleFish[Random.Range(0, possibleFish.Count)];
-            }
-            // [CƠ CHẾ AN TOÀN]: Nếu ông quay trúng Tier Epic, nhưng cá Epic duy nhất lại chỉ xuất hiện lúc trời Mưa (mà hiện tại đang Nắng)
-            // -> Hệ thống sẽ đền bù cho ông một con cá Common hợp lệ thay vì báo lỗi.
-            else if (fallbackFish.Count > 0)
-            {
-                caughtFish = fallbackFish[Random.Range(0, fallbackFish.Count)];
-                Debug.LogWarning($"Không tìm thấy cá {tier} nào hợp điều kiện thời tiết/map hiện tại. Đền bù cá {FishTier.Common}");
+                List<FishItemData> possibleFish = new List<FishItemData>();
+
+                foreach (var fish in availableFish)
+                {
+                    if (IsFishSpawnable(fish) && fish.tier == currentSearchTier)
+                    {
+                        possibleFish.Add(fish);
+                    }
+                }
+
+                if (possibleFish.Count > 0)
+                {
+                    caughtFish = possibleFish[Random.Range(0, possibleFish.Count)];
+                    if (currentSearchTier != tier)
+                    {
+                        Debug.LogWarning($"Không tìm thấy cá bậc {tier}. Đã hạ xuống đền bù cá bậc {currentSearchTier}");
+                    }
+                    break;
+                }
+
+                currentSearchTier--;
             }
 
-            // 3. TẶNG CÁ VÀO TÚI
             if (caughtFish != null)
             {
-                InventoryManager.Instance.AddItem(caughtFish, 1);
-                if (NotificationManager.Instance != null)
+                bool success = InventoryManager.Instance.AddItem(caughtFish, 1);
+
+                if (success)
                 {
-                    NotificationManager.Instance.ShowNotification($"+1 {caughtFish.displayName}");
+                    if (NotificationManager.Instance != null)
+                    {
+                        // Tên cá sẽ được xử lý đa ngôn ngữ lúc sửa file ItemData sau
+                        NotificationManager.Instance.ShowNotification($"+1 {caughtFish.displayName}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Balo đã đầy! Cá câu được đã bị thả đi.");
+                    if (NotificationManager.Instance != null)
+                    {
+                        string fullMsg = locInventoryFull != null && !locInventoryFull.IsEmpty ? locInventoryFull.GetLocalizedString() : "Balo đầy, không thể chứa cá!";
+                        NotificationManager.Instance.ShowNotification(fullMsg);
+                    }
                 }
             }
             else
@@ -379,21 +358,17 @@ public class FishingZone : MonoBehaviour, IInteractable
             }
         }
     }
+
     private bool IsFishSpawnable(FishItemData fish)
     {
-        // 1. Kiểm tra Khu Vực
         bool locationMatch = fish.allowedLocations.Contains(FishingLocation.Any) || fish.allowedLocations.Contains(thisLocation);
         if (!locationMatch) return false;
 
-        // 2. Kiểm tra Thời Tiết (Lấy dữ liệu từ WeatherManager nếu có)
-        // Lưu ý: Giả định WeatherManager có biến currentWeather và enum WeatherState
         if (fish.requiredWeather != SpawnWeather.Any)
         {
-            // Tạm dùng reflection hoặc check null để tránh lỗi nếu ông chưa có WeatherManager
             bool isRaining = false;
             if (WeatherManager.Instance != null)
             {
-                // Nếu WeatherState của ông là enum, nhớ ép kiểu cho đúng, ở đây tớ lấy "Raining" làm ví dụ như file DayNightSystem của ông
                 isRaining = (WeatherManager.Instance.currentWeather.ToString() == "Raining");
             }
 
@@ -401,13 +376,11 @@ public class FishingZone : MonoBehaviour, IInteractable
             if (fish.requiredWeather == SpawnWeather.SunnyOnly && isRaining) return false;
         }
 
-        // 3. Kiểm tra Thời Gian (Lấy dữ liệu từ TimeSystem)
         if (fish.requiredTime != SpawnTime.Any)
         {
             TimeSystem timeSys = FindFirstObjectByType<TimeSystem>();
             if (timeSys != null)
             {
-                // Giống logic ban đêm của DayNightSystem (từ 18h tối đến 6h sáng)
                 bool isNight = timeSys.hour < 6f || timeSys.hour >= 18f;
 
                 if (fish.requiredTime == SpawnTime.DayOnly && isNight) return false;
@@ -415,7 +388,7 @@ public class FishingZone : MonoBehaviour, IInteractable
             }
         }
 
-        return true; // Qua được hết 3 vòng gửi xe thì được xuất hiện!
+        return true;
     }
 
     private FishTier GetRandomTierBySuccess(int nac)
@@ -426,38 +399,48 @@ public class FishingZone : MonoBehaviour, IInteractable
         return FishTier.Common;
     }
 
-    private Sprite GetSpriteForArrow(ArrowKey key)
-    {
-        switch (key)
-        {
-            case ArrowKey.Up: return upSprite;
-            case ArrowKey.Down: return downSprite;
-            case ArrowKey.Left: return leftSprite;
-            case ArrowKey.Right: return rightSprite;
-            default: return null;
-        }
-    }
-
     public string GetInteractText()
     {
+        // Lấy chữ mặc định "Khu vực câu cá..."
+        string needRodText = locInteractNeedRod != null && !locInteractNeedRod.IsEmpty ? locInteractNeedRod.GetLocalizedString() : "Khu vực Câu cá (Cần cầm Cần Câu)";
+
         if (InventoryManager.Instance == null || InventoryManager.Instance.selectedHotbarIndex == -1)
-            return "Khu vực Câu cá (Cần cầm Cần Câu)";
+            return needRodText;
 
         InventorySlot slot = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex];
 
         if (slot.item is ToolItemData tool && tool.toolType == ToolType.FishingRod)
         {
-            if (slot.currentDurability <= 0) return "Cần câu đã hỏng!";
 
-            if (currentState == FishingState.NotFishing) return "[E] Quăng cần";
-            if (currentState == FishingState.WaitingForBite) return "[E] Hủy câu";
+            if (currentState == FishingState.NotFishing)
+            {
+                // Chức năng: Đọc biến isBaloFull siêu nhẹ
+                if (InventoryManager.Instance.isBaloFull)
+                {
+                    return locInventoryFull != null && !locInventoryFull.IsEmpty ? locInventoryFull.GetLocalizedString() : "Balo đầy, không thể chứa cá!";
+                }
 
-            if (currentState == FishingState.PlayingMiniGame) return $"HIỆP {currentRound}/3";
-            if (currentState == FishingState.WaitingNextRound) return $"Chuẩn bị hiệp {currentRound + 1}!!!";
+                return locCastRod != null && !locCastRod.IsEmpty ? locCastRod.GetLocalizedString() : "[E] Quăng cần";
+            }
+
+            if (currentState == FishingState.WaitingForBite)
+                return locCancelFishing != null && !locCancelFishing.IsEmpty ? locCancelFishing.GetLocalizedString() : "[E] Hủy câu";
+
+            if (currentState == FishingState.PlayingMiniGame)
+            {
+                string roundTxt = locRound != null && !locRound.IsEmpty ? locRound.GetLocalizedString() : "HIỆP";
+                return $"{roundTxt} {currentRound}/{maxRounds}";
+            }
+
+            if (currentState == FishingState.WaitingNextRound)
+            {
+                string prepTxt = locPrepareRound != null && !locPrepareRound.IsEmpty ? locPrepareRound.GetLocalizedString() : "Chuẩn bị hiệp";
+                return $"{prepTxt} {currentRound + 1}!!!";
+            }
 
             if (currentState == FishingState.Pulling) return "";
         }
-        return "Khu vực Câu cá (Cần cầm Cần Câu)";
+        return needRodText;
     }
 
     public void Interact()
@@ -465,6 +448,26 @@ public class FishingZone : MonoBehaviour, IInteractable
         if (Time.time - lastInteractTime < 1f) return;
         lastInteractTime = Time.time;
 
+        if (!isFishLoaded)
+        {
+            if (InventoryManager.Instance != null && InventoryManager.Instance.itemDatabase != null)
+            {
+                availableFish.Clear();
+                // [!] CHÚ Ý: Chữ "items" ở dưới đây phải đúng với tên list trong ItemDatabase.cs của ông
+                foreach (var item in InventoryManager.Instance.itemDatabase.allItems)
+                {
+                    if (item is FishItemData fish)
+                    {
+                        if (fish.allowedLocations.Contains(FishingLocation.Any) || fish.allowedLocations.Contains(thisLocation))
+                        {
+                            availableFish.Add(fish);
+                        }
+                    }
+                }
+                isFishLoaded = true;
+                Debug.Log($"[Hồ câu {thisLocation}] Đã tải trễ thành công {availableFish.Count} loại cá!");
+            }
+        }
         if (InventoryManager.Instance == null || InventoryManager.Instance.selectedHotbarIndex == -1) return;
         InventorySlot slot = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex];
         if (!(slot.item is ToolItemData tool && tool.toolType == ToolType.FishingRod)) return;
@@ -474,19 +477,30 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         if (currentState == FishingState.NotFishing)
         {
+            // Chức năng: Đọc biến isBaloFull đã được xử lý sẵn bên InventoryManager
+            if (InventoryManager.Instance.isBaloFull)
+            {
+                if (NotificationManager.Instance != null)
+                {
+                    string fullMsg = locInventoryFull != null && !locInventoryFull.IsEmpty ? locInventoryFull.GetLocalizedString() : "Balo đầy, không thể chứa cá!";
+                    NotificationManager.Instance.ShowNotification(fullMsg);
+                }
+                return;
+            }
+
             if (playerAnim != null) playerAnim.ResetTrigger("CancelFishing");
-            
+
             currentSequenceLength = baseSequenceLength;
             currentTimeLimit = baseTimeLimit;
 
             currentRound = 0;
             successCount = 0;
-            UpdateTierUI();
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.UpdateTierUI(successCount);
 
             currentState = FishingState.WaitingForBite;
             timer = Random.Range(minBiteTime, maxBiteTime);
 
-            if (tierPanel != null) tierPanel.SetActive(true);
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(true);
 
             if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = true;
             if (playerAnim != null) playerAnim.SetTrigger("StartFishing");
@@ -499,13 +513,31 @@ public class FishingZone : MonoBehaviour, IInteractable
             if (playerAnim != null) playerAnim.ResetTrigger("StartFishing");
 
             StopAllCoroutines();
-            if (tierPanel != null) tierPanel.SetActive(false);
+            if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(false);
             if (playerAnim != null) playerAnim.SetTrigger("CancelFishing");
 
             currentState = FishingState.NotFishing;
 
             if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = false;
             if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(false);
+        }
+    }
+    private void OnDisable()
+    {
+        // Chức năng: Giải phóng trạng thái nhân vật và Camera nếu khu vực câu bị tắt đột ngột
+        if (currentState != FishingState.NotFishing)
+        {
+            if (PlayerMovement.Instance != null) PlayerMovement.Instance.isActionLocked = false;
+            if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(false);
+
+            if (FishingUIManager.Instance != null)
+            {
+                FishingUIManager.Instance.ToggleAuditionPanel(false);
+                FishingUIManager.Instance.ToggleTimer(false);
+                FishingUIManager.Instance.ToggleTierPanel(false);
+            }
+
+            currentState = FishingState.NotFishing;
         }
     }
 }

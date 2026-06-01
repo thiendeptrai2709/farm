@@ -8,7 +8,10 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
     [Header("UI Components")]
     public Image icon;
     public TextMeshProUGUI amountText;
-    public TextMeshProUGUI valueText; // Hiện số tiền bán được của riêng ô này
+    public TextMeshProUGUI valueText;
+
+    // [ĐÃ THÊM]: Ảnh hiển thị màu cấp độ (Tier)
+    public Image tierMarkerImage;
 
     [HideInInspector] public ItemData currentItem;
     [HideInInspector] public int currentAmount;
@@ -22,47 +25,38 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         }
     }
 
-    // ==========================================
-    // 1. NHẬN ĐỒ KHI KÉO THẢ VÀO (IDropHandler)
-    // ==========================================
     public void OnDrop(PointerEventData eventData)
     {
-        if (currentItem != null) return; // Ô này đang để đồ rồi thì không cho đè lên
+        if (currentItem != null) return;
 
         GameObject draggedObj = eventData.pointerDrag;
         if (draggedObj == null) return;
 
-        // Bắt lấy cái Ô Balo đang được kéo tới
         InventorySlotUI invSlot = draggedObj.GetComponent<InventorySlotUI>();
         if (invSlot != null)
         {
-            // Chọc vào kho dữ liệu Balo để lấy thông tin đồ
             InventorySlot slotData = GetSlotData(invSlot.storageType, invSlot.slotIndex);
             if (slotData == null || slotData.item == null) return;
 
             ItemData item = slotData.item;
             ShopData currentShop = ShopUIManager.Instance.currentShop;
 
-            // KIỂM TRA LUẬT LỆ: Cấm bán Tiền và NPC phải chịu mua món này
             if (item == MarketManager.Instance.coinItem) return;
 
-            // [ĐÃ SỬA]: Dùng hàm kiểm tra mới
             if (!currentShop.CanBuyItemFromPlayer(item))
             {
                 Debug.LogWarning($"{currentShop.npcName} không mua loại hàng này!");
                 return;
             }
 
-            // CHUYỂN ĐỒ: Copy dữ liệu sang Bàn Giao Dịch
             currentItem = item;
             currentAmount = slotData.amount;
             int pricePerUnit = MarketManager.Instance.GetCurrentSellPrice(item);
             totalValue = pricePerUnit * currentAmount;
 
-            // XÓA ĐỒ: Rút sạch đồ ở ô Balo đó
             slotData.item = null;
             slotData.amount = 0;
-            invSlot.UpdateSlot(slotData); // Cập nhật lại hình ảnh Balo thành rỗng
+            invSlot.UpdateSlot(slotData);
 
             UpdateVisuals();
             ShopUIManager.Instance.UpdateTotalSellValue();
@@ -74,9 +68,6 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         }
     }
 
-    // ==========================================
-    // 2. BẤM VÀO ĐỂ LẤY LẠI ĐỒ (HỦY BÁN MÓN ĐÓ)
-    // ==========================================
     public void OnPointerClick(PointerEventData eventData)
     {
         if (currentItem != null && eventData.button == PointerEventData.InputButton.Left)
@@ -89,14 +80,12 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
     {
         if (currentItem == null) return;
 
-        // Trả lại Balo
         bool added = InventoryManager.Instance.AddItem(currentItem, currentAmount, false);
         if (added)
         {
             ClearSlot();
             ShopUIManager.Instance.UpdateTotalSellValue();
 
-            // [ĐÃ SỬA]: Dọn dẹp code gọi âm thanh cho chuẩn logic
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlaySFX("Item_Drop");
@@ -112,9 +101,6 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         }
     }
 
-    // ==========================================
-    // GIAO DIỆN & TIỆN ÍCH
-    // ==========================================
     public void UpdateVisuals()
     {
         icon.sprite = currentItem.icon;
@@ -122,6 +108,31 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         amountText.text = currentAmount > 1 ? currentAmount.ToString() : "";
         valueText.text = $"<color=#FFD700>+{totalValue}G</color>";
         valueText.enabled = true;
+
+        // [ĐÃ THÊM]: Cập nhật màu sắc Tier
+        UpdateTierVisuals();
+    }
+
+    // [ĐÃ THÊM]: Hàm xử lý màu Tier
+    private void UpdateTierVisuals()
+    {
+        if (tierMarkerImage != null)
+        {
+            if (currentItem is FishItemData fish)
+            {
+                tierMarkerImage.gameObject.SetActive(true);
+                tierMarkerImage.color = GetColorFromTier(fish.tier);
+            }
+            else if (currentItem is ToolItemData toolItem)
+            {
+                tierMarkerImage.gameObject.SetActive(true);
+                tierMarkerImage.color = GetColorFromToolTier(toolItem.toolTier);
+            }
+            else
+            {
+                tierMarkerImage.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void ClearSlot()
@@ -134,6 +145,9 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         amountText.text = "";
         valueText.text = "";
         valueText.enabled = false;
+
+        // Nhớ ẩn Tier Marker khi ô trống
+        if (tierMarkerImage != null) tierMarkerImage.gameObject.SetActive(false);
     }
 
     private InventorySlot GetSlotData(StorageType type, int index)
@@ -152,5 +166,33 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
     public void OnPointerExit(PointerEventData eventData)
     {
         if (ItemTooltipUI.Instance != null) ItemTooltipUI.Instance.StopHover();
+    }
+
+    // ==========================================
+    // BỘ HÀM CHUYỂN ĐỔI MÀU TIER
+    // ==========================================
+    private Color GetColorFromTier(FishTier tier)
+    {
+        switch (tier)
+        {
+            case FishTier.Common: return Color.white;
+            case FishTier.Uncommon: return new Color(0.2f, 1f, 0.2f);
+            case FishTier.Rare: return new Color(0.2f, 0.6f, 1f);
+            case FishTier.Epic: return new Color(0.8f, 0.2f, 1f);
+            case FishTier.Legendary: return new Color(1f, 0.8f, 0.2f);
+            default: return Color.white;
+        }
+    }
+
+    private Color GetColorFromToolTier(int tier)
+    {
+        switch (tier)
+        {
+            case 1: return new Color(0.5f, 0.5f, 0.5f);
+            case 2: return new Color(0.8f, 0.4f, 0.15f);
+            case 3: return new Color(0.75f, 0.75f, 0.8f);
+            case 4: return new Color(1f, 0.85f, 0f);
+            default: return Color.white;
+        }
     }
 }

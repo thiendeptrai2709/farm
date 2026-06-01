@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804f64c9d65b4614ea07e766e8965791, type: 3}
+  m_Name: Hammer 1
+  m_EditorClassIdentifier: Assembly-CSharp::ToolItemData
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 8518151886004224
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 47e186c74555f9c4a843676d12dfc77c, type: 3}
+  itemType: 0
+  isStackable: 0
+  maxStack: 99
+  sellPrice: 50
+  buyPrice: 15
+  toolType: 4
+  toolTier: 2
+  baseDamage: 10
+  durability: 15
+  toolPrefab: {fileID: 5292356741113627667, guid: a8a6b5a8455d56a42aad3e813e2c23f3, type: 3}
+  references:
+    version: 2
+    RefIds: []

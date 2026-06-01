@@ -65,6 +65,10 @@ public class LoadingManager : MonoBehaviour
                 FarmingZone.Instance.SaveAllPlots(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Cây Trồng vào RAM trước khi chuyển Map!");
             }
+            if (SkeletonQuestManager.Instance != null)
+            {
+                SkeletonQuestManager.Instance.SaveQuestData(currentData);
+            }
             FoodTrough[] allTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
             foreach (var trough in allTroughs)
             {
@@ -164,6 +168,10 @@ public class LoadingManager : MonoBehaviour
                 {
                     newMapMarketManager.LoadShopData(currentData);
                 }
+                if (SkeletonQuestManager.Instance != null)
+                {
+                    SkeletonQuestManager.Instance.LoadQuestData(currentData);
+                }
             }
         }
         if (playerObj != null)
@@ -180,6 +188,9 @@ public class LoadingManager : MonoBehaviour
                 if (InventoryManager.Instance != null)
                 {
                     InventoryManager.Instance.LoadInventoryData(data);
+                    // Trả lại vị trí ô đang chọn
+                    InventoryManager.Instance.selectedHotbarIndex = data.selectedHotbarIndex;
+                    InventoryManager.Instance.RefreshInventoryUI(); // Ép UI cập nhật lại khung viền chọn
                 }
                 if (BusUI.Instance != null && data.unlockedBusStops != null)
                 {

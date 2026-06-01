@@ -217,6 +217,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TrashItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""0f7a1bbe-0778-4535-9a29-aed01ebae0ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -417,6 +426,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Esc"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33aff3d7-a47c-42f0-bdca-0f8a08844f7a"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TrashItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -439,6 +459,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_BuildMenu = m_Player.FindAction("BuildMenu", throwIfNotFound: true);
         m_Player_Journal = m_Player.FindAction("Journal", throwIfNotFound: true);
         m_Player_Esc = m_Player.FindAction("Esc", throwIfNotFound: true);
+        m_Player_TrashItem = m_Player.FindAction("TrashItem", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -533,6 +554,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_BuildMenu;
     private readonly InputAction m_Player_Journal;
     private readonly InputAction m_Player_Esc;
+    private readonly InputAction m_Player_TrashItem;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -601,6 +623,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Esc => m_Wrapper.m_Player_Esc;
         /// <summary>
+        /// Provides access to the underlying input action "Player/TrashItem".
+        /// </summary>
+        public InputAction @TrashItem => m_Wrapper.m_Player_TrashItem;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -668,6 +694,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Esc.started += instance.OnEsc;
             @Esc.performed += instance.OnEsc;
             @Esc.canceled += instance.OnEsc;
+            @TrashItem.started += instance.OnTrashItem;
+            @TrashItem.performed += instance.OnTrashItem;
+            @TrashItem.canceled += instance.OnTrashItem;
         }
 
         /// <summary>
@@ -721,6 +750,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Esc.started -= instance.OnEsc;
             @Esc.performed -= instance.OnEsc;
             @Esc.canceled -= instance.OnEsc;
+            @TrashItem.started -= instance.OnTrashItem;
+            @TrashItem.performed -= instance.OnTrashItem;
+            @TrashItem.canceled -= instance.OnTrashItem;
         }
 
         /// <summary>
@@ -859,5 +891,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEsc(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TrashItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTrashItem(InputAction.CallbackContext context);
     }
 }

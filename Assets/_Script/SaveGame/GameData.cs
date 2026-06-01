@@ -91,10 +91,6 @@ public class SavedTroughData
     public string troughID;
     public List<SavedSlotData> slots = new List<SavedSlotData>();
 }
-
-
-
-
 [System.Serializable]
 public class GameData
 {
@@ -104,6 +100,7 @@ public class GameData
     public int daysInGame;
     public int savedHour;
     public int savedMinute;
+    public int selectedHotbarIndex;
 
     public List<SavedSlotData> hotbarData;
     public List<SavedSlotData> inventoryData;
@@ -130,6 +127,9 @@ public class GameData
     public List<SavedPriceMultiplier> savedPrices;
     public List<SavedNPCData> savedNPCs;
     public List<string> unlockedBusStops;
+    public List<string> collectedBoneIDs;
+    public bool isSkeletonRisen;
+    public bool isQuestStarted;
     public GameData()
     {
         lastSceneName = "Farm";
@@ -158,6 +158,10 @@ public class GameData
         savedPrices = new List<SavedPriceMultiplier>();
         savedNPCs = new List<SavedNPCData>();
         unlockedBusStops = new List<string>();
+        selectedHotbarIndex = -1;
+        collectedBoneIDs = new List<string>();
+        isSkeletonRisen = false;
+        isQuestStarted = false;
     }
     [System.Serializable]
     public class SavedPriceMultiplier

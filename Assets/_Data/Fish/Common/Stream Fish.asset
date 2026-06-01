@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FishItemData
   localizedDisplayName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:8abfb9f671922ad448ec1b2b41583619
     m_TableEntryReference:
-      m_KeyId: 8517433921822720
+      m_KeyId: 1111248265219
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0

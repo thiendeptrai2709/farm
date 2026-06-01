@@ -33,16 +33,13 @@ public class FarmPlotUIManager : MonoBehaviour
         // Gắn sự kiện cho 2 cái nút bấm
         if (plantButton != null) plantButton.onClick.AddListener(ConfirmPlant);
         if (closeButton != null) closeButton.onClick.AddListener(ClosePlotUI);
+    }
 
-        if (InventoryUI.Instance != null)
+    private void Update()
+    {
+        if (IsOpen() && InventoryUI.Instance != null && !InventoryUI.Instance.IsOpen())
         {
-            InventoryUI.Instance.OnInventoryUIToggled += (isBaloOpen) =>
-            {
-                if (!isBaloOpen && IsOpen())
-                {
-                    ClosePlotUI();
-                }
-            };
+            ClosePlotUI();
         }
     }
 
