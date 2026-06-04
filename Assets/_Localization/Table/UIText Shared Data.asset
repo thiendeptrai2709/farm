@@ -639,6 +639,12 @@ MonoBehaviour:
     m_Key: NPC_Fish
     m_Metadata:
       m_Items: []
+  - m_Id: 16334102874480640
+    m_Key: 'Press
+
+'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

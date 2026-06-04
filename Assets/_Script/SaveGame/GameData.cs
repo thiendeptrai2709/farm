@@ -96,6 +96,8 @@ public class GameData
 {
     public string lastSceneName;
     public Vector3 playerPosition;
+    public Quaternion playerRotation;
+    public Vector3 cameraAngles;
 
     public int daysInGame;
     public int savedHour;
@@ -134,6 +136,9 @@ public class GameData
     {
         lastSceneName = "Farm";
         playerPosition = Vector3.zero;
+        playerRotation = Quaternion.identity;
+        cameraAngles = Vector3.zero;
+
         hotbarData = new List<SavedSlotData>();
         inventoryData = new List<SavedSlotData>();
         savedChests = new List<SavedChestData>();

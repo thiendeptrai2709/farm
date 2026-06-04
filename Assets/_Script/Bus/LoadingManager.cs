@@ -182,8 +182,8 @@ public class LoadingManager : MonoBehaviour
                 GameData data = SaveManager.Instance.GetCurrentData();
 
                 // 1. Dịch chuyển vị trí
-                MovePlayerToSavedPosition(playerObj, data.playerPosition);
-
+                MovePlayerToSavedPosition(playerObj, data.playerPosition, data.playerRotation, data.cameraAngles);
+                
                 // 2. [ĐÃ THÊM]: Đổ đồ vào lại túi đồ
                 if (InventoryManager.Instance != null)
                 {
@@ -322,20 +322,31 @@ public class LoadingManager : MonoBehaviour
 
         Debug.Log("Đã đưa Player về đúng vị trí SpawnPoint!");
     }
-    private void MovePlayerToSavedPosition(GameObject actualPlayer, Vector3 savedPos)
+    private void MovePlayerToSavedPosition(GameObject actualPlayer, Vector3 savedPos, Quaternion savedRot, Vector3 savedCamAngles)
     {
         CharacterController cc = actualPlayer.GetComponent<CharacterController>();
 
-        // Tắt CC để tránh xung đột vật lý
-        if (cc != null) cc.enabled = false;
+        // Tắt CC để tránh xung đột vật lý
+        if (cc != null) cc.enabled = false;
 
         actualPlayer.transform.position = savedPos;
 
+        // [ĐÃ SỬA LẠI]: Thay vì tự xoay, ta gọi hàm xử lý ép cả Camera ở PlayerMovement
+        PlayerMovement pm = actualPlayer.GetComponent<PlayerMovement>();
+        if (pm != null)
+        {
+            pm.ForceCameraLook(savedRot, savedCamAngles);
+        }
+        else
+        {
+            actualPlayer.transform.rotation = savedRot;
+        }
+
         Physics.SyncTransforms();
 
-        // Bật lại CC
-        if (cc != null) cc.enabled = true;
+        // Bật lại CC
+        if (cc != null) cc.enabled = true;
 
-        Debug.Log("Đã đưa Player về đúng tọa độ Save Game!");
+        Debug.Log("Đã đưa Player về đúng tọa độ và ép Camera hướng nhìn Save Game!");
     }
 }

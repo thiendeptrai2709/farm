@@ -637,6 +637,10 @@ MonoBehaviour:
     m_Localized: Fish Merchant
     m_Metadata:
       m_Items: []
+  - m_Id: 16334102874480640
+    m_Localized: Press Any Key To Start
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

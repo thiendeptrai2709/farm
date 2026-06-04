@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Camera")]
     public Transform mainCamera;
     public float turnSmoothTime = 0.05f;
+    public Unity.Cinemachine.CinemachineCamera freeLookCamera;
 
     [Header("Cài đặt Ngồi")]
     public float crouchHeight = 1f; // Chiều cao lúc ngồi
@@ -137,6 +138,42 @@ public class PlayerMovement : MonoBehaviour
         if (currentMomentum.magnitude >= 0.1f || targetVelocity.magnitude >= 0.1f)
         {
             controller.Move(currentMomentum * Time.deltaTime);
+        }
+    }
+    public void ForceCameraLook(Quaternion savedRotation, Vector3 savedCamAngles)
+    {
+        // 1. Xoay cơ thể Player
+        transform.rotation = savedRotation;
+
+        // 2. Ép Cinemachine cập nhật chuẩn xác cả 2 trục
+        if (freeLookCamera != null)
+        {
+            var orbital = freeLookCamera.GetComponent<Unity.Cinemachine.CinemachineOrbitalFollow>();
+            if (orbital != null)
+            {
+                // Trục ngang (Yaw) - Không bị giới hạn nên truyền thẳng
+                orbital.HorizontalAxis.Value = savedCamAngles.y;
+
+                // Chuẩn hóa trục dọc (Pitch) từ 0-360 về -180 đến 180
+                float normalizedPitch = savedCamAngles.x;
+                if (normalizedPitch > 180f)
+                {
+                    normalizedPitch -= 360f;
+                }
+
+                // Truyền góc đã chuẩn hóa vào trục Vertical
+                orbital.VerticalAxis.Value = normalizedPitch;
+            }
+
+            // Ép xoay Transform vật lý để khớp đồng bộ
+            freeLookCamera.transform.rotation = Quaternion.Euler(savedCamAngles.x, savedCamAngles.y, 0f);
+
+            // Cắt đứt hiệu ứng lướt (blending)
+            freeLookCamera.PreviousStateIsValid = false;
+        }
+        else
+        {
+            Debug.LogWarning("Chưa gắn Cinemachine Camera vào PlayerMovement, không thể ép hướng nhìn!");
         }
     }
 }

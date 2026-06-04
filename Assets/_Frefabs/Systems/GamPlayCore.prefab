@@ -15511,6 +15511,51 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4661233603057896652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4818471099500896970}
+  - component: {fileID: 5250183150104225655}
+  m_Layer: 0
+  m_Name: GraphicsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4818471099500896970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4661233603057896652}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6144945560450276850}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5250183150104225655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4661233603057896652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90e6a4e23f7bbf4397f76329ef2d200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DisplaySettings
+  monitorDropdown: {fileID: 8085348484590564770}
 --- !u!1 &4671245921186715864
 GameObject:
   m_ObjectHideFlags: 0
@@ -25165,6 +25210,7 @@ Transform:
   - {fileID: 576664568778150204}
   - {fileID: 6662254031173878702}
   - {fileID: 8658314623311012294}
+  - {fileID: 4818471099500896970}
   m_Father: {fileID: 4740099641035958837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1782949260899551912
@@ -29454,6 +29500,10 @@ PrefabInstance:
       propertyPath: textOpenMenuHint.m_TableReference.m_TableCollectionName
       value: GUID:b128b4439333ee54ea4f487b9b6033f3
       objectReference: {fileID: 0}
+    - target: {fileID: 8950212855293684918, guid: 4844a22ea17af6f42a54ecea65a421a6, type: 3}
+      propertyPath: freeLookCamera
+      value: 
+      objectReference: {fileID: 472614502686737775}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -30660,6 +30710,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2020615679337247889, guid: f41e56bb0ba08fc4d8ea0d0c498c230d, type: 3}
   m_PrefabInstance: {fileID: 8252491626402386364}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8085348484590564770 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 194306737646003230, guid: f41e56bb0ba08fc4d8ea0d0c498c230d, type: 3}
+  m_PrefabInstance: {fileID: 8252491626402386364}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_Dropdown
 --- !u!1 &8246551935325647188 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 69557451052851432, guid: f41e56bb0ba08fc4d8ea0d0c498c230d, type: 3}

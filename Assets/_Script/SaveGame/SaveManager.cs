@@ -87,7 +87,12 @@ public class SaveManager : MonoBehaviour
         if (player != null)
         {
             currentData.playerPosition = player.transform.position;
+            currentData.playerRotation = player.transform.rotation;
             currentData.lastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
+        if (Camera.main != null)
+        {
+            currentData.cameraAngles = Camera.main.transform.eulerAngles;
         }
         if (TimeManager.Instance != null)
         {

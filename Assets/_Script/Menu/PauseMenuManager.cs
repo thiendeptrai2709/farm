@@ -208,7 +208,14 @@ public class PauseMenuManager : MonoBehaviour
         {
             Destroy(playerObj.transform.root.gameObject);
         }
-        SceneManager.LoadScene(menuSceneName);
+        if (LoadingManager.Instance != null)
+        {
+            LoadingManager.Instance.LoadScene(menuSceneName, "");
+        }
+        else
+        {
+            SceneManager.LoadScene(menuSceneName);
+        }
     }
 
     private void ExecuteQuitGame()

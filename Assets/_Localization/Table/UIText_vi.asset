@@ -658,6 +658,10 @@ MonoBehaviour:
     m_Localized: "Ng\u01B0\u1EDDi bu\xF4n c\xE1"
     m_Metadata:
       m_Items: []
+  - m_Id: 16334102874480640
+    m_Localized: "B\u1EA5m b\u1EA5t k\xEC n\xFAt n\xE0o \u0111\u1EC3 b\u1EAFt \u0111\u1EA7u"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -74,12 +74,18 @@ public class AudioManager : MonoBehaviour
 
     public void PlayLoopSFX(string name)
     {
+        Debug.Log("[AudioManager] Đang gọi PlayLoopSFX với tên: " + name);
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
             loopSource.clip = data.clip;
             loopSource.volume = isMuted ? 0 : data.volume * sfxVolume;
             loopSource.pitch = data.pitch;
             loopSource.Play();
+            Debug.Log("[AudioManager] Đã phát loopSFX thành công. Volume hiện tại của loa là: " + loopSource.volume);
+        }
+        else
+        {
+            Debug.LogError("[AudioManager] Không tìm thấy âm thanh nào tên là: " + name);
         }
     }
 
