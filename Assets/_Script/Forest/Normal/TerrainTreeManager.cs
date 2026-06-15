@@ -30,13 +30,13 @@ public class TerrainTreeManager : MonoBehaviour
 
     private TreeInstance[] cachedTrees;
 
-    // ==========================================
-    // THUẬT TOÁN LƯỚI KHÔNG GIAN (CỨU FPS)
-    // ==========================================
-    private Dictionary<Vector2Int, List<int>> treeGrid = new Dictionary<Vector2Int, List<int>>();
+    // ==========================================
+    // THUẬT TOÁN LƯỚI KHÔNG GIAN (CỨU FPS)
+    // ==========================================
+    private Dictionary<Vector2Int, List<int>> treeGrid = new Dictionary<Vector2Int, List<int>>();
     private float gridSize = 20f; // Chia rừng thành các chunk 20x20 mét
 
-    private void Awake()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
         if (targetTerrain == null) targetTerrain = Terrain.activeTerrain;
@@ -53,23 +53,23 @@ public class TerrainTreeManager : MonoBehaviour
         TerrainData tData = targetTerrain.terrainData;
         Vector3 terrainPos = targetTerrain.transform.position;
 
-        // 1. Lọc ra danh sách ID của các loại cây ĐƯỢC PHÉP CHẶT (Giải quyết lỗi số 2)
-        HashSet<int> validPrototypes = new HashSet<int>();
+        // 1. Lọc ra danh sách ID của các loại cây ĐƯỢC PHÉP CHẶT (Giải quyết lỗi số 2)
+        HashSet<int> validPrototypes = new HashSet<int>();
         foreach (var profile in treeProfiles)
         {
             validPrototypes.Add(profile.prototypeIndex);
         }
 
-        // 2. Chia cây vào các ô lưới (Giải quyết lỗi số 3)
-        for (int i = 0; i < cachedTrees.Length; i++)
+        // 2. Chia cây vào các ô lưới (Giải quyết lỗi số 3)
+        for (int i = 0; i < cachedTrees.Length; i++)
         {
-            // Nếu cây này không nằm trong danh sách được chặt -> Bỏ qua luôn, không đưa vào bộ nhớ
-            if (!validPrototypes.Contains(cachedTrees[i].prototypeIndex)) continue;
+            // Nếu cây này không nằm trong danh sách được chặt -> Bỏ qua luôn, không đưa vào bộ nhớ
+            if (!validPrototypes.Contains(cachedTrees[i].prototypeIndex)) continue;
 
             Vector3 treeWorldPos = Vector3.Scale(cachedTrees[i].position, tData.size) + terrainPos;
 
-            // Xếp cây vào ô lưới tương ứng
-            Vector2Int gridCoord = new Vector2Int(Mathf.FloorToInt(treeWorldPos.x / gridSize), Mathf.FloorToInt(treeWorldPos.z / gridSize));
+            // Xếp cây vào ô lưới tương ứng
+            Vector2Int gridCoord = new Vector2Int(Mathf.FloorToInt(treeWorldPos.x / gridSize), Mathf.FloorToInt(treeWorldPos.z / gridSize));
 
             if (!treeGrid.ContainsKey(gridCoord))
             {
@@ -95,37 +95,37 @@ public class TerrainTreeManager : MonoBehaviour
         return virtualInteractables[treeIndex];
     }
 
-    // TÌM CÂY BẰNG LƯỚI KHÔNG GIAN (Chỉ tính toán 10 cây thay vì 50,000 cây)
-    public int GetClosestTreeIndex(Vector3 hitPoint, float searchRadius = 1.5f)
+    // TÌM CÂY BẰNG LƯỚI KHÔNG GIAN (Chỉ tính toán 10 cây thay vì 50,000 cây)
+    public int GetClosestTreeIndex(Vector3 hitPoint, float searchRadius = 1.5f)
     {
         if (targetTerrain == null || cachedTrees == null) return -1;
 
-        // Tìm xem người chơi đang đứng ở ô lưới nào
-        Vector2Int centerGridCoord = new Vector2Int(Mathf.FloorToInt(hitPoint.x / gridSize), Mathf.FloorToInt(hitPoint.z / gridSize));
+        // Tìm xem người chơi đang đứng ở ô lưới nào
+        Vector2Int centerGridCoord = new Vector2Int(Mathf.FloorToInt(hitPoint.x / gridSize), Mathf.FloorToInt(hitPoint.z / gridSize));
 
         int closestIndex = -1;
         float closestSqrDist = searchRadius * searchRadius;
         TerrainData tData = targetTerrain.terrainData;
         Vector3 terrainPos = targetTerrain.transform.position;
 
-        // Quét 9 ô lưới quanh người chơi (Ô đang đứng và 8 ô kề cạnh)
-        for (int x = -1; x <= 1; x++)
+        // Quét 9 ô lưới quanh người chơi (Ô đang đứng và 8 ô kề cạnh)
+        for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
             {
                 Vector2Int checkCoord = new Vector2Int(centerGridCoord.x + x, centerGridCoord.y + y);
 
-                // Nếu ô này có cây
-                if (treeGrid.TryGetValue(checkCoord, out List<int> treesInCell))
+                // Nếu ô này có cây
+                if (treeGrid.TryGetValue(checkCoord, out List<int> treesInCell))
                 {
                     foreach (int i in treesInCell)
                     {
                         if (cachedTrees[i].heightScale <= 0) continue; // Cây đã bị chặt
 
-                        Vector3 treeWorldPos = Vector3.Scale(cachedTrees[i].position, tData.size) + terrainPos;
+                        Vector3 treeWorldPos = Vector3.Scale(cachedTrees[i].position, tData.size) + terrainPos;
                         treeWorldPos.y = hitPoint.y; // Cân bằng trục Y
 
-                        float sqrDist = (treeWorldPos - hitPoint).sqrMagnitude;
+                        float sqrDist = (treeWorldPos - hitPoint).sqrMagnitude;
 
                         if (sqrDist < closestSqrDist)
                         {
@@ -166,14 +166,14 @@ public class TerrainTreeManager : MonoBehaviour
 
     private void FellTree(int treeIndex, TerrainTreeProfile profile)
     {
-        // 1. Cập nhật dữ liệu (Struct cần gán lại)
-        TreeInstance modifiedTree = cachedTrees[treeIndex];
+        // 1. Cập nhật dữ liệu (Struct cần gán lại)
+        TreeInstance modifiedTree = cachedTrees[treeIndex];
         modifiedTree.widthScale = 0f;
         modifiedTree.heightScale = 0f;
         cachedTrees[treeIndex] = modifiedTree;
 
-        // 2. HÀM NÀY GIẢI QUYẾT LỖI CÂY KHÔNG ĐỔ: Cập nhật thẳng vào 1 cây duy nhất!
-        targetTerrain.terrainData.SetTreeInstance(treeIndex, modifiedTree);
+        // 2. HÀM NÀY GIẢI QUYẾT LỖI CÂY KHÔNG ĐỔ: Cập nhật thẳng vào 1 cây duy nhất!
+        targetTerrain.terrainData.SetTreeInstance(treeIndex, modifiedTree);
 
         Collider terrainCollider = targetTerrain.GetComponent<Collider>();
         if (terrainCollider != null)
@@ -181,8 +181,8 @@ public class TerrainTreeManager : MonoBehaviour
             terrainCollider.enabled = false;
             terrainCollider.enabled = true;
         }
-        // 4. Ép đồ
-        if (profile.dropItem != null && InventoryManager.Instance != null)
+        // 4. Ép đồ
+        if (profile.dropItem != null && InventoryManager.Instance != null)
         {
             InventoryManager.Instance.AddItem(profile.dropItem, profile.dropAmount);
         }

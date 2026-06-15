@@ -478,7 +478,7 @@ public class FarmingZone : MonoBehaviour, IInteractable
     }
     private void OnDestroy()
     {
-        
+
     }
     public void SaveAllPlots(GameData data)
     {

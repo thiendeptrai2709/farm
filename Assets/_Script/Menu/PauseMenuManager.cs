@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    public static bool isCutscenePlaying = false;
+
     public PlayerInputHandler inputHandler;
     public GameObject pauseMenuPanel;
     public GameObject unsavedWarningPanel;
@@ -22,6 +24,8 @@ public class PauseMenuManager : MonoBehaviour
     private void Update()
     {
         if (SceneManager.GetActiveScene().name == menuSceneName) return;
+
+        if (isCutscenePlaying) return;
 
         if (inputHandler != null && inputHandler.EscTriggered)
         {

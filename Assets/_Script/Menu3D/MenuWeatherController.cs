@@ -14,9 +14,19 @@ public class MenuWeatherController : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(SetupWeatherAndMusic());
+    }
+
+    private System.Collections.IEnumerator SetupWeatherAndMusic()
+    {
+        // [ĐÃ THÊM]: Cầm chân luồng code, chờ đến khi màn hình Loading tắt hẳn mới chạy tiếp
+        if (LoadingManager.Instance != null && LoadingManager.Instance.loadingPanel.activeSelf)
+        {
+            yield return new WaitUntil(() => !LoadingManager.Instance.loadingPanel.activeSelf);
+        }
+
         int randomChance = UnityEngine.Random.Range(1, 101);
 
-        // TẠM THỜI SỬA THÀNH <= 100 ĐỂ ÉP TRỜI MƯA 100%
         if (randomChance <= 10)
         {
             rainParticle.SetActive(true);
@@ -26,9 +36,6 @@ public class MenuWeatherController : MonoBehaviour
             {
                 AudioManager.Instance.PlayMusic(rainMusicName);
                 AudioManager.Instance.PlayLoopSFX(rainAmbientSFX);
-            }
-            else
-            {
             }
         }
         else

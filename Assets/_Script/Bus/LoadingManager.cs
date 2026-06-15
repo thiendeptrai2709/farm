@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using Unity.Cinemachine; // Khai báo chuẩn Cinemachine v3
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
+
 public class LoadingManager : MonoBehaviour
 {
     public static LoadingManager Instance;
@@ -14,6 +16,7 @@ public class LoadingManager : MonoBehaviour
     public GameObject loadingPanel;
     public Slider progressBar;
     public TextMeshProUGUI progressText;
+
     private string targetSpawnPointID = "";
 
     private void Awake()
@@ -23,66 +26,73 @@ public class LoadingManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // Nhận trực tiếp Prefab vào đây
     public void LoadScene(string sceneName, string spawnID, GameObject prefab = null)
     {
         targetSpawnPointID = spawnID;
 
-        // [ĐÃ THÊM]: Ép Scene hiện tại phải nộp lại dữ liệu lưu tạm vào RAM trước khi nó bị xóa sổ
+        // Đồng bộ dữ liệu map hiện tại vào RAM trước khi chuyển scene
         if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
         {
             GameData currentData = SaveManager.Instance.GetCurrentData();
 
-            ChestManager currentMapChestManager = UnityEngine.Object.FindFirstObjectByType<ChestManager>();
+            ChestManager currentMapChestManager = FindFirstObjectByType<ChestManager>();
             if (currentMapChestManager != null)
             {
                 currentMapChestManager.SaveAllChestsToData(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Rương vào RAM trước khi chuyển Map!");
             }
 
-            AnimalPen[] allPens = UnityEngine.Object.FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
+            AnimalPen[] allPens = FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
             foreach (var pen in allPens)
             {
                 pen.SaveAnimalData(currentData);
             }
 
-            DroppedItemManager currentMapItemManager = UnityEngine.Object.FindFirstObjectByType<DroppedItemManager>();
+            DroppedItemManager currentMapItemManager = FindFirstObjectByType<DroppedItemManager>();
             if (currentMapItemManager != null)
             {
                 currentMapItemManager.SaveDroppedItemsToData(currentData);
             }
 
-            PlacedPropManager currentPropManager = UnityEngine.Object.FindFirstObjectByType<PlacedPropManager>();
+            PlacedPropManager currentPropManager = FindFirstObjectByType<PlacedPropManager>();
             if (currentPropManager != null)
             {
                 currentPropManager.SavePropsToData(currentData);
             }
+
             if (FarmingZone.Instance != null)
             {
                 FarmingZone.Instance.SaveAllPlots(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Cây Trồng vào RAM trước khi chuyển Map!");
             }
+
             if (SkeletonQuestManager.Instance != null)
             {
                 SkeletonQuestManager.Instance.SaveQuestData(currentData);
             }
-            FoodTrough[] allTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
+
+            FoodTrough[] allTroughs = FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
             foreach (var trough in allTroughs)
             {
                 trough.SaveTroughData(currentData);
             }
+
             if (MarketManager.Instance != null)
             {
                 MarketManager.Instance.SaveShopData(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Chợ vào RAM trước khi chuyển Map!");
             }
+
             SaveManager.Instance.SaveAllNPCsToData(currentData);
         }
-        // Truyền thẳng cái prefab xuống cho Giai đoạn 2 để nó đẻ Player
-        StartCoroutine(LoadAsynchronously(sceneName, prefab));
+
+        StartCoroutine(LoadAsynchronously(sceneName, prefab));
     }
 
     private IEnumerator LoadAsynchronously(string sceneName, GameObject gameplayCorePrefab)
@@ -91,9 +101,9 @@ public class LoadingManager : MonoBehaviour
         progressBar.value = 0;
         progressText.text = "0%";
 
-        // ==========================================
-        // GIAI ĐOẠN 1: LOAD MAP (0% -> 80%)
-        // ==========================================
+        // ===============================
+        // GIAI ĐOẠN 1: LOAD SCENE
+        // ===============================
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
 
@@ -102,99 +112,109 @@ public class LoadingManager : MonoBehaviour
             float loadProgress = (operation.progress / 0.9f) * 0.8f;
             progressBar.value = loadProgress;
             progressText.text = (loadProgress * 100f).ToString("F0") + "%";
-            yield return null; // Chỉ đợi frame, không đếm thời gian
+            yield return null;
         }
 
         operation.allowSceneActivation = true;
-
-        // Chờ đến khi Scene mới thực sự hiện ra (Trạng thái IsDone = true)
         yield return new WaitUntil(() => operation.isDone);
 
-
-        // ==========================================
-        // GIAI ĐOẠN 2: ÉP CAMERA LÀM VIỆC (80% -> 100%)
-        // ==========================================
+        // ===============================
+        // GIAI ĐOẠN 2: TÌM / TẠO PLAYER
+        // ===============================
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject coreInstance = null;
 
-        // BƯỚC 1: XÁC ĐỊNH ĐỐI TƯỢNG PLAYER
         if (playerObj == null && gameplayCorePrefab != null)
         {
-            // Nếu chưa có (Lần đầu load từ Bootstrap/Menu) -> Sinh ra mới
             coreInstance = Instantiate(gameplayCorePrefab);
             DontDestroyOnLoad(coreInstance);
 
-            // [QUAN TRỌNG ĐÃ SỬA]: Phải tìm lại Player sau khi đẻ ra cái cục Prefab
             playerObj = GameObject.FindGameObjectWithTag("Player");
         }
         else if (playerObj != null)
         {
-            // Nếu đã có sẵn (Di chuyển giữa Farm <-> Tower)
             coreInstance = playerObj.transform.root.gameObject;
         }
+
+        // ===============================
+        // GIAI ĐOẠN 3: LOAD DỮ LIỆU MAP
+        // ===============================
         if (SaveManager.Instance != null)
         {
             GameData currentData = SaveManager.Instance.GetCurrentData();
 
-            // [ĐÃ THÊM]: Phục hồi Nông Trại nếu Scene mới load có FarmingZone
             if (currentData != null && FarmingZone.Instance != null)
             {
                 FarmingZone.Instance.LoadAllPlots(currentData);
+                yield return null;
             }
+
             if (currentData != null)
             {
-                AnimalPen[] allPens = UnityEngine.Object.FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
+                AnimalPen[] allPens = FindObjectsByType<AnimalPen>(FindObjectsSortMode.None);
                 foreach (var pen in allPens)
                 {
                     pen.LoadAnimalData(currentData);
                 }
-                DroppedItemManager newMapItemManager = UnityEngine.Object.FindFirstObjectByType<DroppedItemManager>();
+                yield return null;
+
+                DroppedItemManager newMapItemManager = FindFirstObjectByType<DroppedItemManager>();
                 if (newMapItemManager != null)
                 {
                     newMapItemManager.LoadDroppedItemsFromData(currentData);
                 }
-                PlacedPropManager newPropManager = UnityEngine.Object.FindFirstObjectByType<PlacedPropManager>();
+                yield return null;
+
+                PlacedPropManager newPropManager = FindFirstObjectByType<PlacedPropManager>();
                 if (newPropManager != null)
                 {
                     newPropManager.LoadPropsFromData(currentData);
                 }
-                FoodTrough[] newTroughs = UnityEngine.Object.FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
+                yield return null;
+
+                FoodTrough[] newTroughs = FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
                 foreach (var trough in newTroughs)
                 {
                     trough.LoadTroughData(currentData);
                 }
-                MarketManager newMapMarketManager = UnityEngine.Object.FindFirstObjectByType<MarketManager>();
+                yield return null;
+
+                MarketManager newMapMarketManager = FindFirstObjectByType<MarketManager>();
                 if (newMapMarketManager != null)
                 {
                     newMapMarketManager.LoadShopData(currentData);
                 }
+
                 if (SkeletonQuestManager.Instance != null)
                 {
                     SkeletonQuestManager.Instance.LoadQuestData(currentData);
                 }
+
+                yield return null;
             }
         }
+
+        // ===============================
+        // GIAI ĐOẠN 4: ĐẶT PLAYER VÀO ĐÚNG VỊ TRÍ
+        // ===============================
         if (playerObj != null)
         {
-            // [ĐÃ THÊM LOGIC ĐỌC SAVE]
             if (targetSpawnPointID == "SavedPosition" && SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
             {
                 GameData data = SaveManager.Instance.GetCurrentData();
 
-                // 1. Dịch chuyển vị trí
                 MovePlayerToSavedPosition(playerObj, data.playerPosition, data.playerRotation, data.cameraAngles);
-                
-                // 2. [ĐÃ THÊM]: Đổ đồ vào lại túi đồ
+
                 if (InventoryManager.Instance != null)
                 {
                     InventoryManager.Instance.LoadInventoryData(data);
-                    // Trả lại vị trí ô đang chọn
                     InventoryManager.Instance.selectedHotbarIndex = data.selectedHotbarIndex;
-                    InventoryManager.Instance.RefreshInventoryUI(); // Ép UI cập nhật lại khung viền chọn
+                    InventoryManager.Instance.RefreshInventoryUI();
                 }
+
                 if (BusUI.Instance != null && data.unlockedBusStops != null)
                 {
-                    BusUI.Instance.discoveredStops = new System.Collections.Generic.List<string>(data.unlockedBusStops);
+                    BusUI.Instance.discoveredStops = new List<string>(data.unlockedBusStops);
                 }
 
                 if (TimeManager.Instance != null)
@@ -202,17 +222,15 @@ public class LoadingManager : MonoBehaviour
                     TimeManager.Instance.LoadSavedDay(data.daysInGame);
                 }
 
-                TimeSystem timeSys = UnityEngine.Object.FindFirstObjectByType<TimeSystem>();
+                TimeSystem timeSys = FindFirstObjectByType<TimeSystem>();
                 if (timeSys != null)
                 {
-                    // Trả lại định dạng số thập phân cho biến hour (Ví dụ 6h30 = 6.5f)
                     timeSys.hour = data.savedHour + (data.savedMinute / 60f);
                 }
             }
             else
             {
-                // [GIỮ NGUYÊN LOGIC CŨ KHI CHẠY XE BUS HOẶC NEW GAME]
-                PlayerSpawnPoint[] allPoints = FindObjectsByType<PlayerSpawnPoint>(FindObjectsSortMode.None);
+                PlayerSpawnPoint[] allPoints = FindObjectsByType<PlayerSpawnPoint>(FindObjectsSortMode.None);
                 PlayerSpawnPoint targetPoint = null;
 
                 foreach (var point in allPoints)
@@ -236,11 +254,14 @@ public class LoadingManager : MonoBehaviour
                 }
             }
 
-            // Xử lý Camera cho đối tượng vừa xác định (Vẫn dùng coreInstance vì Cam nằm ở root)
+            // ===============================
+            // GIAI ĐOẠN 5: XỬ LÝ CAMERA
+            // ===============================
             if (coreInstance != null)
             {
-                var targetCam = coreInstance.GetComponentInChildren<CinemachineVirtualCameraBase>();
-                var brain = FindFirstObjectByType<CinemachineBrain>();
+                CinemachineVirtualCameraBase targetCam = coreInstance.GetComponentInChildren<CinemachineVirtualCameraBase>();
+                CinemachineBrain brain = FindFirstObjectByType<CinemachineBrain>();
+
                 Debug.Log($"Brain: {brain}, Cam: {targetCam}, CoreInstance: {coreInstance}");
 
                 if (brain != null && targetCam != null)
@@ -255,87 +276,190 @@ public class LoadingManager : MonoBehaviour
                             progressBar.value = 0.8f + (blendProgress * 0.2f);
                             progressText.text = (progressBar.value * 100f).ToString("F0") + "%";
                         }
+
                         yield return null;
                     }
                 }
             }
         }
 
-        // ==========================================
-        // KẾT THÚC: Tắt UI NGAY LẬP TỨC khi vòng lặp Camera kết thúc
-        // ==========================================
         progressBar.value = 1f;
         progressText.text = "100%";
 
+        // Tạm tắt Cinemachine Brain trong lúc ổn định scene
+        CinemachineBrain sceneBrain = FindFirstObjectByType<CinemachineBrain>();
+        if (sceneBrain != null)
+        {
+            sceneBrain.enabled = false;
+        }
+
         yield return null;
 
-        OnPlayerReady?.Invoke();
-        yield return null;
-        yield return null;
 
+        // Đợi Physics / NavMesh ổn định một chút
+        yield return new WaitForSeconds(0.3f);
+
+        // ===============================
+        // GIAI ĐOẠN 6: LOAD VỊ TRÍ NPC TỐI ƯU HƠN
+        // ===============================
         if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
         {
             GameData data = SaveManager.Instance.GetCurrentData();
 
-            NPCVillager[] villagers = FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
-            foreach (var v in villagers)
+            if (data.savedNPCs != null && data.savedNPCs.Count > 0)
             {
-                var saved = data.savedNPCs.Find(n => n.npcName == v.gameObject.name);
-                if (saved != null)
-                {
-                    UnityEngine.AI.NavMeshAgent agent = v.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                    if (agent != null) agent.Warp(saved.position);
-                }
-            }
+                Dictionary<string, Vector3> savedNPCPositions = new Dictionary<string, Vector3>();
 
-            NPCMerchant[] merchants = FindObjectsByType<NPCMerchant>(FindObjectsSortMode.None);
-            foreach (var m in merchants)
-            {
-                var saved = data.savedNPCs.Find(n => n.npcName == m.gameObject.name);
-                if (saved != null)
+                foreach (SavedNPCData npcData in data.savedNPCs)
                 {
-                    UnityEngine.AI.NavMeshAgent agent = m.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                    if (agent != null) agent.Warp(saved.position);
+                    if (!savedNPCPositions.ContainsKey(npcData.npcName))
+                    {
+                        savedNPCPositions.Add(npcData.npcName, npcData.position);
+                    }
+                }
+
+                NPCVillager[] villagers = FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
+
+                int villagerCounter = 0;
+                foreach (var v in villagers)
+                {
+                    if (savedNPCPositions.TryGetValue(v.gameObject.name, out Vector3 savedPosition))
+                    {
+                        UnityEngine.AI.NavMeshAgent agent = v.GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+                        if (agent != null)
+                        {
+                            agent.enabled = false;
+                            v.transform.position = savedPosition;
+                            agent.enabled = true;
+                        }
+                        else
+                        {
+                            v.transform.position = savedPosition;
+                        }
+                    }
+
+                    villagerCounter++;
+
+                    // Cứ xử lý 10 NPC thì nhường 1 frame để tránh spike CPU
+                    if (villagerCounter % 10 == 0)
+                    {
+                        yield return null;
+                    }
+                }
+
+                yield return null;
+
+                NPCMerchant[] merchants = FindObjectsByType<NPCMerchant>(FindObjectsSortMode.None);
+
+                int merchantCounter = 0;
+                foreach (var m in merchants)
+                {
+                    if (savedNPCPositions.TryGetValue(m.gameObject.name, out Vector3 savedPosition))
+                    {
+                        UnityEngine.AI.NavMeshAgent agent = m.GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+                        if (agent != null)
+                        {
+                            agent.enabled = false;
+                            m.transform.position = savedPosition;
+                            agent.enabled = true;
+                        }
+                        else
+                        {
+                            m.transform.position = savedPosition;
+                        }
+                    }
+
+                    merchantCounter++;
+
+                    // Cứ xử lý 10 NPC thì nhường 1 frame để tránh spike CPU
+                    if (merchantCounter % 10 == 0)
+                    {
+                        yield return null;
+                    }
                 }
             }
         }
-        yield return new WaitForSeconds(0.3f);
 
+        yield return null;
+
+        if (sceneBrain != null)
+        {
+            sceneBrain.enabled = true;
+        }
+
+        // Chờ vài frame để Unity kịp render/culling/shadow/camera ổn định
+        // Cái này giúp tránh tình trạng vừa tắt loading là spike ngay
+        for (int i = 0; i < 10; i++)
+        {
+            progressBar.value = 1f;
+            progressText.text = "100%";
+            yield return null;
+        }
+
+        // Chờ thêm rất ngắn để terrain/detail/cỏ/shadow ổn định
+        yield return new WaitForSeconds(0.2f);
+
+        // Lúc này mới báo player sẵn sàng
+        OnPlayerReady?.Invoke();
+
+        // Chờ thêm 1 frame sau khi các script nhận OnPlayerReady chạy xong
+        yield return null;
+
+        // Tắt loading sau cùng
         loadingPanel.SetActive(false);
     }
 
-    // [ĐÃ SỬA]: Dịch chuyển chính xác thằng Player
     private void MovePlayerToSpawnPoint(GameObject actualPlayer, Transform spawnTransform)
     {
-        // Lấy đúng CharacterController trên người thằng Player (thay vì GetComponentsInChildren)
         CharacterController cc = actualPlayer.GetComponent<CharacterController>();
 
-        // Tắt CC để tránh xung đột vật lý bật ngược lại
         if (cc != null) cc.enabled = false;
 
         actualPlayer.transform.position = spawnTransform.position;
-        actualPlayer.transform.rotation = spawnTransform.rotation;
+
+        PlayerMovement pm = actualPlayer.GetComponent<PlayerMovement>();
+        if (pm != null)
+        {
+            pm.ForceCameraLook(spawnTransform.rotation, spawnTransform.eulerAngles);
+
+            // Ép luôn Camera thật ở frame này để cắt đứt quán tính quay cổ của PlayerMovement trong lúc loading
+            if (Camera.main != null)
+            {
+                Camera.main.transform.rotation = spawnTransform.rotation;
+            }
+        }
+        else
+        {
+            actualPlayer.transform.rotation = spawnTransform.rotation;
+        }
 
         Physics.SyncTransforms();
-        // Bật lại CC sau khi đã đặt yên vị
+
         if (cc != null) cc.enabled = true;
 
-        Debug.Log("Đã đưa Player về đúng vị trí SpawnPoint!");
+        Debug.Log("Đã đưa Player về đúng vị trí và hướng nhìn SpawnPoint!");
     }
+
     private void MovePlayerToSavedPosition(GameObject actualPlayer, Vector3 savedPos, Quaternion savedRot, Vector3 savedCamAngles)
     {
         CharacterController cc = actualPlayer.GetComponent<CharacterController>();
 
-        // Tắt CC để tránh xung đột vật lý
         if (cc != null) cc.enabled = false;
 
         actualPlayer.transform.position = savedPos;
 
-        // [ĐÃ SỬA LẠI]: Thay vì tự xoay, ta gọi hàm xử lý ép cả Camera ở PlayerMovement
         PlayerMovement pm = actualPlayer.GetComponent<PlayerMovement>();
         if (pm != null)
         {
             pm.ForceCameraLook(savedRot, savedCamAngles);
+
+            // Ép luôn Camera thật ở frame này để cắt đứt quán tính quay cổ của PlayerMovement
+            if (Camera.main != null)
+            {
+                Camera.main.transform.rotation = Quaternion.Euler(savedCamAngles.x, savedCamAngles.y, 0f);
+            }
         }
         else
         {
@@ -344,9 +468,8 @@ public class LoadingManager : MonoBehaviour
 
         Physics.SyncTransforms();
 
-        // Bật lại CC
         if (cc != null) cc.enabled = true;
 
-        Debug.Log("Đã đưa Player về đúng tọa độ và ép Camera hướng nhìn Save Game!");
+        Debug.Log("Đã đưa Player về đúng tọa độ và hướng nhìn Save Game!");
     }
 }

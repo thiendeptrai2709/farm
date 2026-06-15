@@ -257,12 +257,22 @@ public class PlayerCameraManager : MonoBehaviour
     }
     public void ToggleFishingCamera(bool isFishing)
     {
-        isFishingCameraActive = isFishing; // Chốt cờ đang câu cá
+        isFishingCameraActive = isFishing;
 
         if (fishingCamera != null)
         {
-            // Bật ảo ảnh Camera này lên, Cinemachine sẽ tự động mượt mà lướt tới
-            fishingCamera.SetActive(isFishing);
+            fishingCamera.SetActive(true);
+
+            var vcam = fishingCamera.GetComponent<Unity.Cinemachine.CinemachineVirtualCameraBase>();
+            if (vcam != null)
+            {
+                
+                vcam.Priority = isFishing ? 100 : 0;
+            }
+            else
+            {
+                Debug.LogWarning("fishingCamera không có chứa Cinemachine Camera Component!");
+            }
         }
         UpdateCursorState();
     }

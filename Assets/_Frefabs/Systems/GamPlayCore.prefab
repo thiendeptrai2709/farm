@@ -19272,6 +19272,7 @@ Transform:
   - {fileID: 91131732173407235}
   - {fileID: 2738692861592632845}
   - {fileID: 7760018592307987037}
+  - {fileID: 7605786481499517321}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5871326723247047647
@@ -22971,6 +22972,63 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &6778395097973430158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7605786481499517321}
+  - component: {fileID: 6111942466445641924}
+  m_Layer: 0
+  m_Name: CoreMusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7605786481499517321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778395097973430158}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -20.444824, y: 0, z: 7.4055634}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4740099641035958837}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6111942466445641924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778395097973430158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31def7ffbc63ae24983e6a82319cabf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoreMusicManager
+  sceneConfigs:
+  - sceneName: Farm
+    musicTracks:
+    - SceneFarmBGMusic1
+    ambientSFX: 
+  - sceneName: Forest
+    musicTracks:
+    - SceneForestBGMusic1
+    ambientSFX: 
+  - sceneName: Tower
+    musicTracks:
+    - SceneTowerBGMuisc1
+    ambientSFX: 
 --- !u!1 &6874201816682343551
 GameObject:
   m_ObjectHideFlags: 0
@@ -26375,7 +26433,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4738126744562634665}
-  - component: {fileID: 6196512409398297460}
   m_Layer: 0
   m_Name: CinemachineBrain
   m_TagString: Untagged
@@ -26398,38 +26455,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4740099641035958837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6196512409398297460
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8237125803518374334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
-  ShowDebugText: 0
-  ShowCameraFrustum: 1
-  IgnoreTimeScale: 0
-  WorldUpOverride: {fileID: 0}
-  ChannelMask: -1
-  UpdateMethod: 2
-  BlendUpdateMethod: 1
-  LensModeOverride:
-    Enabled: 0
-    DefaultMode: 2
-  DefaultBlend:
-    Style: 1
-    Time: 2
-    CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
 --- !u!1 &8306152691545456920
 GameObject:
   m_ObjectHideFlags: 0
@@ -29172,6 +29197,14 @@ PrefabInstance:
       value: CameraLookingPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 863246332978141026, guid: 2b800bb6103401347959ce1618cd5294, type: 3}
+      propertyPath: Priority.Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 863246332978141026, guid: 2b800bb6103401347959ce1618cd5294, type: 3}
+      propertyPath: Priority.m_Value
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 863246332978141026, guid: 2b800bb6103401347959ce1618cd5294, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
       objectReference: {fileID: 6967052523368615319}
@@ -29412,10 +29445,6 @@ PrefabInstance:
       propertyPath: fishingCamera
       value: 
       objectReference: {fileID: 8672895205978938072}
-    - target: {fileID: 2574569473118202478, guid: 4844a22ea17af6f42a54ecea65a421a6, type: 3}
-      propertyPath: cameraInputProvider
-      value: 
-      objectReference: {fileID: 472614502686737775}
     - target: {fileID: 2895149879746396634, guid: 4844a22ea17af6f42a54ecea65a421a6, type: 3}
       propertyPath: m_Center.y
       value: 1.08

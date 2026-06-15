@@ -134,7 +134,7 @@ public class SaveManager : MonoBehaviour
             currentData.lastFarmExitTimeTicks = System.DateTime.Now.Ticks;
         }
         else
-        {  
+        {
         }
         ConstructionSite[] allSites = UnityEngine.Object.FindObjectsByType<ConstructionSite>(FindObjectsSortMode.None);
         foreach (var site in allSites)
@@ -178,7 +178,14 @@ public class SaveManager : MonoBehaviour
         }
         string path = GetSaveFilePath(currentSlot);
         string json = JsonUtility.ToJson(currentData, true);
-        File.WriteAllText(path, json);
+
+        // Đẩy việc ghi file I/O nặng nề sang Thread khác để không làm khựng Main Thread
+        string capturedPath = path;
+        string capturedJson = json;
+        System.Threading.Tasks.Task.Run(() =>
+        {
+            File.WriteAllText(capturedPath, capturedJson);
+        });
         Debug.Log("<color=green>Đã lưu game thành công tại Slot " + currentSlot + ": </color>" + path);
     }
 

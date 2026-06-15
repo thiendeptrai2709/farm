@@ -132,6 +132,7 @@ public class GameData
     public List<string> collectedBoneIDs;
     public bool isSkeletonRisen;
     public bool isQuestStarted;
+    public bool hasSeenTowerIntro;
     public GameData()
     {
         lastSceneName = "Farm";
@@ -167,6 +168,7 @@ public class GameData
         collectedBoneIDs = new List<string>();
         isSkeletonRisen = false;
         isQuestStarted = false;
+        hasSeenTowerIntro = false;
     }
     [System.Serializable]
     public class SavedPriceMultiplier

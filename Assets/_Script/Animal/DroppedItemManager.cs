@@ -77,7 +77,7 @@ public class DroppedItemManager : MonoBehaviour
 
         if (data == null || data.savedDroppedItems == null) return;
 
-        
+
         ClearAllDroppedItemsInScene();
 
         // Lọc ra đúng những cục đồ rớt ở Map hiện tại

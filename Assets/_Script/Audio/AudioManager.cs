@@ -16,6 +16,9 @@ public class AudioManager : MonoBehaviour
     private float sfxVolume = 1f;
     private bool isMuted = false;
 
+    public float fadeDuration = 1f;
+    private Coroutine fadeCoroutine;
+
     private void Awake()
     {
         if (Instance == null)
@@ -56,10 +59,35 @@ public class AudioManager : MonoBehaviour
     {
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
-            musicSource.clip = data.clip;
-            musicSource.volume = data.volume * musicVolume;
-            musicSource.Play();
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+            fadeCoroutine = StartCoroutine(FadeMusic(data));
         }
+    }
+
+    private System.Collections.IEnumerator FadeMusic(AudioData newData)
+    {
+        float targetVolume = newData.volume * musicVolume;
+
+        if (musicSource.isPlaying)
+        {
+            float startVolume = musicSource.volume;
+            for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(startVolume, 0f, t / fadeDuration);
+                yield return null;
+            }
+            musicSource.volume = 0f;
+        }
+
+        musicSource.clip = newData.clip;
+        musicSource.Play();
+
+        for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+        {
+            musicSource.volume = Mathf.Lerp(0f, targetVolume, t / fadeDuration);
+            yield return null;
+        }
+        musicSource.volume = targetVolume;
     }
 
     public void PlaySFX(string name)
@@ -147,5 +175,9 @@ public class AudioManager : MonoBehaviour
             // 6. Lệnh cho cái loa này "tự sát" sau khi phát xong để không làm nặng máy
             Destroy(tempAudioObj, data.clip.length);
         }
+    }
+    public void StopMusic()
+    {
+        if (musicSource != null && musicSource.isPlaying) musicSource.Stop();
     }
 }
