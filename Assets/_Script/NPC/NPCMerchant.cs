@@ -6,6 +6,8 @@ public class NPCMerchant : MonoBehaviour, IInteractable
 {
     [Header("Đa Ngôn Ngữ")]
     public LocalizedString interactTextNormal;
+    [Header("Thông tin NPC")]
+    public string npcName = "NPC Mặc định";
 
     [Header("Shop Data")]
     public ShopData myShopData;
@@ -223,9 +225,9 @@ public class NPCMerchant : MonoBehaviour, IInteractable
     {
         if (!isAtWork || isInsideHouse) return "";
 
-        string shopName = myShopData != null ? myShopData.npcName : "Cửa hàng";
+        string displayName = myShopData != null && !string.IsNullOrEmpty(myShopData.npcName) ? myShopData.npcName : npcName;
 
-        return $"{interactTextNormal.GetLocalizedString()} {shopName}";
+        return $"{interactTextNormal.GetLocalizedString()} {displayName}";
     }
 
     public void Interact()

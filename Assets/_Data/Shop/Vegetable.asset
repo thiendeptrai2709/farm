@@ -12,44 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Vegetable
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  localizedNpcName:
-    m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
-    m_TableEntryReference:
-      m_KeyId: 8533842886320128
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  merchantMoney: 2510
-  minDailyMoney: 500
-  maxDailyMoney: 2000
+  npcName: Flora
+  merchantMoney: 1556
+  minDailyMoney: 10000
+  maxDailyMoney: 100000
   maxShopSlots: 10
   itemsForSale:
-  - item: {fileID: 11400000, guid: 4c359654c2a6f23418b7830a2d11c636, type: 2}
-    currentQuantity: 6
-  - item: {fileID: 11400000, guid: a92369285e179a246aa0c0339fb1be9e, type: 2}
-    currentQuantity: 13
-  - item: {fileID: 11400000, guid: 5c30c5412d626ea4aad92f65a0f7252c, type: 2}
-    currentQuantity: 12
-  - item: {fileID: 11400000, guid: 1ef1fdb8dba1d0f499d34070e4092c83, type: 2}
-    currentQuantity: 8
-  - item: {fileID: 11400000, guid: b5b7e204e1274494587f066d19385e0b, type: 2}
-    currentQuantity: 12
   - item: {fileID: 11400000, guid: a8149a1a5c2080249872a0d2ed24f4fa, type: 2}
-    currentQuantity: 10
-  - item: {fileID: 11400000, guid: 133ceffc3cc631149bc543843a80d556, type: 2}
-    currentQuantity: 13
-  - item: {fileID: 11400000, guid: 770ae979b5af3bc4aad61fc6cc2914cb, type: 2}
-    currentQuantity: 11
-  - item: {fileID: 11400000, guid: c67b2782cec6d464e8c41764c52ba9a6, type: 2}
-    currentQuantity: 11
-  - item: {fileID: 11400000, guid: ca089d8d06da571418f6bc0608e58481, type: 2}
+    currentQuantity: 15
+  - item: {fileID: 11400000, guid: b5b7e204e1274494587f066d19385e0b, type: 2}
+    currentQuantity: 6
+  - item: {fileID: 11400000, guid: 01e43854f281b7047a3b86bcd7a2eaeb, type: 2}
     currentQuantity: 12
-  - item: {fileID: 11400000, guid: 41616189fcdf6d3458e426bffffa80a2, type: 2}
+  - item: {fileID: 11400000, guid: 8a6fe3e0d42467e4193c3aba75b097a2, type: 2}
+    currentQuantity: 6
+  - item: {fileID: 11400000, guid: 52ac07c4800aca043b3e0398d8f5de50, type: 2}
     currentQuantity: 9
-  - item: {fileID: 11400000, guid: 6110fb862fc9ed24fab04c95da886646, type: 2}
-    currentQuantity: 10
+  - item: {fileID: 11400000, guid: d34e8cdfb78c2f94b8fc453d77b11f56, type: 2}
+    currentQuantity: 15
+  - item: {fileID: 11400000, guid: 5c30c5412d626ea4aad92f65a0f7252c, type: 2}
+    currentQuantity: 6
+  - item: {fileID: 11400000, guid: 022cae00e4db1de448ddc296c4d52692, type: 2}
+    currentQuantity: 11
+  - item: {fileID: 11400000, guid: c86d4c1095319a94ca2021a8bfa34b18, type: 2}
+    currentQuantity: 12
+  - item: {fileID: 11400000, guid: a92369285e179a246aa0c0339fb1be9e, type: 2}
+    currentQuantity: 7
   possibleItemsToSell:
   - {fileID: 11400000, guid: ca089d8d06da571418f6bc0608e58481, type: 2}
   - {fileID: 11400000, guid: 52ac07c4800aca043b3e0398d8f5de50, type: 2}
@@ -85,7 +73,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a9b9474cc30cb9f439beddec17fa15f8, type: 2}
   minQuantity: 5
   maxQuantity: 15
-  acceptedItemTypesToBuy: 0100000002000000
-  references:
-    version: 2
-    RefIds: []

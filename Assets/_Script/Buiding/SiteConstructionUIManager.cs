@@ -3,11 +3,14 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Localization;
 
 // [FILE MỚI]: Bảng UI 2 (Nộp Nguyên Liệu) trồi lên ngay tại Bãi đất
 public class SiteConstructionUIManager : MonoBehaviour
 {
     public static SiteConstructionUIManager Instance;
+
+    public LocalizedString locConstruction;
 
     [Header("Main UI Panel (UI 2)")]
     public GameObject depositPanel; // Một cái bảng UI nhỏ nhỏ ở góc màn hình
@@ -53,7 +56,8 @@ public class SiteConstructionUIManager : MonoBehaviour
         depositPanel.SetActive(true);
         OnSiteConstructionUIToggled?.Invoke(true); // Nhả chuột (Camera Manager lắng nghe cái này)
 
-        buildingNameText.text = $"Thi Công: {site.myBlueprint.buildingName}";
+        string constructTxt = locConstruction.IsEmpty ? "Thi Công:" : locConstruction.GetLocalizedString();
+        buildingNameText.text = $"{constructTxt} {site.myBlueprint.buildingName}";
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bag_Open");
 
@@ -123,14 +127,29 @@ public class SiteConstructionUIManager : MonoBehaviour
     {
         if (currentSite == null) return;
 
-        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Build_Success"); 
+        
+        if (PlayerStamina.Instance != null)
+        {
+            // Tạm dùng phí vung Rìu (axeCost) làm chuẩn cho việc đập búa xây nhà
+            if (PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.axeCost)
+            {
+                // Hết sức -> Quăng thông báo và HỦY LỆNH XÂY (Giữ nguyên giao diện)
+                if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+                return;
+            }
+
+            // Đủ sức -> Trừ thể lực
+            PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.axeCost);
+        }
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Build_Success");
 
         foreach (var slot in depositSlots)
         {
-            slot.ClearSlot();
+            slot.ClearSlot(); // Nuốt vật liệu
         }
 
         Debug.Log($"[Xây Dựng] Đã trừ đủ vật liệu! Khánh thành {currentSite.myBlueprint.buildingName}!");
+
         PlayerInteraction player = FindAnyObjectByType<PlayerInteraction>();
         if (player != null)
         {
@@ -140,9 +159,9 @@ public class SiteConstructionUIManager : MonoBehaviour
         {
             currentSite.FinishBuilding(); // Sơ cua lỡ không tìm thấy player
         }
+
         CloseUI(false);
     }
-
     private int CountItemInDepositList(ItemData targetItem)
     {
         int total = 0;

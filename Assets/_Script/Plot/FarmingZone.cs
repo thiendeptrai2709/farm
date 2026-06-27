@@ -5,6 +5,8 @@ public class FarmingZone : MonoBehaviour, IInteractable
 {
     [Header("Ranh giới Nông Trại")]
     public BoxCollider farmBoundary;
+    public BoxCollider maxFarmBoundary;
+
 
     [SerializeField] private TerrainPainter terrainPainter;
 
@@ -54,6 +56,7 @@ public class FarmingZone : MonoBehaviour, IInteractable
     [Header("Đa Ngôn Ngữ")]
     public LocalizedString textTillSoil;
     public LocalizedString textPlant;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -319,8 +322,23 @@ public class FarmingZone : MonoBehaviour, IInteractable
             }
             if (isOccupied) break;
         }
+        bool isBlockedByDebris = false;
+        if (!isOutOfBounds && !isOccupied)
+        {
+            float checkHalfExtent = (gridSize * currentGridSize) * 0.4f;
+            Vector3 boxCenter = new Vector3(worldPos.x, transform.position.y + 0.5f, worldPos.z);
 
-        SetVisuals(!isOutOfBounds && !isOccupied);
+            Collider[] hits = Physics.OverlapBox(boxCenter, new Vector3(checkHalfExtent, 0.5f, checkHalfExtent), Quaternion.identity);
+            foreach (var hit in hits)
+            {
+                if (hit.GetComponentInParent<PickupItem>() != null)
+                {
+                    isBlockedByDebris = true;
+                    break;
+                }
+            }
+        }
+        SetVisuals(!isOutOfBounds && !isOccupied && !isBlockedByDebris);
     }
 
     private void SetVisuals(bool isActive)
@@ -351,9 +369,17 @@ public class FarmingZone : MonoBehaviour, IInteractable
 
     public void DigPlot()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.hoeCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
         Vector3Int coords = GetGridCoords(transform.position);
         if (!activePlots.ContainsKey(coords) && tilledDirtPrefab != null)
         {
+            if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.hoeCost);
+
             // Tạo ID ngẫu nhiên không trùng lặp cho luống đất mới
             string newID = "Plot_" + System.Guid.NewGuid().ToString();
 
@@ -379,10 +405,18 @@ public class FarmingZone : MonoBehaviour, IInteractable
     // ==========================================
     private void PlantBigTree()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.hoeCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
         Vector3Int baseCoords = GetGridCoords(transform.position - new Vector3(gridSize / 2f, 0, gridSize / 2f));
 
         if (treePitPrefab != null && holdingBigTreeSeed != null)
         {
+            if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.hoeCost);
+
             // Trừ đồ trong balo
             int selectedIndex = InventoryManager.Instance.selectedHotbarIndex;
             InventoryManager.Instance.hotbarSlots[selectedIndex].amount--;

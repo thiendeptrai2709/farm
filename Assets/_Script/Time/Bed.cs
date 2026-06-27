@@ -18,27 +18,10 @@ public class Bed : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        TimeSystem timeSystem = FindAnyObjectByType<TimeSystem>();
-
-        if (timeSystem != null)
+        // Chức năng: Mở bảng chọn ngủ
+        if (SleepUIManager.Instance != null)
         {
-            // Chức năng: Kiểm tra điều kiện thời gian từ 22h đêm đến 6h sáng
-            if (timeSystem.hour >= canSleepAfterHour || timeSystem.hour <= canSleepBeforeHour)
-            {
-                if (SleepUIManager.Instance != null)
-                {
-                    SleepUIManager.Instance.OpenSleepPanel();
-                }
-            }
-            else
-            {
-                // Chức năng: Thông báo nếu chưa đến giờ ngủ
-                Debug.Log("Chưa đến 10h tối, không thể ngủ được!");
-            }
-        }
-        else
-        {
-            Debug.LogError("Không tìm thấy TimeSystem trên Scene!");
+            SleepUIManager.Instance.OpenSleepPanel();
         }
     }
 }

@@ -272,6 +272,12 @@ public class FarmPlot : MonoBehaviour, IInteractable
     }
     private void RemovePlot()
     {
+        if(PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.hoeCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+        if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.hoeCost);
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.DeductEquippedToolDurability(1f);
@@ -301,12 +307,23 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
         UpdateVisuals();
         Debug.Log($"Đã trồng: {seedPlanted.displayName}. Cần {seedPlanted.growTime} giây để lớn.");
-        if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay", 1);
-        if (QuestManager.Instance != null) QuestManager.Instance.ReportAction("TrongCay_" + seedPlanted.name, 1);
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.ReportAction("TrongCay", 1);
+            QuestManager.Instance.ReportAction("Plant_" + seedPlanted.name, 1);
+        }
     }
 
     private void WaterPlant()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.waterCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
+        if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.waterCost);
+
         isWatered = true;
         UpdateVisuals(); // Gọi để đổi màu đất
         growTimer += GetBaseTime() * 0.25f;
@@ -329,9 +346,16 @@ public class FarmPlot : MonoBehaviour, IInteractable
 
     private void FertilizePlant()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.waterCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning(); return;
+        }
+
         // Trừ 1 Phân Bón trong kho (Giả sử tên item là "Fertilizer")
         if (fertilizerItem != null)
         {
+            if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.waterCost);
+
             ConsumePersonalItem(fertilizerItem);
             isFertilized = true;
             growTimer += GetBaseTime() * 0.25f;
@@ -372,6 +396,10 @@ public class FarmPlot : MonoBehaviour, IInteractable
             }
             Debug.Log($"Đã thu hoạch: {plantedSeed.yieldAmount}x {plantedSeed.yieldItem.displayName}");
 
+            if (QuestManager.Instance != null)
+            {
+                QuestManager.Instance.ReportAction("Harvest_" + plantedSeed.yieldItem.name, 1);
+            }
             if (plantedSeed != null && plantedSeed.isMultiHarvest)
             {
                 currentHarvestCount++; // Tăng bộ đếm lên 1

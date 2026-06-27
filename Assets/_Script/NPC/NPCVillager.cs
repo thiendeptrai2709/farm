@@ -7,16 +7,9 @@ public class NPCVillager : MonoBehaviour, IInteractable
 {
     [Header("Đa Ngôn Ngữ")]
     public LocalizedString interactTextNormal; // Chữ bình thường
-    public LocalizedString localizedNpcName;
 
     [Header("Thông tin Dân làng")]
-    public string npcName
-    {
-        get
-        {
-            return localizedNpcName.IsEmpty ? gameObject.name : localizedNpcName.GetLocalizedString();
-        }
-    }
+    public string npcName = "NPC Mặc định";
 
     public string greetingSound = "Villager_Hello";
 
@@ -61,19 +54,33 @@ public class NPCVillager : MonoBehaviour, IInteractable
     private bool isGoingHome = false;
     private float waitTimer = 0f;
     private bool isWaiting = false;
-    private bool isInitialized = false;
+    [HideInInspector] public bool isInitialized = false;
 
     // Biến quản lý trạng thái ngồi
-    private bool isCurrentlySitting = false;
+    [HideInInspector] public bool isCurrentlySitting = false;
+    
     private bool wasTalkingToPlayer = false;
     private float sitCooldownTimer = 0f;
 
     private Chair currentDynamicChair;
     private int currentChairSeatIndex = -1;
+    [HideInInspector] public bool isSocializingCustom = false;
+
+    [Header("Sự Kiện Đặc Biệt (Khóc lóc)")]
+    public QuestData eventQuestCrying;
+    public Transform cryingLocation;
+    public string cryingAnimBool = "IsCrying";
+    public string cryingAudioSFX = "Mother_Cry";
+    [HideInInspector] public bool isAtCryingLocation = false;
+    private bool hasPlayedCryingAudio = false;
+    private AudioSource currentCryingSource;
+    public GameObject targetToWaitForHide;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         if (npcAnimator == null) npcAnimator = GetComponentInChildren<Animator>();
+
+        if (agent != null) agent.avoidancePriority = Random.Range(30, 60);
     }
 
     private void OnEnable()
@@ -119,9 +126,26 @@ public class NPCVillager : MonoBehaviour, IInteractable
         {
             if (QuestManager.Instance.GetQuestStatus(disableAfterQuestCompleted) == QuestStatus.Completed)
             {
-                gameObject.SetActive(false);
-                isInitialized = true;
-                return;
+                bool shouldHide = true;
+                string dayKey = disableAfterQuestCompleted.questID + "_CompletedDay";
+
+                // Soi xem nhiệm vụ được hoàn thành vào ngày nào
+                if (QuestManager.Instance.actionProgress.ContainsKey(dayKey) && TimeManager.Instance != null)
+                {
+                    int dayCompleted = QuestManager.Instance.actionProgress[dayKey];
+                    // Nếu vẫn đang trong cùng ngày -> CHƯA ĐƯỢC ẨN
+                    if (TimeManager.Instance.daysInGame <= dayCompleted)
+                    {
+                        shouldHide = false;
+                    }
+                }
+
+                if (shouldHide)
+                {
+                    gameObject.SetActive(false);
+                    isInitialized = true;
+                    return;
+                }
             }
         }
 
@@ -174,6 +198,11 @@ public class NPCVillager : MonoBehaviour, IInteractable
         {
             wasTalkingToPlayer = true;
 
+            if (currentCryingSource != null && currentCryingSource.isPlaying)
+            {
+                currentCryingSource.Pause();
+            }
+
             if (isCurrentlySitting)
             {
                 StandUpFromSitPoint();
@@ -196,8 +225,17 @@ public class NPCVillager : MonoBehaviour, IInteractable
             {
                 wasTalkingToPlayer = false;
                 sitCooldownTimer = 1.5f;
+
+                if (currentCryingSource != null && !currentCryingSource.isPlaying && isAtCryingLocation)
+                {
+                    currentCryingSource.Play();
+                }
             }
-            UpdateRoutine();
+
+            if (!isSocializingCustom)
+            {
+                UpdateRoutine();
+            }
         }
 
         UpdateAnimation();
@@ -207,6 +245,33 @@ public class NPCVillager : MonoBehaviour, IInteractable
     {
         TimeSystem timeSys = FindAnyObjectByType<TimeSystem>();
         if (timeSys == null || agent == null) return;
+
+        if (eventQuestCrying != null && QuestManager.Instance != null)
+        {
+            QuestStatus status = QuestManager.Instance.GetQuestStatus(eventQuestCrying);
+
+            // CHỐT CHẶN: Chỉ khi thằng bé đã tàng hình bả mới được phép khóc
+            if ((status == QuestStatus.Available || status == QuestStatus.InProgress) &&
+                (targetToWaitForHide == null || !targetToWaitForHide.activeInHierarchy))
+            {
+                HandleCryingEvent();
+                return; // Cắt luồng logic đi dạo/ngủ ở dưới
+            }
+            else if (isAtCryingLocation) // Trả xong nhiệm vụ thì nín khóc
+            {
+                isAtCryingLocation = false;
+                hasPlayedCryingAudio = false;
+                if (npcAnimator != null) npcAnimator.SetBool(cryingAnimBool, false);
+
+                // Dọn dẹp: Tắt nhạc, gỡ bỏ cái loa ảo khỏi người bả cho nhẹ máy
+                if (currentCryingSource != null)
+                {
+                    currentCryingSource.Stop();
+                    Destroy(currentCryingSource);
+                    currentCryingSource = null;
+                }
+            }
+        }
 
         float currentTime = timeSys.hour;
         bool isDayTime = currentTime >= schedule.workStartTime && currentTime < schedule.workEndTime;
@@ -255,10 +320,40 @@ public class NPCVillager : MonoBehaviour, IInteractable
             }
         }
     }
+    private void HandleCryingEvent()
+    {
+        if (cryingLocation == null) return;
 
-    // ==========================================
-    // LOGIC NGỒI GỐC CÂY
-    // ==========================================
+        SetNPCVisibility(true);
+        isSleeping = false;
+        isGoingHome = false;
+        if (isCurrentlySitting) StandUpFromSitPoint();
+
+        if (Vector3.Distance(transform.position, cryingLocation.position) > 0.5f)
+        {
+            GoToPoint(cryingLocation.position);
+            isAtCryingLocation = false;
+            hasPlayedCryingAudio = false;
+            if (npcAnimator != null) npcAnimator.SetBool(cryingAnimBool, false);
+        }
+        else
+        {
+            if (!isAtCryingLocation)
+            {
+                isAtCryingLocation = true;
+                if (agent.enabled) agent.isStopped = true;
+                transform.rotation = cryingLocation.rotation;
+
+                if (npcAnimator != null) npcAnimator.SetBool(cryingAnimBool, true);
+
+                if (!hasPlayedCryingAudio && AudioManager.Instance != null && !string.IsNullOrEmpty(cryingAudioSFX))
+                {
+                    currentCryingSource = AudioManager.Instance.Play3DLoopSFX(cryingAudioSFX, transform);
+                    hasPlayedCryingAudio = true;
+                }
+            }
+        }
+    }
     private void HandleSitting()
     {
         if (isCurrentlySitting)
@@ -383,7 +478,7 @@ public class NPCVillager : MonoBehaviour, IInteractable
             {
                 isWaiting = false;
 
-                if (Random.value < 0.3f && TryFindAndTargetChair())
+                if (Random.value < 0.1f && TryFindAndTargetChair())
                 {
                     return;
                 }
@@ -463,6 +558,11 @@ public class NPCVillager : MonoBehaviour, IInteractable
             if (!QuestManager.Instance.completedQuests.Contains(secretStoryQuest.questID))
             {
                 QuestManager.Instance.completedQuests.Add(secretStoryQuest.questID);
+
+                if (TimeManager.Instance != null)
+                {
+                    QuestManager.Instance.actionProgress[secretStoryQuest.questID + "_CompletedDay"] = TimeManager.Instance.daysInGame;
+                }
             }
         }
 

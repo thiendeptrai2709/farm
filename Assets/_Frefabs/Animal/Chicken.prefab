@@ -1117,17 +1117,17 @@ MonoBehaviour:
   currentState: 0
   maxHunger: 100
   currentHunger: 0
-  hungerDrainRate: 1
+  hungerDrainRate: 0.14
   wanderRadius: 10
   minWaitTime: 2
   maxWaitTime: 5
   jumpHeight: 2
   jumpSpeed: 1
   productPrefab: {fileID: 2556864973062412590, guid: 86a439c96241924459380d1fb1c1da4e, type: 3}
-  produceInterval: 10
+  produceInterval: 480
   animalCryClip: {fileID: 8300000, guid: 148a521fb880d2a478175add088b089a, type: 3}
-  minSoundInterval: 0
-  maxSoundInterval: 15
+  minSoundInterval: 15
+  maxSoundInterval: 35
 --- !u!65 &7960611247488278344
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -15,17 +15,40 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Vietnamese (vi)
   m_GUID: ac1b32a0f3f87af41a6b59464e5debc9
   m_SerializeEntries:
-  - m_GUID: 11102f48d35329141b861aca53145241
-    m_Address: UIText_vi
+  - m_GUID: 361f1631e93af4b44903b58bdaddde6a
+    m_Address: QuestName_vi
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-vi
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c363ab9f86dabb4db18fe53bec23474
+    m_Address: NPC+ArthurQuest_vi
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-vi
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db5bc298420d148488a3a5832ebf3d53
+    m_Address: StoryQuest_vi
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-vi
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e03fde26427d50e4096c2f3723fb9026
+    m_Address: NameItem_vi
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-vi
+    - Preload
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e412a008129c857458d4115a272e2b45
     m_Address: FishName_vi
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-vi
+    - Preload
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 4858d1489e089014aa3ac135c14ccfb4, type: 2}

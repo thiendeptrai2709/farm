@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableItemData
   localizedDisplayName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8365351524818944
+      m_KeyId: 2011
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -25,11 +25,11 @@ MonoBehaviour:
   itemType: 2
   isStackable: 1
   maxStack: 36
-  sellPrice: 12
-  buyPrice: 15
+  sellPrice: 230
+  buyPrice: 290
   healthRestore: 0
-  hungerRestore: 10
-  thirstRestore: 7
+  hungerRestore: 0
+  thirstRestore: 0
   references:
     version: 2
     RefIds: []

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Localization;
 
 [System.Serializable]
 public class TroughSlot
@@ -10,6 +11,8 @@ public class TroughSlot
 
 public class FoodTrough : MonoBehaviour, IInteractable
 {
+    public LocalizedString locInteractText;
+
     [Header("Dữ liệu Máng Ăn")]
     public TroughSlot[] slots = new TroughSlot[5]; // Kho chứa thực tế
     public List<ItemData> validFoodItem;                 // Bộ lọc đồ ăn hợp lệ
@@ -68,7 +71,7 @@ public class FoodTrough : MonoBehaviour, IInteractable
     }
     public string GetInteractText()
     {
-        return "[E] Mở Máng Ăn";
+        return locInteractText.IsEmpty ? "[E] Mở Máng Ăn" : locInteractText.GetLocalizedString();
     }
 
     public void Interact()

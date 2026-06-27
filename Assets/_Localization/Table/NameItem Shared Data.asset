@@ -1,0 +1,708 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: NameItem Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: NameItem
+  m_TableCollectionNameGuidString: e2cb65efd6a4e7849b42de1cb27264d9
+  m_Entries:
+  - m_Id: 1001
+    m_Key: building_animal_barn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1002
+    m_Key: building_big_chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1003
+    m_Key: building_chest_medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1004
+    m_Key: building_chicken_coop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1005
+    m_Key: building_feed_trough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1006
+    m_Key: building_fence_end
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1007
+    m_Key: building_fence_gate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1008
+    m_Key: building_fence_mid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1009
+    m_Key: building_upgrade_farm_lv1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1010
+    m_Key: building_well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1011
+    m_Key: entity_chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1012
+    m_Key: item_egg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2001
+    m_Key: fruit_apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2002
+    m_Key: fruit_avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2003
+    m_Key: fruit_carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2004
+    m_Key: fruit_wheat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2005
+    m_Key: fruit_garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2006
+    m_Key: fruit_lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2007
+    m_Key: fruit_mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2008
+    m_Key: fruit_onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2009
+    m_Key: fruit_orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2010
+    m_Key: fruit_pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2011
+    m_Key: fruit_pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2012
+    m_Key: fruit_potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2013
+    m_Key: fruit_pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2014
+    m_Key: fruit_radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2015
+    m_Key: fruit_tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2016
+    m_Key: fruit_watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4001
+    m_Key: seed_apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4002
+    m_Key: seed_avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4003
+    m_Key: seed_carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4004
+    m_Key: seed_garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4005
+    m_Key: seed_lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4006
+    m_Key: seed_mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4007
+    m_Key: seed_onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4008
+    m_Key: seed_orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4009
+    m_Key: seed_pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4010
+    m_Key: seed_pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4011
+    m_Key: seed_potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4012
+    m_Key: seed_pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4013
+    m_Key: seed_radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4014
+    m_Key: seed_tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4015
+    m_Key: seed_watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4016
+    m_Key: seed_wheat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5001
+    m_Key: material_forest_wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5002
+    m_Key: material_rock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5003
+    m_Key: material_wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5004
+    m_Key: speed_fertilizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5005
+    m_Key: speed_watering_can
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5006
+    m_Key: tool_axe_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5007
+    m_Key: tool_axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5008
+    m_Key: tool_fishing_pole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5009
+    m_Key: tool_hammer_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5010
+    m_Key: tool_hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5011
+    m_Key: tool_plow_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5012
+    m_Key: tool_plow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5013
+    m_Key: currency_money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6001
+    m_Key: item_hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9001
+    m_Key: ui_load_game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9201
+    m_Key: ui_screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9301
+    m_Key: merchant_wallet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9302
+    m_Key: in_stock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9303
+    m_Key: total
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9304
+    m_Key: total_earnings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9305
+    m_Key: inventory_items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9306
+    m_Key: title_chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9307
+    m_Key: action_sit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9401
+    m_Key: ui_play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9402
+    m_Key: ui_settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9403
+    m_Key: ui_quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9404
+    m_Key: ui_audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9405
+    m_Key: ui_graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9406
+    m_Key: ui_control
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9407
+    m_Key: ui_music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9408
+    m_Key: ui_sensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9409
+    m_Key: ui_invert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9410
+    m_Key: ui_language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9411
+    m_Key: ui_press_any_key
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9412
+    m_Key: ui_day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9413
+    m_Key: action_talk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9414
+    m_Key: action_buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9415
+    m_Key: action_sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9416
+    m_Key: action_confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9417
+    m_Key: action_travel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9418
+    m_Key: ui_shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9419
+    m_Key: ui_quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9420
+    m_Key: ui_finish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9421
+    m_Key: action_accept
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9422
+    m_Key: action_complete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9423
+    m_Key: ui_save_game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9424
+    m_Key: ui_menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9426
+    m_Key: action_unstuck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9427
+    m_Key: ui_resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9428
+    m_Key: action_cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9429
+    m_Key: ui_empty_journal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9430
+    m_Key: ui_journal_header
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9431
+    m_Key: ui_progress_label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9432
+    m_Key: ui_requirement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9433
+    m_Key: ui_rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9434
+    m_Key: ui_gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9435
+    m_Key: ui_just_talk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9436
+    m_Key: ui_exhausted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9437
+    m_Key: ui_not_enough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9438
+    m_Key: ui_drop_warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9439
+    m_Key: ui_placing_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9440
+    m_Key: ui_open_menu_hint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9441
+    m_Key: action_bus_schedule
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9442
+    m_Key: action_open_chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9443
+    m_Key: action_open_bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9444
+    m_Key: action_open_workshop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9445
+    m_Key: ui_interact_need_rod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9446
+    m_Key: ui_cast_rod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9447
+    m_Key: ui_cancel_fishing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9448
+    m_Key: ui_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9449
+    m_Key: ui_prepare_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9450
+    m_Key: ui_inventory_full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9451
+    m_Key: ui_till_soil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9452
+    m_Key: ui_plant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9454
+    m_Key: ui_market_notice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9455
+    m_Key: ui_need_food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9456
+    m_Key: ui_wrong_food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9457
+    m_Key: ui_feed_bear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9458
+    m_Key: ui_hours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9459
+    m_Key: ui_plant_seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9460
+    m_Key: ui_water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9461
+    m_Key: ui_fertilize
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9462
+    m_Key: ui_growing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9463
+    m_Key: ui_harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9464
+    m_Key: ui_remove_plot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9465
+    m_Key: ui_chop_sapling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9466
+    m_Key: ui_chop_tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9467
+    m_Key: ui_harvest_tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9468
+    m_Key: ui_water_tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9469
+    m_Key: ui_fertilize_tree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9470
+    m_Key: ui_growing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9471
+    m_Key: ui_regrowing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9472
+    m_Key: ui_feeding_trough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9473
+    m_Key: ui_open_feeding_trough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9474
+    m_Key: ui_plant_no_key
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9475
+    m_Key: ui_price
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9476
+    m_Key: ui_level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9477
+    m_Key: ui_unlock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9478
+    m_Key: ui_spawning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9479
+    m_Key: ui_barn_full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9480
+    m_Key: ui_open_buy_panel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9481
+    m_Key: ui_pen_capacity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9482
+    m_Key: ui_well_full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9483
+    m_Key: ui_well_refill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9484
+    m_Key: ui_well_need_can
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9485
+    m_Key: ui_need_hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9486
+    m_Key: ui_construct
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9487
+    m_Key: ui_construct_e
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9488
+    m_Key: ui_market_notification
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9490
+    m_Key: ui_sleep_panel_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9492
+    m_Key: ui_bus_panel_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9493
+    m_Key: ui_yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9494
+    m_Key: ui_no
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9495
+    m_Key: quest_skeleton_dialogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9496
+    m_Key: ui_tooltip_durability
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9497
+    m_Key: ui_tooltip_grow_time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9498
+    m_Key: ui_tooltip_days
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9496
+    m_Key: ui_tooltip_durability
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9497
+    m_Key: ui_tooltip_grow_time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9498
+    m_Key: ui_tooltip_days
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9499
+    m_Key: ui_tooltip_yields_continuously
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9500
+    m_Key: ui_tooltip_multi_harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9501
+    m_Key: ui_tooltip_single_harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9502
+    m_Key: ui_tooltip_restore_hunger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9503
+    m_Key: ui_tooltip_restore_thirst
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9504
+    m_Key: ui_tooltip_restore_health
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7524124689992515716
+  references:
+    version: 2
+    RefIds:
+    - rid: 7524124689992515716
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1782459208658

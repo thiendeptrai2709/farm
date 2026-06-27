@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using System;
-
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 public class ShopUIManager : MonoBehaviour
 {
     public static ShopUIManager Instance;
@@ -42,6 +43,12 @@ public class ShopUIManager : MonoBehaviour
     private Collider currentMerchantCollider;
     private bool _isOpeningShop = false;
 
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString locMerchantWallet;
+    public LocalizedString locInStock;
+    public LocalizedString locTotal;
+    public LocalizedString locTotalEarnings;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -60,6 +67,34 @@ public class ShopUIManager : MonoBehaviour
         if (Instance == this)
         {
             Instance = null;
+        }
+    }
+
+    private void OnEnable()
+    {
+        LocalizationSettings.SelectedLocaleChanged += OnLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationSettings.SelectedLocaleChanged -= OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(UnityEngine.Localization.Locale locale)
+    {
+        if (IsOpen())
+        {
+            RefreshUI();
+            UpdateTotalSellValue();
+            if (buyPopupPanel != null && buyPopupPanel.activeSelf)
+            {
+                UpdatePopupUI();
+                if (selectedBuyItem != null)
+                {
+                    string inStockTxt = locInStock.IsEmpty ? "In Stock:" : locInStock.GetLocalizedString();
+                    popupStockText.text = $"{inStockTxt} {selectedBuyItem.currentQuantity}";
+                }
+            }
         }
     }
 
@@ -109,14 +144,21 @@ public class ShopUIManager : MonoBehaviour
         if (shopPanel != null) shopPanel.SetActive(true);
 
         _isOpeningShop = true;
-        if (InventoryUI.Instance != null) InventoryUI.Instance.ForceOpen(false);
-        
+        if (InventoryUI.Instance != null)
+        {
+            InventoryUI.Instance.ForceOpen(false);
+            // [THÊM MỚI ĐỂ GIỮ HOTBAR]: Ép bật lại giao diện In-Game ngay lập tức
+            InventoryUI.Instance.ToggleInGameUI(true);
+        }
+        // [THÊM MỚI]: Giấu thanh thể lực đi khi bảng Shop đang mở
+        if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ToggleVisibility(false);
+
         _isOpeningShop = false;
 
         OnShopUIToggled?.Invoke(true);
         if (PlayerCameraManager.Instance != null)
         {
-            PlayerCameraManager.Instance.SetShopOpenState(true); // Nhớ đổi thành false ở hàm CloseShop
+            PlayerCameraManager.Instance.SetShopOpenState(true);
         }
     }
 
@@ -146,6 +188,10 @@ public class ShopUIManager : MonoBehaviour
             InventoryUI.Instance.ForceClose(false);
             InventoryUI.Instance.ToggleInGameUI(true); // [ĐÃ SỬA]: Thêm dòng này để gọi Hotbar hiện về!
         }
+
+        // [THÊM MỚI]: Bật lại thanh thể lực khi thoát Shop ra ngoài cày cuốc tiếp
+        if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ToggleVisibility(true);
+
         OnShopUIToggled?.Invoke(false);
         if (PlayerCameraManager.Instance != null)
         {
@@ -186,7 +232,10 @@ public class ShopUIManager : MonoBehaviour
         if (currentShop == null) return;
 
         if (merchantMoneyText != null)
-            merchantMoneyText.text = $"Merchant Wallet: <color=#FFD700>{currentShop.merchantMoney}G</color>";
+        {
+            string walletTxt = locMerchantWallet.IsEmpty ? "Merchant Wallet:" : locMerchantWallet.GetLocalizedString();
+            merchantMoneyText.text = $"{walletTxt} <color=#FFD700>{currentShop.merchantMoney}G</color>";
+        }
 
         if (buyTabContent.gameObject.activeSelf) RefreshBuySlots();
     }
@@ -241,7 +290,9 @@ public class ShopUIManager : MonoBehaviour
         buyPopupPanel.SetActive(true);
 
         popupNameText.text = sItem.item.displayName;
-        popupStockText.text = $"In Stock: {sItem.currentQuantity}";
+
+        string inStockTxt = locInStock.IsEmpty ? "In Stock:" : locInStock.GetLocalizedString();
+        popupStockText.text = $"{inStockTxt} {sItem.currentQuantity}";
 
         amountSlider.minValue = 1;
         amountSlider.maxValue = sItem.currentQuantity;
@@ -261,7 +312,9 @@ public class ShopUIManager : MonoBehaviour
     {
         int amount = Mathf.RoundToInt(amountSlider.value);
         popupAmountText.text = amount.ToString();
-        popupTotalPriceText.text = $"Total: <color=#FFD700>{amount * selectedBuyPrice}G</color>";
+
+        string totalTxt = locTotal.IsEmpty ? "Total:" : locTotal.GetLocalizedString();
+        popupTotalPriceText.text = $"{totalTxt} <color=#FFD700>{amount * selectedBuyPrice}G</color>";
     }
 
     public void ConfirmBuy()
@@ -297,7 +350,9 @@ public class ShopUIManager : MonoBehaviour
             if (slot.currentItem != null) total += slot.totalValue;
         }
 
-        totalSellValueText.text = $"Total Earnings: <color=#FFD700>{total}G</color>";
+        string earningsTxt = locTotalEarnings.IsEmpty ? "Total Earnings:" : locTotalEarnings.GetLocalizedString();
+        totalSellValueText.text = $"{earningsTxt} <color=#FFD700>{total}G</color>";
+
         confirmSellButton.interactable = (total > 0);
     }
 
@@ -326,9 +381,16 @@ public class ShopUIManager : MonoBehaviour
 
         foreach (TradingSlotUI slot in tradeSlots)
         {
-            slot.ClearSlot();
-        }
+            if (slot.currentItem != null)
+            {
+                if (QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.ReportAction("Sell_" + slot.currentItem.name, slot.currentAmount);
+                }
+            }
 
+            slot.ClearSlot(); // Sau khi báo cáo xong thì mới dọn bàn
+        }
         UpdateTotalSellValue();
         RefreshUI();
 
@@ -336,7 +398,7 @@ public class ShopUIManager : MonoBehaviour
 
         Debug.Log($"Sold successfully! Earned {totalProfit}G");
     }
-    public bool TryAddTradeItemFromShiftClick(ItemData item, int amount, out int originalAmountLeft)
+    public bool TryAddTradeItemFromShiftClick(ItemData item, int amount, out int originalAmountLeft, float passedDurability = -1f)
     {
         originalAmountLeft = amount; // Khởi tạo lượng đồ còn lại
 
@@ -401,6 +463,7 @@ public class ShopUIManager : MonoBehaviour
 
                 slot.currentItem = item;
                 slot.currentAmount = amountToAdd;
+                slot.currentDurability = passedDurability;
                 slot.totalValue = pricePerUnit * slot.currentAmount;
                 slot.UpdateVisuals();
 
@@ -426,8 +489,6 @@ public class ShopUIManager : MonoBehaviour
             if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Drop");
             Debug.LogWarning("Bàn giao dịch đã đầy, một số đồ bị giữ lại trong Balo!");
 
-            // Vẫn trả về true để Balo biết là đã chuyển được 1 phần, 
-            // và Balo sẽ tự lấy biến originalAmountLeft để cập nhật lại số dư
             return true;
         }
 

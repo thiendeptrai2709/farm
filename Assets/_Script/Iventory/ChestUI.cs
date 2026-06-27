@@ -28,6 +28,11 @@ public class ChestUI : MonoBehaviour
 
     private void TogglePanel(bool isOpen)
     {
+        if (StaminaUIManager.Instance != null)
+        {
+            StaminaUIManager.Instance.ToggleVisibility(!isOpen);
+        }
+
         chestPanel.SetActive(isOpen);
 
         if (AudioManager.Instance != null)

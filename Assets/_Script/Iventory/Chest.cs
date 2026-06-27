@@ -19,6 +19,7 @@ public class Chest : MonoBehaviour, IInteractable
     public string chestID;
     public bool isBuiltByPlayer = false;
     public string prefabID;
+    public bool isHiddenChest = false;
 
     private Coroutine animationCoroutine;
     private Quaternion closedRotation;
@@ -129,10 +130,6 @@ public class Chest : MonoBehaviour, IInteractable
                 chestSlots.Add(new InventorySlot(loadedItem, slotData.amount, slotData.currentDurability));
             }
         }
-
-        // 2. [LỚP BẢO VỆ CHỐNG LỖI INDEX]
-        // Nếu file save bị rỗng, hoặc chứa ít hơn số lượng cho phép của rương,
-        // thì tự động độn thêm các ô trống (null) vào cho đến khi danh sách đủ số lượng chestSize (VD: 16 ô).
         while (chestSlots.Count < chestSize)
         {
             chestSlots.Add(new InventorySlot(null, 0));

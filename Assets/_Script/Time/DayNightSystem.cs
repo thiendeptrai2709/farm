@@ -61,6 +61,11 @@ public class DayNightSystem : MonoBehaviour
     {
         timeClock = GetComponent<TimeSystem>();
         RenderSettings.fog = true;
+        if (LoadingManager.Instance != null)
+        {
+            LoadingManager.OnPlayerReady += ForceSkyboxInstantUpdate;
+        }
+
         RenderSettings.fogMode = FogMode.ExponentialSquared;
         if (moonLight != null) moonLight.intensity = 0f;
         if (sunLight != null) sunLight.color = defaultSunColor;
@@ -226,7 +231,38 @@ public class DayNightSystem : MonoBehaviour
             dayTriggerLocked = false;
         }
     }
+    private void ForceSkyboxInstantUpdate()
+    {
+        if (timeClock == null || skyboxPhases == null || skyboxPhases.Count == 0) return;
 
+        float currentHour = timeClock.hour;
+        SkyboxMapping currentPhase = null;
+
+        // Tìm bầu trời hiện tại
+        foreach (var phase in skyboxPhases)
+        {
+            if (currentHour >= phase.hour) currentPhase = phase;
+        }
+
+        if (currentPhase != null && currentPhase.skyboxMat != null)
+        {
+            RenderSettings.skybox = currentPhase.skyboxMat;
+
+            // Nếu có tính năng Blend thì set thẳng luôn giá trị Target thay vì chờ Update Lerp
+            if (RenderSettings.skybox.HasProperty("_Blend"))
+            {
+                RenderSettings.skybox.SetFloat("_Blend", currentPhase.targetBlend);
+            }
+        }
+
+        // Ép xoay mặt trời ngay lập tức luôn
+        float p = timeClock.TimePercent;
+        float rotX = (p * 360f) - 90f;
+        if (sunLight != null) sunLight.transform.localRotation = Quaternion.Euler(rotX, 170f, 0f);
+        if (moonLight != null) moonLight.transform.localRotation = Quaternion.Euler(rotX + 180f, 170f, 0f);
+
+        Debug.Log("[DayNightSystem] Đã ép bầu trời nhảy ngay lập tức vào giờ Load Game: " + currentHour);
+    }
     private void HandleSkyboxTransition(float hour)
     {
         SkyboxMapping currentPhase = null;
@@ -249,6 +285,13 @@ public class DayNightSystem : MonoBehaviour
                 float nextBlend = Mathf.MoveTowards(currentBlend, currentPhase.targetBlend, Time.deltaTime * transitionSpeed);
                 RenderSettings.skybox.SetFloat("_Blend", nextBlend);
             }
+        }
+    }
+    private void OnDestroy()
+    {
+        if (LoadingManager.Instance != null)
+        {
+            LoadingManager.OnPlayerReady -= ForceSkyboxInstantUpdate;
         }
     }
 }

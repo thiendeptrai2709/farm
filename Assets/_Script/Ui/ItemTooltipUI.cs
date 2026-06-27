@@ -2,16 +2,29 @@
 using TMPro;
 using System.Text;
 using UnityEngine.UI;
+using UnityEngine.Localization; // [THÊM MỚI]
+
 public class ItemTooltipUI : MonoBehaviour
 {
     public static ItemTooltipUI Instance;
 
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString locDurability;
+    public LocalizedString locGrowTime;
+    public LocalizedString locDays;
+    public LocalizedString locYieldsContinuously;
+    public LocalizedString locMultiHarvest;
+    public LocalizedString locSingleHarvest;
+    public LocalizedString locRestoreHunger;
+    public LocalizedString locRestoreThirst;
+    public LocalizedString locRestoreHealth;
+
     [Header("Tham chiếu UI (Kéo thả vào đây)")]
-    public GameObject tooltipPanel; // Cái bảng nền
-    public TextMeshProUGUI nameText; // Tên vật phẩm
-    public TextMeshProUGUI typeText; // Loại (Tool, Seed...)
-    public TextMeshProUGUI statsText; // Chỉ số động (Sát thương, Hồi máu...)
-    public TextMeshProUGUI priceText; // Giá bán
+    public GameObject tooltipPanel;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI typeText;
+    public TextMeshProUGUI statsText;
+    public TextMeshProUGUI priceText;
 
     [Header("Cài đặt")]
     public float showDelay = 0.25f; // Rê chuột để yên 0.25s mới hiện
@@ -22,6 +35,7 @@ public class ItemTooltipUI : MonoBehaviour
     private RectTransform targetSlotRect;
 
     public float secondsPerGameDay = 1440f;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -65,14 +79,15 @@ public class ItemTooltipUI : MonoBehaviour
     {
         tooltipPanel.SetActive(true);
         transform.SetAsLastSibling();
+
         // 1. CHUNG: Tên vật phẩm và Phân loại
         nameText.text = currentItem.displayName;
-        typeText.text = currentItem.itemType.ToString();
+        typeText.text = currentItem.itemType.ToString(); // (Lưu ý: Tên Type lấy từ Enum, sau này nếu muốn có thể chuyển thành Localization)
 
-        // 2. TẮT GIÁ BÁN Ở ĐÂY (Giải quyết Vấn đề 2 bên dưới)
+        // 2. TẮT GIÁ BÁN Ở ĐÂY
         if (priceText != null) priceText.gameObject.SetActive(false);
-
         if (typeText != null) typeText.gameObject.SetActive(false);
+
         // 3. ĐỘNG: Đọc chỉ số chi tiết và TỰ ĐỘNG ẨN nếu không có gì
         string finalStats = BuildStatsString(currentItem);
         if (string.IsNullOrWhiteSpace(finalStats))
@@ -89,6 +104,7 @@ public class ItemTooltipUI : MonoBehaviour
 
         SnapToBottomRight();
     }
+
     private void SnapToBottomRight()
     {
         if (targetSlotRect == null || tooltipPanel == null) return;
@@ -116,7 +132,6 @@ public class ItemTooltipUI : MonoBehaviour
         }
 
         // Nếu tràn viền Dưới màn hình -> Kéo dịch lên trên
-        // (Do trục Y của màn hình bắt đầu từ 0 ở đáy)
         if (targetPos.y - tooltipHeight < 0)
         {
             targetPos.y = tooltipHeight;
@@ -125,10 +140,12 @@ public class ItemTooltipUI : MonoBehaviour
         // Áp dụng vị trí cuối cùng an toàn
         panelRect.position = targetPos;
     }
+
     private void HideTooltip()
     {
         tooltipPanel.SetActive(false);
     }
+
     // ==========================================
     // BỘ MÁY ĐỌC CHỈ SỐ THÔNG MINH
     // ==========================================
@@ -139,7 +156,8 @@ public class ItemTooltipUI : MonoBehaviour
         // --- NẾU LÀ CÔNG CỤ / VŨ KHÍ ---
         if (item is ToolItemData tool)
         {
-            builder.AppendLine($"Durability: {tool.durability}");
+            string durTxt = locDurability.IsEmpty ? "Durability" : locDurability.GetLocalizedString();
+            builder.AppendLine($"{durTxt}: {tool.durability}");
         }
 
         // --- NẾU LÀ HẠT GIỐNG ---
@@ -147,19 +165,27 @@ public class ItemTooltipUI : MonoBehaviour
         {
             // Tính số ngày (Làm tròn lên: ví dụ 1.2 ngày -> 2 ngày)
             int days = Mathf.CeilToInt(seed.growTime / secondsPerGameDay);
-            builder.AppendLine($"Grow time: {days} days");
+
+            string growTxt = locGrowTime.IsEmpty ? "Grow time" : locGrowTime.GetLocalizedString();
+            string daysTxt = locDays.IsEmpty ? "days" : locDays.GetLocalizedString();
+
+            builder.AppendLine($"{growTxt}: {days} {daysTxt}");
+
             // Phân loại phương thức thu hoạch
             if (seed.isBigTree)
             {
-                builder.AppendLine("Yields fruit continuously");
+                string yieldsTxt = locYieldsContinuously.IsEmpty ? "Yields fruit continuously" : locYieldsContinuously.GetLocalizedString();
+                builder.AppendLine(yieldsTxt);
             }
             else if (seed.isMultiHarvest)
             {
-                builder.AppendLine("Multi-harvest crop");
+                string multiTxt = locMultiHarvest.IsEmpty ? "Multi-harvest crop" : locMultiHarvest.GetLocalizedString();
+                builder.AppendLine(multiTxt);
             }
             else
             {
-                builder.AppendLine("Single harvest");
+                string singleTxt = locSingleHarvest.IsEmpty ? "Single harvest" : locSingleHarvest.GetLocalizedString();
+                builder.AppendLine(singleTxt);
             }
         }
 
@@ -167,16 +193,26 @@ public class ItemTooltipUI : MonoBehaviour
         else if (item is ConsumableItemData consumable)
         {
             if (consumable.hungerRestore > 0)
-                builder.AppendLine($"Restores Hunger: +{consumable.hungerRestore}");
+            {
+                string hgTxt = locRestoreHunger.IsEmpty ? "Restores Hunger" : locRestoreHunger.GetLocalizedString();
+                builder.AppendLine($"{hgTxt}: +{consumable.hungerRestore}");
+            }
             if (consumable.thirstRestore > 0)
-                builder.AppendLine($"Restores Thirst: +{consumable.thirstRestore}");
+            {
+                string thTxt = locRestoreThirst.IsEmpty ? "Restores Thirst" : locRestoreThirst.GetLocalizedString();
+                builder.AppendLine($"{thTxt}: +{consumable.thirstRestore}");
+            }
             if (consumable.healthRestore > 0)
-                builder.AppendLine($"Restores Health: +{consumable.healthRestore}");
+            {
+                string hpTxt = locRestoreHealth.IsEmpty ? "Restores Health" : locRestoreHealth.GetLocalizedString();
+                builder.AppendLine($"{hpTxt}: +{consumable.healthRestore}");
+            }
         }
         else if (item is FishItemData fish)
         {
-            builder.AppendLine($"{fish.tier.ToString()}");
+            builder.AppendLine($"{fish.tier.ToString()}"); // (Cái này là Enum Tier Cá, tạm thời không dịch)
         }
+
         return builder.ToString();
     }
 }

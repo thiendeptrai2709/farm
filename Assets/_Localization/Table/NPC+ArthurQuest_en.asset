@@ -1,0 +1,465 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: NPC+ArthurQuest_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: fdf1f23efff172c4fbff78f565d559e3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: Ahoy young man! The sea breeze is great today. Are you the new guy
+      moving into the old farm?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: Caught any fresh fish today? Bring them here, I'll buy them for
+      a good price!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Smooth sailing!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Hello. My shop sells all kinds of tools here. If you need anything
+      for farming, just take a look.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Do you need to buy a hoe, an axe, or a watering can? Choose what
+      you need and bring it here to pay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Remember to oil them regularly, durability depends on the user.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Good wood, hard stone. Your farm will definitely need a lot of repairs.
+      I'm Mason.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Do you need wood or boulders? I have enough materials to build a
+      whole new farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Just call me if you need to expand your barns.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Hello! The weather is beautiful for planting seeds today. I'm Flora,
+      nice to meet you!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Do you want to buy wheat seeds or apple saplings? I always have
+      the best ones available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Remember to water them regularly!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Ah, you must be Richard's kid! Welcome to our little town. I'm Thomas,
+      the village head.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: A thriving farm means a thriving town! If you need any advice, just
+      ask the locals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: By the way, the town is quite large. You can use the bus stations
+      to travel around quickly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Hello, you must be the new arrival at the farm, right? I'm Clara.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: The air in our town is always so fresh. I love taking walks around
+      here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: If you have some free time, you should walk around town and get
+      to know everyone.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: Hello. I am Dr. Victor. I oversee the health of everyone in this
+      town.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: Farming is physically demanding. Make sure you don't overexert yourself
+      and pass out in the fields.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: If you ever feel unwell, come see me immediately.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: What do you want? Go away, I have nothing for you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: City kids like you shouldn't be wandering around here. Go back to
+      your shiny farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: Stop bothering me. Mind your own business, kid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: Oh, Richard's child! It's so good to see you returning to the farm.
+      I'm Martha.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: Have you seen my boy, Oliver? He is always running around somewhere...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: If you ever get hungry from all that farm work, come by. I bake
+      fresh bread every morning.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: Wow, you're the new farmer! I'm Oliver. Do you have any cool animals?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: Mom tells me not to go near the forest, but I want to explore it!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: When you're not busy digging dirt, let's play together!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: Hello, you are Richard's son, right?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: The trip from the city must have been exhausting. Your father's
+      farm is a bit far from here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: Go to the bus station over there and take it to the farm. I will
+      head back first and wait for you there.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: The bus station is right over there. Just get on and select the
+      Farm as your destination.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Localized: You made it. Welcome home.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Localized: Now that you're here, we should get straight to business.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Localized: Your father, Richard, left some old farming tools for you in a chest
+      in the warehouse on the right.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Localized: Head over there, open the chest and take them. You will need them
+      to clear this overgrown field.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Localized: The chest is right inside the warehouse on the right. Go get your
+      tools so you can start working.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42
+    m_Localized: Excellent. With those tools, you can start breathing life back into
+      this farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43
+    m_Localized: Now that you have the tools and the wheat seeds I gave you, let's
+      put them to use.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44
+    m_Localized: Try tilling the soil and planting 10 wheat seeds on your field.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Localized: Use your hoe to till the ground, then plant 10 wheat seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Localized: Great job! You're a natural at this, just like your father.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Localized: The farm is looking better, but the garden is still quite a mess.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Localized: Just gather up the scattered branches and stones around the garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Localized: Keep picking up the branches and stones. A clean field is the first
+      step to a successful harvest.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Localized: Excellent work. The place is finally starting to look like a real
+      farm again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Localized: Farming takes patience. Now that the seeds are planted, they need
+      time to grow.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Localized: Wait for the wheat to ripen, then harvest them.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Localized: Just be patient and wait for the wheat to ripen, then harvest them.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Localized: A wonderful first harvest! You are really getting the hang of this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Localized: As a reward for your harvest, here are some fruit tree seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Localized: Go ahead and plant them in the garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Localized: Go ahead and plant those fruit tree seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Localized: Great. Fruit trees take a while to grow, but they are worth the
+      wait.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Localized: Fruit trees take much longer to grow than wheat. You will need to
+      be patient.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Localized: Wait until the apple trees mature to harvest the apples. Also, use
+      your axe to chop down the trees to collect wood.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Localized: Just wait for the trees to grow, then harvest the apples and use
+      your axe to chop wood.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Localized: Perfect. Now we have fresh apples and enough wood for future work.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Localized: Here is some stone for your hard work. Now that we have enough wood
+      and stone, let's upgrade the garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Localized: Head over to the Workshop to upgrade and expand the garden area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Localized: Take your wood and stone to the Workshop to upgrade the garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Localized: Look at that! The garden is much more spacious now. We can plant
+      a lot more here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Localized: Now that the farm is bigger, you will need money to buy more seeds
+      and supplies.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Localized: Try taking some of your harvested wheat or apples to sell.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69
+    m_Localized: Take the items you want to sell to the merchant.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Localized: Good job. Earning money is an essential part of running this farm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 71
+    m_Localized: You did well with your first sale. Here, take this watering can.
+      You will need it from now on.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72
+    m_Localized: Watering and using fertilizer will reduce the growing time of your
+      crops. Head over to the old well and unlock it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73
+    m_Localized: Go unlock it, because when your watering can runs out, you will
+      need the well to draw more water.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74
+    m_Localized: Perfect. Now you can use the well to get water.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75
+    m_Localized: Here, take this fishing rod. It's always good to have other ways
+      to gather food and materials.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76
+    m_Localized: Head over to the water and try catching 5 fish.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77
+    m_Localized: Use your fishing rod to catch 5 fish. Be patient!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 78
+    m_Localized: Great catch! Fishing is a wonderful way to pass the time while waiting
+      for crops to grow.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79
+    m_Localized: You have learned the basics of farming, gathering, and fishing.
+      Now it's time to prepare for livestock.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80
+    m_Localized: Go and unlock the animal barn. We need a proper place for them to
+      stay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81
+    m_Localized: Head over and unlock the animal barn.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82
+    m_Localized: You did it! The barn is ready for the animals, but we still need
+      to set up a few more things before they arrive.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 95
+    m_Localized: To finish the preparations, you need to build a feeding trough for
+      the animals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 96
+    m_Localized: If you don't, the animals will eat the crops in your garden. Also,
+      you should build fences to keep them from wandering around.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97
+    m_Localized: Go build a feeding trough to protect your crops. And remember, fences
+      will keep the animals from wandering around.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98
+    m_Localized: Excellent work! Your farm is now safe and truly complete. I will
+      take my leave now. Good luck!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240
+    m_Localized: Hello there! Oh, perfect timing. Do you happen to have any radishes
+      growing on your farm?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 241
+    m_Localized: I'm making my special stew today, but the ones at the market are
+      all wilted. If you have some, could you spare a few fresh ones?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 242
+    m_Localized: Still waiting on those radishes! The stew pot is already boiling.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 243
+    m_Localized: Oh, these are so crisp and fresh! Thank you so much. Here, take
+      this for your hard work.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247
+    m_Localized: Oh, hello again! That stew was delicious. You wouldn't happen to
+      be growing potatoes too, would you?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248
+    m_Localized: I'm thinking of making baked potatoes for dinner. If you harvest
+      any, could you bring some over?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249
+    m_Localized: Still haven't found any good potatoes yet. Take your time, there's
+      no rush today.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250
+    m_Localized: Look at these! Big and firm. Your farm soil must be magical. Thanks
+      again!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254
+    m_Localized: Hello again! Say, do you happen to have any mango trees on your
+      farm?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 255
+    m_Localized: I'm craving something sweet for dessert today. If you harvest any
+      ripe mangoes, could you bring a few over?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256
+    m_Localized: No rush on those mangoes. Just bring them over whenever they're
+      ready.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257
+    m_Localized: Oh, these smell amazing! Perfectly ripe. Thank you so much!
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

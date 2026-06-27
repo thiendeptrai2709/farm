@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System;
 
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance { get; private set; }
+
+    private readonly byte[] encryptionKey = Encoding.UTF8.GetBytes("G7k9P2mX5vA1qL4zD8wE3bY6hN0cR1fT");
+    private readonly byte[] encryptionIV = Encoding.UTF8.GetBytes("J4mB7vC2zX9qR1wF");
 
     private GameData currentData;
     private int currentSlot = 1;
@@ -63,20 +69,67 @@ public class SaveManager : MonoBehaviour
     }
     public void SaveAllNPCsToData(GameData data)
     {
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
         NPCVillager[] villagers = UnityEngine.Object.FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
         foreach (var v in villagers)
         {
-            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == v.gameObject.name);
+            // Ép thêm tên Scene vào trước tên NPC
+            string uniqueID = currentScene + "_" + v.gameObject.name;
+            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == uniqueID);
             if (existing != null) existing.position = v.transform.position;
-            else data.savedNPCs.Add(new SavedNPCData { npcName = v.gameObject.name, position = v.transform.position });
+            else data.savedNPCs.Add(new SavedNPCData { npcName = uniqueID, position = v.transform.position });
         }
 
         NPCMerchant[] merchants = UnityEngine.Object.FindObjectsByType<NPCMerchant>(FindObjectsSortMode.None);
         foreach (var m in merchants)
         {
-            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == m.gameObject.name);
+            string uniqueID = currentScene + "_" + m.gameObject.name;
+            SavedNPCData existing = data.savedNPCs.Find(n => n.npcName == uniqueID);
             if (existing != null) existing.position = m.transform.position;
-            else data.savedNPCs.Add(new SavedNPCData { npcName = m.gameObject.name, position = m.transform.position });
+            else data.savedNPCs.Add(new SavedNPCData { npcName = uniqueID, position = m.transform.position });
+        }
+    }
+    private string Encrypt(string plainText)
+    {
+        using (Aes aesAlg = Aes.Create())
+        {
+            aesAlg.Key = encryptionKey;
+            aesAlg.IV = encryptionIV;
+            ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+            using (MemoryStream msEncrypt = new MemoryStream())
+            {
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                {
+                    swEncrypt.Write(plainText);
+                }
+                return Convert.ToBase64String(msEncrypt.ToArray());
+            }
+        }
+    }
+
+    private string Decrypt(string cipherText)
+    {
+        try
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = encryptionKey;
+                aesAlg.IV = encryptionIV;
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                using (MemoryStream msDecrypt = new MemoryStream(cipherBytes))
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                {
+                    return srDecrypt.ReadToEnd();
+                }
+            }
+        }
+        catch
+        {
+            return string.Empty;
         }
     }
     public void SaveGame()
@@ -89,6 +142,11 @@ public class SaveManager : MonoBehaviour
             currentData.playerPosition = player.transform.position;
             currentData.playerRotation = player.transform.rotation;
             currentData.lastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
+        if (PlayerStamina.Instance != null)
+        {
+            currentData.currentStamina = PlayerStamina.Instance.currentStamina;
+            currentData.maxStamina = PlayerStamina.Instance.maxStamina;
         }
         if (Camera.main != null)
         {
@@ -178,13 +236,13 @@ public class SaveManager : MonoBehaviour
         }
         string path = GetSaveFilePath(currentSlot);
         string json = JsonUtility.ToJson(currentData, true);
+        string encryptedData = Encrypt(json);
 
-        // Đẩy việc ghi file I/O nặng nề sang Thread khác để không làm khựng Main Thread
         string capturedPath = path;
-        string capturedJson = json;
+        string capturedData = encryptedData;
         System.Threading.Tasks.Task.Run(() =>
         {
-            File.WriteAllText(capturedPath, capturedJson);
+            File.WriteAllText(capturedPath, capturedData);
         });
         Debug.Log("<color=green>Đã lưu game thành công tại Slot " + currentSlot + ": </color>" + path);
     }
@@ -194,9 +252,19 @@ public class SaveManager : MonoBehaviour
         string path = GetSaveFilePath(currentSlot);
         if (File.Exists(path))
         {
-            string json = File.ReadAllText(path);
-            currentData = JsonUtility.FromJson<GameData>(json);
-            Debug.Log("<color=yellow>Đã tải dữ liệu Save Game từ Slot " + currentSlot + "!</color>");
+            string encryptedData = File.ReadAllText(path);
+            string json = Decrypt(encryptedData);
+
+            if (string.IsNullOrEmpty(json))
+            {
+                Debug.LogError("Dữ liệu save bị hỏng hoặc sai mã hóa!");
+                currentData = new GameData();
+            }
+            else
+            {
+                currentData = JsonUtility.FromJson<GameData>(json);
+                Debug.Log("<color=yellow>Đã tải dữ liệu Save Game từ Slot " + currentSlot + "!</color>");
+            }
         }
         else
         {
@@ -233,9 +301,13 @@ public class SaveManager : MonoBehaviour
         string path = GetSaveFilePath(slotIndex);
         if (System.IO.File.Exists(path))
         {
-            string json = System.IO.File.ReadAllText(path);
-            return JsonUtility.FromJson<GameData>(json);
+            string encryptedData = System.IO.File.ReadAllText(path);
+            string json = Decrypt(encryptedData);
+            if (!string.IsNullOrEmpty(json))
+            {
+                return JsonUtility.FromJson<GameData>(json);
+            }
         }
-        return null; // Trả về null nếu slot này chưa có ai chơi
+        return null;
     }
 }

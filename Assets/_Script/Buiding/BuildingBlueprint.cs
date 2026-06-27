@@ -54,7 +54,7 @@ public class BuildingBlueprint : ScriptableObject
 
     public int currentLevel = 0;
     public int maxLevel = 3;
-    public float costMultiplierPerLevel = 2f;
+    public float costIncreasePerLevel = 0.5f;
 
     [Header("Bước 1: Mua Bản Vẽ (Tại Nhà Chính)")]
     public int unlockPrice;
@@ -72,7 +72,8 @@ public class BuildingBlueprint : ScriptableObject
     {
         if ((blueprintType != BlueprintType.FarmExpansion && blueprintType != BlueprintType.PenCapacityUpgrade) || currentLevel == 0) return unlockPrice;
 
-        return Mathf.RoundToInt(unlockPrice * Mathf.Pow(costMultiplierPerLevel, currentLevel));
+        // [SỬA LẠI CÔNG THỨC]: Giá gốc + (Giá gốc * Hệ số * Level)
+        return Mathf.RoundToInt(unlockPrice + (unlockPrice * costIncreasePerLevel * currentLevel));
     }
 
     // --- TÁCH LOGIC: Hàm tính số lượng Nguyên Liệu hiện tại ---
@@ -80,7 +81,8 @@ public class BuildingBlueprint : ScriptableObject
     {
         if ((blueprintType != BlueprintType.FarmExpansion && blueprintType != BlueprintType.PenCapacityUpgrade) || currentLevel == 0) return baseAmount;
 
-        return Mathf.RoundToInt(baseAmount * Mathf.Pow(costMultiplierPerLevel, currentLevel));
+        // [SỬA LẠI CÔNG THỨC]: Số gốc + (Số gốc * Hệ số * Level)
+        return Mathf.RoundToInt(baseAmount + (baseAmount * costIncreasePerLevel * currentLevel));
     }
     private void OnEnable()
     {

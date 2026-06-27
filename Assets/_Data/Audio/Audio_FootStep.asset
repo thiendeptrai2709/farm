@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57157959d7cdcf148b14e109fb726897, type: 3}
   m_Name: Audio_FootStep
   m_EditorClassIdentifier: Assembly-CSharp::AudioData
-  soundName: Footstep
-  clip: {fileID: 8300000, guid: ce9f205e7df440544a17845da959555d, type: 3}
-  volume: 1
+  soundName: Footstep_Grass
+  clip: {fileID: 8300000, guid: fed97abe594138846b76967a2205680c, type: 3}
+  volume: 0.3
   pitch: 1

@@ -12,32 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Tool
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  localizedNpcName:
-    m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
-    m_TableEntryReference:
-      m_KeyId: 8533844434018304
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  merchantMoney: 1384
-  minDailyMoney: 500
-  maxDailyMoney: 2000
+  npcName: Gareth
+  merchantMoney: 1788
+  minDailyMoney: 10000
+  maxDailyMoney: 100000
   maxShopSlots: 10
   itemsForSale:
   - item: {fileID: 11400000, guid: f08604279aa25a1458384a1fe3d43a4b, type: 2}
-    currentQuantity: 5
-  - item: {fileID: 11400000, guid: 3059eaaaa487da04cb63c3b1c4857a2f, type: 2}
     currentQuantity: 1
+  - item: {fileID: 11400000, guid: 3059eaaaa487da04cb63c3b1c4857a2f, type: 2}
+    currentQuantity: 8
   - item: {fileID: 11400000, guid: 0975cdcf99196f945baf46845bf9d9cb, type: 2}
-    currentQuantity: 4
+    currentQuantity: 6
   - item: {fileID: 11400000, guid: 503cffc127bfd94429020312b951d5d9, type: 2}
-    currentQuantity: 4
+    currentQuantity: 5
   - item: {fileID: 11400000, guid: 5487a6909ee4e62439c1ce70981f8b12, type: 2}
-    currentQuantity: 4
+    currentQuantity: 6
   - item: {fileID: 11400000, guid: 359eb4ee6dc50cb40bf54512b74ff5fb, type: 2}
-    currentQuantity: 4
+    currentQuantity: 2
+  - item: {fileID: 11400000, guid: f6b7acf0a524e9b49ba6957fc63f3d2f, type: 2}
+    currentQuantity: 7
+  - item: {fileID: 11400000, guid: 943fe4a58532e684b97d91c0af2f73dc, type: 2}
+    currentQuantity: 10
+  - item: {fileID: 11400000, guid: 381221a4d2560ae4ab0f7389db011dd4, type: 2}
+    currentQuantity: 6
   possibleItemsToSell:
   - {fileID: 11400000, guid: f08604279aa25a1458384a1fe3d43a4b, type: 2}
   - {fileID: 11400000, guid: 3059eaaaa487da04cb63c3b1c4857a2f, type: 2}
@@ -50,6 +48,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 381221a4d2560ae4ab0f7389db011dd4, type: 2}
   minQuantity: 1
   maxQuantity: 10
-  references:
-    version: 2
-    RefIds: []

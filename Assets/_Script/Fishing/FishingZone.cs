@@ -35,12 +35,27 @@ public class FishingZone : MonoBehaviour, IInteractable
     private int currentRound = 0;
     private int successCount = 0;
     private List<ArrowKey> targetSequence = new List<ArrowKey>();
+    private List<bool> invertedSequence = new List<bool>();
+
     private int currentInputIndex = 0;
     private float timer = 0f;
     private float lastInteractTime = 0f;
     private PlayerInputHandler playerInput;
     private bool isFishLoaded = false;
     public FishingLocation thisLocation = FishingLocation.Farm;
+
+    [Header("Cài đặt Phao & Dây Câu Động")]
+    public GameObject bobberPrefab;
+    public LineRenderer fishingLineRenderer;
+    public LayerMask waterLayer;
+    private GameObject currentBobber;
+    private Transform dynamicRodTip;
+    private Vector3 bobberPosition;
+    private bool isCastingBobber = false;
+
+    private float currentSagAmount = 0f;
+    private float currentSagDirection = -1f;
+    public float lineLerpSpeed = 5f;
 
     [Header("Cài đặt Ngôn ngữ (Localization)")]
     public LocalizedString locInteractNeedRod; // "Khu vực Câu cá (Cần cầm Cần Câu)"
@@ -55,8 +70,17 @@ public class FishingZone : MonoBehaviour, IInteractable
         if (currentState == FishingState.NotFishing)
         {
             if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(false);
+            if (fishingLineRenderer != null && fishingLineRenderer.enabled) fishingLineRenderer.enabled = false;
+            if (currentBobber != null) { Destroy(currentBobber); currentBobber = null; }
         }
-
+        else
+        {
+            if (fishingLineRenderer != null && fishingLineRenderer.enabled)
+            {
+                // [MỚI]: Liên tục uốn cong dây theo vị trí phao bay
+                DrawCurvedFishingLine();
+            }
+        }
         if (currentState == FishingState.WaitingForBite)
         {
             timer -= Time.deltaTime;
@@ -117,23 +141,69 @@ public class FishingZone : MonoBehaviour, IInteractable
         timer = currentTimeLimit;
         currentInputIndex = 0;
         targetSequence.Clear();
+        invertedSequence.Clear(); // Xóa sạch danh sách ngược của hiệp cũ
 
         for (int i = 0; i < currentSequenceLength; i++)
         {
             targetSequence.Add((ArrowKey)Random.Range(0, 4));
+            invertedSequence.Add(false); // Mặc định tất cả đều là nút trắng bình thường
+        }
+
+        // 2. CƠ CHẾ SỐ LƯỢNG NÚT ĐỎ (Chỉ kích hoạt ở Hiệp 3)
+        if (currentRound == 3)
+        {
+            // M CÓ THỂ ĐỔI SỐ LƯỢNG NÚT ĐỎ Ở ĐÂY (Ví dụ t đang để cứng là 2 nút)
+            int targetRedArrows = 2;
+
+            // Chống lỗi: Đảm bảo số nút đỏ yêu cầu không được vượt quá tổng số nút đang có trên màn hình
+            int actualRedArrows = Mathf.Min(targetRedArrows, currentSequenceLength);
+
+            // Tạo một danh sách các "ghế trống" để chọn ngẫu nhiên vị trí đặt nút đỏ
+            List<int> availableIndices = new List<int>();
+            for (int i = 0; i < currentSequenceLength; i++)
+            {
+                availableIndices.Add(i);
+            }
+
+            // Bốc thăm ngẫu nhiên vị trí để nhét nút đỏ vào
+            for (int i = 0; i < actualRedArrows; i++)
+            {
+                int randomIndex = Random.Range(0, availableIndices.Count);
+                int selectedPosition = availableIndices[randomIndex];
+
+                invertedSequence[selectedPosition] = true; // Nhuộm đỏ nút ở vị trí đã trúng tuyển
+                availableIndices.RemoveAt(randomIndex); // Rút vị trí này ra khỏi danh sách để các vòng lặp sau không chọn trùng lại
+            }
         }
 
         if (FishingUIManager.Instance != null)
         {
             FishingUIManager.Instance.ToggleAuditionPanel(true);
             FishingUIManager.Instance.ToggleTimer(true, currentTimeLimit, currentTimeLimit);
-            FishingUIManager.Instance.SetupArrows(currentSequenceLength, targetSequence);
+            // Truyền thêm danh sách ngược sang UI để nó biết đường tô màu
+            FishingUIManager.Instance.SetupArrows(currentSequenceLength, targetSequence, invertedSequence);
         }
     }
-
+    private ArrowKey GetOppositeKey(ArrowKey key)
+    {
+        // Hàm phụ trợ để tìm ra phím ngược chiều
+        switch (key)
+        {
+            case ArrowKey.Up: return ArrowKey.Down;
+            case ArrowKey.Down: return ArrowKey.Up;
+            case ArrowKey.Left: return ArrowKey.Right;
+            case ArrowKey.Right: return ArrowKey.Left;
+            default: return key;
+        }
+    }
     private void ProcessInput(ArrowKey pressedKey)
     {
-        if (pressedKey == targetSequence[currentInputIndex])
+        ArrowKey displayedKey = targetSequence[currentInputIndex];
+        bool isInverted = invertedSequence[currentInputIndex];
+        ArrowKey expectedKey = isInverted ? GetOppositeKey(displayedKey) : displayedKey;
+
+        // So sánh phím người chơi bấm với expectedKey thay vì displayedKey
+        if (pressedKey == expectedKey)
         {
             if (FishingUIManager.Instance != null) FishingUIManager.Instance.MarkArrowSuccess(currentInputIndex);
 
@@ -200,19 +270,21 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     private IEnumerator SpawnAndFlyFishRoutine()
     {
-        if (waterSurfacePoint == null || genericFishPrefab == null) yield break;
+        if (genericFishPrefab == null) yield break;
 
+        // Ép toàn bộ hiệu ứng bọt nước văng lên từ vị trí cái Phao (bobberPosition)
         if (splashEffectPrefab != null)
         {
-            GameObject splash = Instantiate(splashEffectPrefab, waterSurfacePoint.position, Quaternion.identity);
+            GameObject splash = Instantiate(splashEffectPrefab, bobberPosition, Quaternion.identity);
             Destroy(splash, 2f);
         }
 
-        GameObject fish = Instantiate(genericFishPrefab, waterSurfacePoint.position, Quaternion.identity);
+        // Sinh con cá bắt đầu bay lên từ đúng cái vị trí Phao
+        GameObject fish = Instantiate(genericFishPrefab, bobberPosition, Quaternion.identity);
         Transform playerTransform = FindAnyObjectByType<PlayerMovement>().transform;
 
         float elapsed = 0f;
-        Vector3 startPos = waterSurfacePoint.position;
+        Vector3 startPos = bobberPosition;
 
         while (elapsed < fishFlyDuration)
         {
@@ -234,7 +306,6 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         if (fish != null) Destroy(fish);
     }
-
     private void EndFishing()
     {
         if (AudioManager.Instance != null) AudioManager.Instance.StopLoopSFX();
@@ -247,6 +318,10 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         Animator playerAnim = FindAnyObjectByType<PlayerInteraction>().playerAnimator;
         currentState = FishingState.Pulling;
+
+        // [MỚI]: Thu hồi phao và dây ngay lúc nhân vật chuyển animation giật cần lên (dù trượt hay trúng)
+        if (fishingLineRenderer != null) fishingLineRenderer.enabled = false;
+        if (currentBobber != null) { Destroy(currentBobber); currentBobber = null; }
 
         if (InventoryManager.Instance != null)
         {
@@ -290,6 +365,17 @@ public class FishingZone : MonoBehaviour, IInteractable
     private IEnumerator ResetFishingStateRoutine(float delay)
     {
         yield return new WaitForSeconds(delay);
+
+        // Chức năng: Đứng treo tại đây, đợi Animator thoát hẳn khỏi anim thu cá / trượt cá mới chốt hạ
+        Animator playerAnim = FindAnyObjectByType<PlayerInteraction>().playerAnimator;
+        if (playerAnim != null)
+        {
+            while (playerAnim.GetCurrentAnimatorStateInfo(0).IsName("CatchFish") ||
+                   playerAnim.GetCurrentAnimatorStateInfo(0).IsName("MissFish"))
+            {
+                yield return null; // Đợi tiếp frame sau...
+            }
+        }
 
         currentState = FishingState.NotFishing;
         if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(false);
@@ -341,7 +427,16 @@ public class FishingZone : MonoBehaviour, IInteractable
                         // Tên cá sẽ được xử lý đa ngôn ngữ lúc sửa file ItemData sau
                         NotificationManager.Instance.ShowNotification($"+1 {caughtFish.displayName}");
                     }
+                    if (QuestManager.Instance != null)
+                    {
+                        // Báo cáo chung là có bắt được 1 con cá (Dành cho Nhiệm vụ 11: Cứ câu lên là tính)
+                        QuestManager.Instance.ReportAction("Catch_Fish", 1);
+
+                        // Báo cáo cụ thể tên cá (Dành cho sau này lỡ có Quest bắt đích danh cá chép, cá mập...)
+                        QuestManager.Instance.ReportAction("CatchFish_" + caughtFish.name, 1);
+                    }
                 }
+
                 else
                 {
                     Debug.LogWarning("Balo đã đầy! Cá câu được đã bị thả đi.");
@@ -369,7 +464,7 @@ public class FishingZone : MonoBehaviour, IInteractable
             bool isRaining = false;
             if (WeatherManager.Instance != null)
             {
-                isRaining = (WeatherManager.Instance.currentWeather.ToString() == "Raining");
+                isRaining = (WeatherManager.Instance.currentWeather == WeatherState.Raining);
             }
 
             if (fish.requiredWeather == SpawnWeather.RainyOnly && !isRaining) return false;
@@ -393,12 +488,29 @@ public class FishingZone : MonoBehaviour, IInteractable
 
     private FishTier GetRandomTierBySuccess(int nac)
     {
-        if (nac == 1) return (FishTier)Random.Range(0, 2);
-        if (nac == 2) return (FishTier)Random.Range(0, 4);
-        if (nac == 3) return (FishTier)Random.Range(2, 5);
+        float roll = UnityEngine.Random.Range(0f, 100f);
+
+        if (nac == 1)
+        {
+            if (roll <= 70f) return FishTier.Common;
+            return FishTier.Uncommon;
+        }
+        if (nac == 2)
+        {
+            if (roll <= 40f) return FishTier.Common;
+            if (roll <= 75f) return FishTier.Uncommon;
+            if (roll <= 95f) return FishTier.Rare;
+            return FishTier.Epic;
+        }
+        if (nac == 3)
+        {
+            if (roll <= 60f) return FishTier.Rare;
+            if (roll <= 90f) return FishTier.Epic;
+            return FishTier.Legendary;
+        }
+
         return FishTier.Common;
     }
-
     public string GetInteractText()
     {
         // Lấy chữ mặc định "Khu vực câu cá..."
@@ -477,6 +589,11 @@ public class FishingZone : MonoBehaviour, IInteractable
 
         if (currentState == FishingState.NotFishing)
         {
+            if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.fishCost)
+            {
+                if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+                return;
+            }
             // Chức năng: Đọc biến isBaloFull đã được xử lý sẵn bên InventoryManager
             if (InventoryManager.Instance.isBaloFull)
             {
@@ -487,6 +604,7 @@ public class FishingZone : MonoBehaviour, IInteractable
                 }
                 return;
             }
+            if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.fishCost);
 
             if (playerAnim != null) playerAnim.ResetTrigger("CancelFishing");
 
@@ -497,8 +615,36 @@ public class FishingZone : MonoBehaviour, IInteractable
             successCount = 0;
             if (FishingUIManager.Instance != null) FishingUIManager.Instance.UpdateTierUI(successCount);
 
+            Transform playerTransform = FindAnyObjectByType<PlayerMovement>().transform;
+            dynamicRodTip = null;
+            foreach (Transform t in playerTransform.GetComponentsInChildren<Transform>())
+            {
+                if (t.name == "RodTip")
+                {
+                    dynamicRodTip = t;
+                    break;
+                }
+            }
+            if (dynamicRodTip == null) dynamicRodTip = playerTransform;
+
+            Vector3 castTarget = playerTransform.position + playerTransform.forward * 5f;
+            castTarget.y += 20f;
+            RaycastHit hit;
+            float finalWaterY = waterSurfacePoint != null ? waterSurfacePoint.position.y : playerTransform.position.y;
+
+
+            if (Physics.Raycast(castTarget, Vector3.down, out hit, 40f, waterLayer))
+            {
+                finalWaterY = hit.point.y;
+            }
+            bobberPosition = new Vector3(castTarget.x, finalWaterY, castTarget.z);
+
+            // Chuyển toàn bộ việc sinh phao và dây vào Coroutine để đợi Animation
+            StartCoroutine(FlyBobberRoutine(bobberPosition, 1.0f));
+
             currentState = FishingState.WaitingForBite;
-            timer = Random.Range(minBiteTime, maxBiteTime);
+            // Cộng thêm 0.5s vào thời gian chờ cá cắn để bù cho lúc vung cần
+            timer = Random.Range(minBiteTime, maxBiteTime) + 0.5f;
 
             if (FishingUIManager.Instance != null) FishingUIManager.Instance.ToggleTierPanel(true);
 
@@ -522,6 +668,48 @@ public class FishingZone : MonoBehaviour, IInteractable
             if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.ToggleFishingCamera(false);
         }
     }
+    private IEnumerator FlyBobberRoutine(Vector3 endPos, float duration)
+    {
+        // 1. DELAY KHỚP ANIMATION (Chỉnh 0.4f này cho khớp với Frame vung tay tới đỉnh của Model Player)
+        yield return new WaitForSeconds(0.4f);
+
+        // 2. TẠO PHAO & DÂY
+        Vector3 startPos = dynamicRodTip != null ? dynamicRodTip.position : transform.position;
+        if (bobberPrefab != null)
+        {
+            currentBobber = Instantiate(bobberPrefab, startPos, Quaternion.identity);
+        }
+        if (fishingLineRenderer != null)
+        {
+            fishingLineRenderer.positionCount = 15; // Set sẵn đốt để uốn cong
+            fishingLineRenderer.enabled = true;
+        }
+
+        // 3. BAY RA BIỂN & BÁO HIỆU CHO DÂY ĐỔI CHIỀU CONG
+        isCastingBobber = true;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (currentBobber == null) yield break;
+
+            // Liên tục cập nhật điểm gốc đề phòng nhân vật đang thở/nhúc nhích
+            startPos = dynamicRodTip != null ? dynamicRodTip.position : transform.position;
+
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            Vector3 currentPos = Vector3.Lerp(startPos, endPos, t);
+            currentPos.y += Mathf.Sin(t * Mathf.PI) * 2.0f; // Phao bay bổng lên trên
+
+            currentBobber.transform.position = currentPos;
+            yield return null;
+        }
+
+        if (currentBobber != null) currentBobber.transform.position = endPos;
+        isCastingBobber = false; // Phao rớt xuống nước -> Tắt cờ bay
+    }
+
     private void OnDisable()
     {
         // Chức năng: Giải phóng trạng thái nhân vật và Camera nếu khu vực câu bị tắt đột ngột
@@ -537,7 +725,58 @@ public class FishingZone : MonoBehaviour, IInteractable
                 FishingUIManager.Instance.ToggleTierPanel(false);
             }
 
+            if (fishingLineRenderer != null) fishingLineRenderer.enabled = false;
+            if (currentBobber != null) { Destroy(currentBobber); currentBobber = null; }
+
             currentState = FishingState.NotFishing;
+        }
+    }
+    private void DrawCurvedFishingLine()
+    {
+        if (fishingLineRenderer == null || dynamicRodTip == null) return;
+
+        // Điểm đầu là cần câu, điểm cuối là cái phao (hoặc vị trí phao nếu phao chưa sinh ra)
+        Vector3 startPos = dynamicRodTip.position;
+        Vector3 endPos = currentBobber != null ? currentBobber.transform.position : bobberPosition;
+
+        // Chia sợi dây thành 15 đốt để bẻ cong
+        int lineSegments = 15;
+        fishingLineRenderer.positionCount = lineSegments;
+
+        float distance = Vector3.Distance(startPos, endPos);
+
+        // 1. Xác định MỤC TIÊU (Target) của độ cong và hướng cong
+        float targetSagAmount = distance * 0.15f;
+        float targetSagDirection = -1f; // -1 là cong xuống mặt nước (trọng lực bình thường)
+
+        if (isCastingBobber)
+        {
+            // [VẬT LÝ 1]: Đang ném phao bay trên trời -> Gió cản đẩy dây vút cong lên trên!
+            targetSagAmount = distance * 0.1f;
+            targetSagDirection = 1f; // +1 là vút lên trên
+        }
+        else if (currentState == FishingState.PlayingMiniGame || currentState == FishingState.WaitingNextRound)
+        {
+            // [VẬT LÝ 2]: Cá cắn câu giằng co -> Dây thẳng đét và chìm xuống
+            targetSagAmount = distance * 0.02f;
+            targetSagDirection = -1f;
+        }
+
+        // 2. LERP: Dịch chuyển mượt mà giá trị HIỆN TẠI tiến dần về MỤC TIÊU
+        currentSagAmount = Mathf.Lerp(currentSagAmount, targetSagAmount, Time.deltaTime * lineLerpSpeed);
+        currentSagDirection = Mathf.Lerp(currentSagDirection, targetSagDirection, Time.deltaTime * lineLerpSpeed);
+
+        // Vẽ từng đốt của sợi dây
+        for (int i = 0; i < lineSegments; i++)
+        {
+            float t = i / (float)(lineSegments - 1);
+            Vector3 currentPoint = Vector3.Lerp(startPos, endPos, t);
+
+            // 3. Dùng giá trị current (đã được làm mượt) thay vì target
+            float sag = Mathf.Sin(t * Mathf.PI) * currentSagAmount;
+            currentPoint.y += sag * currentSagDirection;
+
+            fishingLineRenderer.SetPosition(i, currentPoint);
         }
     }
 }

@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 496444863757207753}
   - component: {fileID: 94866809137639318}
   - component: {fileID: 2353400656159762225}
+  - component: {fileID: -1556096430290485385}
   m_Layer: 7
   m_Name: AvacadoTree
   m_TagString: Untagged
@@ -143,6 +144,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeVisuals
   fruitVisuals: {fileID: 2651902380882113517}
+--- !u!65 &-1556096430290485385
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3916051449069141634}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 3, z: 0.5}
+  m_Center: {x: -0.044919193, y: 1.47, z: 0.005101204}
 --- !u!1001 &898667133928138008
 PrefabInstance:
   m_ObjectHideFlags: 0

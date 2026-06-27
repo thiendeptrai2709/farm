@@ -47,6 +47,9 @@ public class LanguageTabController : MonoBehaviour
         yield return LocalizationSettings.InitializationOperation;
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[localeID];
 
+        // [FIX GIẬT UI]: Đợi thêm 1 nhịp để hệ thống load xong bảng dịch mới vào bộ nhớ
+        yield return null;
+
         UpdateMainButtonText();
 
         if (dropdownPanel != null)
@@ -56,7 +59,6 @@ public class LanguageTabController : MonoBehaviour
 
         isChanging = false;
     }
-
     private void UpdateMainButtonText()
     {
         if (mainButtonText != null)

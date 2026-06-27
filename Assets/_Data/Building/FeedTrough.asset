@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingBlueprint
   localizedBuildingName:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 1005
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -30,8 +30,8 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  icon: {fileID: 0}
-  prefabToBuild: {fileID: 0}
+  icon: {fileID: 21300000, guid: f2d88b6009a220449baee74ec3229d3c, type: 3}
+  prefabToBuild: {fileID: 5504730213467252640, guid: 97c26b85afa73ac49885b53c0987175b, type: 3}
   blueprintType: 2
   expandSize: {x: 0, y: 0, z: 0}
   centerOffset: {x: 0, y: 0, z: 0}
@@ -39,10 +39,12 @@ MonoBehaviour:
   capacityIncreasePerLevel: 2
   currentLevel: 0
   maxLevel: 3
-  costMultiplierPerLevel: 2
+  costIncreasePerLevel: 0.5
   unlockPrice: 0
   unlockItemCosts: []
-  buildItemCosts: []
+  buildItemCosts:
+  - item: {fileID: 11400000, guid: 8140f3483f6fe6147bfa54dd794b655f, type: 2}
+    amount: 2
   references:
     version: 2
     RefIds: []

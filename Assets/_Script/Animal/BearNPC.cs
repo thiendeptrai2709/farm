@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Localization;
 
 public enum BearState { Sleeping, Eating, Sitting }
 
@@ -42,8 +43,16 @@ public class BearNPC : MonoBehaviour, IInteractable
     public List<BearReward> commonRewards;
     public List<BearReward> rareRewards;
     public List<BearReward> legendaryRewards;
+    [Header("Nâng cấp Thể Lực (Cá Huyền Thoại Rừng)")]
+    public float staminaBonusPerFish = 10f; // Mỗi con cá tăng bao nhiêu điểm
+    public float maxStaminaLimit = 200f;
 
     private BearState currentState = BearState.Sleeping;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString locNeedFood;
+    public LocalizedString locFeedBear;
+    public LocalizedString locWrongFood;
 
     private void Start()
     {
@@ -95,20 +104,24 @@ public class BearNPC : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
+        string needFoodTxt = locNeedFood.IsEmpty ? "Gấu đang ngủ, hãy cầm gì đó cho nó ăn..." : locNeedFood.GetLocalizedString();
+        string wrongFoodTxt = locWrongFood.IsEmpty ? "Món này gấu không ăn được..." : locWrongFood.GetLocalizedString();
+        string feedTxt = locFeedBear.IsEmpty ? "[E] Cho gấu ăn" : locFeedBear.GetLocalizedString();
+
         if (InventoryManager.Instance == null || InventoryManager.Instance.selectedHotbarIndex == -1)
-            return "Gấu đang ngủ, hãy cầm gì đó cho nó ăn...";
+            return needFoodTxt;
 
         InventorySlot currentSlot = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex];
         ItemData heldItem = currentSlot.item;
 
-        if (heldItem == null) return "Gấu đang ngủ, hãy cầm gì đó cho nó ăn...";
+        if (heldItem == null) return needFoodTxt;
 
         if (heldItem.itemType == ItemType.Fish || heldItem.itemType == ItemType.Consumable)
         {
-            return $"[E] Cho gấu ăn {heldItem.displayName}";
+            return $"{feedTxt} {heldItem.displayName}";
         }
 
-        return "Món này gấu không ăn được...";
+        return wrongFoodTxt;
     }
 
     public void Interact()
@@ -125,8 +138,27 @@ public class BearNPC : MonoBehaviour, IInteractable
         if (heldItem.itemType == ItemType.Fish || heldItem.itemType == ItemType.Consumable)
         {
             FishTier fishTier = FishTier.Common;
-            if (heldItem is FishItemData fishData) fishTier = fishData.tier;
+            bool isForestLegendary = false;
 
+            if (heldItem is FishItemData fishData)
+            {
+                fishTier = fishData.tier;
+
+                // Kiểm tra xem có phải Cá Huyền Thoại và câu ở Rừng không
+                if (fishTier == FishTier.Legendary && fishData.allowedLocations.Contains(FishingLocation.Forest))
+                {
+                    isForestLegendary = true;
+                }
+            }
+
+            // ĐIỀU KIỆN ĐẶC BIỆT: Nâng cấp thể lực (Không rớt đồ)
+            if (isForestLegendary && PlayerStamina.Instance != null && PlayerStamina.Instance.maxStamina < maxStaminaLimit)
+            {
+                StartCoroutine(ProcessStaminaUpgrade(currentSlot));
+                return; // Thoát luôn, không chạy xuống phần rớt đồ (RollReward) ở dưới nữa
+            }
+
+            // Nếu không phải cá Huyền thoại rừng, hoặc thể lực đã max khung -> Chạy logic rớt đồ bình thường
             List<BearReward> pool = commonRewards;
             if (heldItem.itemType == ItemType.Fish)
             {
@@ -220,5 +252,29 @@ public class BearNPC : MonoBehaviour, IInteractable
                 }
                 break;
         }
+    }
+    private IEnumerator ProcessStaminaUpgrade(InventorySlot slotToDeduct)
+    {
+        // 1. Thu hồi cá
+        slotToDeduct.amount--;
+        if (slotToDeduct.amount <= 0)
+        {
+            slotToDeduct.item = null;
+            slotToDeduct.currentDurability = -1f;
+        }
+        InventoryManager.Instance.RefreshInventoryUI();
+
+        // 2. Chạy Anim Gấu Ăn
+        SetState(BearState.Eating);
+        yield return new WaitForSeconds(3f);
+
+        // 3. Tăng thể lực
+        if (PlayerStamina.Instance != null)
+        {
+            PlayerStamina.Instance.UpgradeMaxStamina(staminaBonusPerFish, maxStaminaLimit);
+            Debug.Log($"[Gấu] Dâng cá thành công! Đã tăng giới hạn thể lực lên {PlayerStamina.Instance.maxStamina}");
+        }
+
+        SetState(BearState.Sitting);
     }
 }

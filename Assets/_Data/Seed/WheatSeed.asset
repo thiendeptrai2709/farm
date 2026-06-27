@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b6307e14f37d624986ee407cf850f0b, type: 3}
+  m_Name: WheatSeed
+  m_EditorClassIdentifier: Assembly-CSharp::SeedItemData
+  localizedDisplayName:
+    m_TableReference:
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
+    m_TableEntryReference:
+      m_KeyId: 4016
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  icon: {fileID: 21300000, guid: 0936f77eaba37194796ab694d44c9ee4, type: 3}
+  itemType: 2
+  isStackable: 1
+  maxStack: 36
+  sellPrice: 5
+  buyPrice: 10
+  growTime: 120
+  cropPrefab: {fileID: 358267512542640219, guid: 0210f11fff81a604cb55f774549eb2e7, type: 3}
+  yieldItem: {fileID: 11400000, guid: 52ac07c4800aca043b3e0398d8f5de50, type: 2}
+  yieldAmount: 1
+  woodItem: {fileID: 0}
+  woodAmount: 3
+  fruitModelPrefab: {fileID: 0}
+  isMultiHarvest: 0
+  maxHarvestTimes: 3
+  regrowTime: 2880
+  isBigTree: 0
+  references:
+    version: 2
+    RefIds: []

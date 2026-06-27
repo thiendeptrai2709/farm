@@ -51,13 +51,13 @@ public class SleepUIManager : MonoBehaviour
         if (timeSystem != null)
         {
             float hoursToSleep = sleepSlider.value;
-            float wakeUpTime = (timeSystem.hour + hoursToSleep) % 24f; // Chức năng: Tính toán giờ thức dậy
+            float wakeUpTime = (timeSystem.hour + hoursToSleep) % 24f;
 
             timeSystem.SkipToMorning(wakeUpTime);
         }
+
         if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.SetSleepUIOpenState(false);
         sleepPanel.SetActive(false);
-
     }
     public void IncreaseSleepTime()
     {
@@ -75,4 +75,5 @@ public class SleepUIManager : MonoBehaviour
         if (PlayerCameraManager.Instance != null) PlayerCameraManager.Instance.SetSleepUIOpenState(false);
         sleepPanel.SetActive(false);
     }
+
 }

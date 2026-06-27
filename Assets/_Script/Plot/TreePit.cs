@@ -192,6 +192,13 @@ public class TreePit : MonoBehaviour, IInteractable
         }
 
         UpdateVisuals();
+
+        
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.ReportAction("PlantTree", 1);
+            QuestManager.Instance.ReportAction("PlantTree_" + seed.name, 1);
+        }
     }
 
     private void Update()
@@ -273,7 +280,16 @@ public class TreePit : MonoBehaviour, IInteractable
     private void ChopTree()
     {
         if (isDead) return;
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.axeCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
+        if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.axeCost);
+
         treeHealth--;
+        
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.DeductEquippedToolDurability(1f); // Mỗi nhát chém tụt 1 máu
@@ -364,7 +380,16 @@ public class TreePit : MonoBehaviour, IInteractable
     }
     private void WaterTree()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.waterCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
+        if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.waterCost);
+
         isWatered = true;
+        
         UpdateVisuals();
         growTimer += GetBaseTime() * 0.25f;
 
@@ -385,8 +410,17 @@ public class TreePit : MonoBehaviour, IInteractable
 
     private void FertilizeTree()
     {
+        if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.waterCost)
+        {
+            if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+            return;
+        }
+
         if (fertilizerItem != null)
         {
+            // Dùng tạm phí của tưới nước cho việc bón phân (1 điểm)
+            if (PlayerStamina.Instance != null) PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.waterCost);
+
             ConsumePersonalItem(fertilizerItem);
             isFertilized = true;
 

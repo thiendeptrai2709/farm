@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Localization; // Khai báo thư viện ngôn ngữ
 
 // Định nghĩa 4 trạng thái của một nhiệm vụ
@@ -9,11 +10,13 @@ public enum QuestStatus
     ReadyToTurnIn,  // Đã đủ đồ, chờ trả
     Completed       // Đã hoàn thành, không nhận lại được nữa
 }
+
 public enum QuestType
 {
     FetchItem,
     Action
 }
+
 [CreateAssetMenu(fileName = "New Quest", menuName = "RPG/Nhiệm Vụ Mới")]
 public class QuestData : ScriptableObject
 {
@@ -26,17 +29,40 @@ public class QuestData : ScriptableObject
     public QuestData requiredPreviousQuest;
     public int requiredDay = 0;
 
+    [System.Serializable]
+    public class QuestItemRequirement
+    {
+        public ItemData item;
+        public int amount;
+        [Tooltip("Tích: NPC thu luôn đồ. Bỏ tích: Chỉ cần có trong balo là hoàn thành nhiệm vụ.")]
+        public bool consumeItem = true;
+    }
+
+    [System.Serializable]
+    public class QuestItemReward
+    {
+        public ItemData item;
+        public int amount;
+    }
+
     [Header("Yêu cầu (Thu thập)")]
     public QuestType questType;
-    public ItemData requiredItem;
-    public int requiredAmount;
+    public List<QuestItemRequirement> requiredItems; // Hỗ trợ đòi nhiều loại vật phẩm cùng lúc
+
+    [System.Serializable]
+    public class QuestActionRequirement
+    {
+        public string actionName;
+        public int amount;
+        public LocalizedString actionDescription;
+    }
+
+    [Header("Yêu cầu (Hành động)")]
+    public List<QuestActionRequirement> requiredActions;
 
     [Header("Phần thưởng")]
     public int coinReward;
-    public ItemData itemReward;
-    public int itemRewardAmount;
-    public string requiredAction; // KHÔNG DỊCH (Mã action nội bộ)
-    public LocalizedString actionDescription;
+    public List<QuestItemReward> itemRewards; // Hỗ trợ tặng nhiều đồ cùng lúc
 
     [Header("Kịch bản Hội thoại")]
     public LocalizedString[] offerLines;
@@ -45,8 +71,6 @@ public class QuestData : ScriptableObject
 
     public string GetQuestName() => questName.GetLocalizedString();
     public string GetDescription() => description.GetLocalizedString();
-    public string GetActionDescription() => actionDescription.GetLocalizedString();
-
     public string[] GetOfferLines()
     {
         if (offerLines == null || offerLines.Length == 0) return new string[0];

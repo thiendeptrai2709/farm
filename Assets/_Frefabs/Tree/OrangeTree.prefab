@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 3586034116053710874}
   - component: {fileID: 6948539200244580410}
   - component: {fileID: 7104548725022693837}
+  - component: {fileID: 7802029602283779946}
   m_Layer: 7
   m_Name: OrangeTree
   m_TagString: Untagged
@@ -148,6 +149,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeVisuals
   fruitVisuals: {fileID: 7078780733957651689}
+--- !u!65 &7802029602283779946
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6695511089697368958}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 3, z: 0.5}
+  m_Center: {x: -0.044919193, y: 1.47, z: 0.005101204}
 --- !u!1001 &1054318775813728036
 PrefabInstance:
   m_ObjectHideFlags: 0

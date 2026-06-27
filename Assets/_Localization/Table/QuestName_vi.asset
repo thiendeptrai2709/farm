@@ -1,0 +1,273 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: QuestName_vi
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: vi
+  m_SharedData: {fileID: 11400000, guid: a2eb61f0f8a3b3148a413dfa824ffce2, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 83
+    m_Localized: "H\xE0nh Tr\xECnh Tr\u1EDF V\u1EC1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84
+    m_Localized: "N\xF4ng C\u1EE5 C\u1EE7a Cha"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85
+    m_Localized: "L\u1EA7n Gieo H\u1EA1t \u0110\u1EA7u Ti\xEAn"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86
+    m_Localized: "D\u1ECDn D\u1EB9p Khu V\u01B0\u1EDDn"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87
+    m_Localized: "V\u1EE5 M\xF9a \u0110\u1EA7u Ti\xEAn"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 88
+    m_Localized: "Tr\u1ED3ng C\xE2y \u0102n Qu\u1EA3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89
+    m_Localized: "Thu Ho\u1EA1ch T\xE1o V\xE0 G\u1ED7"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90
+    m_Localized: "M\u1EDF R\u1ED9ng Khu V\u01B0\u1EDDn"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91
+    m_Localized: "\u0110\u01A1n H\xE0ng \u0110\u1EA7u Ti\xEAn"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92
+    m_Localized: "M\u1EDF Kh\xF3a Gi\u1EBFng N\u01B0\u1EDBc"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93
+    m_Localized: "\u0110i C\xE2u C\xE1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 94
+    m_Localized: "M\u1EDF Kh\xF3a Chu\u1ED3ng V\u1EADt Nu\xF4i"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 99
+    m_Localized: "M\xE1ng \u0102n V\xE0 H\xE0ng R\xE0o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 106
+    m_Localized: "\u0110\u1EE9a Tr\u1EBB M\u1EA5t T\xEDch"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 200
+    m_Localized: "Arthur b\u1EA3o t\xF4i n\xEAn b\u1EAFt xe bu\xFDt \u0111\u1EC3
+      \u0111\u1EBFn n\xF4ng tr\u1EA1i m\xE0 cha t\xF4i \u0111\u1EC3 l\u1EA1i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201
+    m_Localized: "\u0110i \u0111\u1EBFn tr\u1EA1m xe bu\xFDt \u1EDF th\u1ECB tr\u1EA5n."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202
+    m_Localized: "T\xF4i c\u1EA7n t\xECm nh\u1EEFng m\xF3n n\xF4ng c\u1EE5 c\u0169
+      trong nh\xE0 kho m\xE0 cha t\xF4i, Richard, \u0111\xE3 \u0111\u1EC3 l\u1EA1i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 203
+    m_Localized: "T\xECm trong r\u01B0\u01A1ng \u1EDF nh\xE0 kho."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 204
+    m_Localized: "T\xF4i n\xEAn b\u1EAFt \u0111\u1EA7u b\u1EB1ng vi\u1EC7c cu\u1ED1c
+      \u0111\u1EA5t v\xE0 gieo h\u1EA1t gi\u1ED1ng l\xFAa m\xEC."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205
+    m_Localized: "Gieo 10 h\u1EA1t gi\u1ED1ng l\xFAa m\xEC."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206
+    m_Localized: "Khu v\u01B0\u1EDDn \u0111ang r\u1EA5t b\u1EEBa b\u1ED9n. T\xF4i
+      c\u1EA7n d\xF9ng tay d\u1ECDn d\u1EB9p c\xE1c c\xE0nh c\xE2y v\xE0 \u0111\u1EA5t
+      \u0111\xE1 v\u01B0\u01A1ng v\xE3i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207
+    m_Localized: "D\u1ECDn d\u1EB9p c\xE0nh c\xE2y v\xE0 \u0111\u1EA5t \u0111\xE1."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208
+    m_Localized: "T\xF4i c\u1EA7n ki\xEAn nh\u1EABn ch\u1EDD \u0111\u1EE3i l\xFAa
+      m\xEC l\u1EDBn l\xEAn, sau \u0111\xF3 ti\u1EBFn h\xE0nh thu ho\u1EA1ch."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209
+    m_Localized: "Thu ho\u1EA1ch l\xFAa m\xEC."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210
+    m_Localized: "Arthur \u0111\xE3 cho t\xF4i v\xE0i h\u1EA1t gi\u1ED1ng c\xE2y
+      \u0103n qu\u1EA3. T\xF4i n\xEAn \u0111em ch\xFAng \u0111i tr\u1ED3ng trong
+      v\u01B0\u1EDDn."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211
+    m_Localized: "Tr\u1ED3ng h\u1EA1t gi\u1ED1ng c\xE2y \u0103n qu\u1EA3."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212
+    m_Localized: "T\xF4i c\u1EA7n \u0111\u1EE3i c\xE2y t\xE1o tr\u01B0\u1EDFng th\xE0nh
+      \u0111\u1EC3 thu ho\u1EA1ch qu\u1EA3, v\xE0 d\xF9ng r\xECu ch\u1EB7t c\xE2y
+      \u0111\u1EC3 l\u1EA5y g\u1ED7."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213
+    m_Localized: "Thu ho\u1EA1ch t\xE1o v\xE0 thu th\u1EADp g\u1ED7."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 214
+    m_Localized: "V\u1EDBi l\u01B0\u1EE3ng g\u1ED7 v\xE0 \u0111\xE1 \u0111\xE3 thu
+      th\u1EADp, t\xF4i c\xF3 th\u1EC3 \u0111\u1EBFn Nh\xE0 x\u01B0\u1EDFng \u0111\u1EC3
+      n\xE2ng c\u1EA5p v\xE0 m\u1EDF r\u1ED9ng kh\xF4ng gian khu v\u01B0\u1EDDn."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 215
+    m_Localized: "M\u1EDF r\u1ED9ng khu v\u01B0\u1EDDn t\u1EA1i Nh\xE0 x\u01B0\u1EDFng."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216
+    m_Localized: "T\xF4i c\xF3 th\u1EC3 mang n\xF4ng s\u1EA3n \u0111\xE3 thu ho\u1EA1ch
+      \u0111i b\xE1n cho th\u01B0\u01A1ng nh\xE2n \u0111\u1EC3 ki\u1EBFm ch\xFAt
+      ti\u1EC1n."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 217
+    m_Localized: "B\xE1n v\u1EADt ph\u1EA9m cho th\u01B0\u01A1ng nh\xE2n."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218
+    m_Localized: "T\xF4i c\u1EA7n m\u1EDF kh\xF3a chi\u1EBFc gi\u1EBFng c\u0169 \u0111\u1EC3
+      c\xF3 ngu\u1ED3n n\u01B0\u1EDBc cho b\xECnh t\u01B0\u1EDBi. T\u01B0\u1EDBi
+      n\u01B0\u1EDBc gi\xFAp c\xE2y l\u1EDBn nhanh h\u01A1n."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219
+    m_Localized: "M\u1EDF kh\xF3a chi\u1EBFc gi\u1EBFng c\u0169."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220
+    m_Localized: "Arthur \u0111\xE3 cho t\xF4i m\u1ED9t chi\u1EBFc c\u1EA7n c\xE2u.
+      T\xF4i n\xEAn th\u1EED v\u1EADn may v\xE0 c\xE2u v\xE0i con c\xE1."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 221
+    m_Localized: "C\xE2u 5 con c\xE1."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 222
+    m_Localized: "\u0110\xE3 \u0111\u1EBFn l\xFAc chu\u1EA9n b\u1ECB cho vi\u1EC7c
+      ch\u0103n nu\xF4i. T\xF4i c\u1EA7n m\u1EDF kh\xF3a chu\u1ED3ng v\u1EADt nu\xF4i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223
+    m_Localized: "M\u1EDF kh\xF3a chu\u1ED3ng v\u1EADt nu\xF4i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 224
+    m_Localized: "\u0110\u1EC3 b\u1EA3o v\u1EC7 c\xE2y tr\u1ED3ng, t\xF4i ph\u1EA3i
+      x\xE2y d\u1EF1ng m\xE1ng \u0103n v\xE0 h\xE0ng r\xE0o cho \u0111\u1ED9ng v\u1EADt
+      tr\u01B0\u1EDBc khi ch\xFAng t\u1EDBi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225
+    m_Localized: "X\xE2y d\u1EF1ng m\xE1ng \u0103n v\xE0 h\xE0ng r\xE0o."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 230
+    m_Localized: "Ng\u1ECDn L\u1EEDa S\u01B0\u1EDFi \u1EA4m"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231
+    m_Localized: "Ng\u01B0\u1EDDi v\xF4 gia c\u01B0 trong r\u1EEBng c\u1EA7n m\u1ED9t
+      \xEDt g\u1ED7 r\u1EEBng ch\u1EAFc ch\u1EAFn \u0111\u1EC3 s\u01B0\u1EDFi \u1EA5m."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 232
+    m_Localized: "Thu th\u1EADp v\xE0 \u0111\u01B0a g\u1ED7 r\u1EEBng cho ng\u01B0\u1EDDi
+      v\xF4 gia c\u01B0."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237
+    m_Localized: "M\xF3n C\xE1 R\u1EEBng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 238
+    m_Localized: "C\xE2u m\u1ED9t \xEDt c\xE1 t\u1EEB h\u1ED3 n\u01B0\u1EDBc trong
+      r\u1EEBng \u0111\u1EC3 chia s\u1EBB m\u1ED9t b\u1EEFa \u0103n \u1EA5m c\xFAng
+      v\u1EDBi ng\u01B0\u1EDDi v\xF4 gia c\u01B0."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 239
+    m_Localized: "C\xE2u v\xE0 \u0111\u01B0a c\xE1 r\u1EEBng cho ng\u01B0\u1EDDi
+      v\xF4 gia c\u01B0."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 244
+    m_Localized: "C\u1EE7 C\u1EA3i T\u01B0\u01A1i"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245
+    m_Localized: "Clara c\u1EA7n m\u1ED9t \xEDt c\u1EE7 c\u1EA3i t\u01B0\u01A1i t\u1EEB
+      v\u01B0\u1EDDn c\u1EE7a t\xF4i \u0111\u1EC3 n\u1EA5u m\xF3n h\u1EA7m \u0111\u1EB7c
+      bi\u1EC7t."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246
+    m_Localized: "Thu ho\u1EA1ch v\xE0 \u0111\u01B0a c\u1EE7 c\u1EA3i cho Clara."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251
+    m_Localized: "M\xF3n Khoai T\xE2y N\u01B0\u1EDBng"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252
+    m_Localized: "Clara mu\u1ED1n m\u1ED9t \xEDt khoai t\xE2y t\u1EEB n\xF4ng tr\u1EA1i
+      c\u1EE7a t\xF4i \u0111\u1EC3 l\xE0m m\xF3n khoai t\xE2y n\u01B0\u1EDBng cho
+      b\u1EEFa t\u1ED1i."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253
+    m_Localized: "Thu ho\u1EA1ch v\xE0 \u0111\u01B0a khoai t\xE2y cho Clara."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258
+    m_Localized: "Nh\u1EEFng Qu\u1EA3 Xo\xE0i Ng\u1ECDt"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259
+    m_Localized: "Clara mu\u1ED1n m\u1ED9t \xEDt xo\xE0i ch\xEDn t\u1EEB n\xF4ng
+      tr\u1EA1i c\u1EE7a t\xF4i \u0111\u1EC3 l\xE0m m\xF3n tr\xE1ng mi\u1EC7ng."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 260
+    m_Localized: "Thu ho\u1EA1ch v\xE0 \u0111\u01B0a xo\xE0i cho Clara."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

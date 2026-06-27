@@ -16,6 +16,7 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
     [HideInInspector] public ItemData currentItem;
     [HideInInspector] public int currentAmount;
     [HideInInspector] public int totalValue;
+    [HideInInspector] public float currentDurability = -1f;
 
     private void Awake()
     {
@@ -51,11 +52,13 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
 
             currentItem = item;
             currentAmount = slotData.amount;
+            currentDurability = slotData.currentDurability;
             int pricePerUnit = MarketManager.Instance.GetCurrentSellPrice(item);
             totalValue = pricePerUnit * currentAmount;
 
             slotData.item = null;
             slotData.amount = 0;
+            slotData.currentDurability = -1f;
             invSlot.UpdateSlot(slotData);
 
             UpdateVisuals();
@@ -80,7 +83,7 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
     {
         if (currentItem == null) return;
 
-        bool added = InventoryManager.Instance.AddItem(currentItem, currentAmount, false);
+        bool added = InventoryManager.Instance.AddItem(currentItem, currentAmount, false, currentDurability);
         if (added)
         {
             ClearSlot();
@@ -140,6 +143,7 @@ public class TradingSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler, 
         currentItem = null;
         currentAmount = 0;
         totalValue = 0;
+        currentDurability = -1f;
         icon.sprite = null;
         icon.enabled = false;
         amountText.text = "";

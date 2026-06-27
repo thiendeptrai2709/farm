@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.Localization;
+using System.Collections.Generic;
+
 public class QuestJournalUIManager : MonoBehaviour
 {
     public static QuestJournalUIManager Instance;
@@ -20,6 +22,7 @@ public class QuestJournalUIManager : MonoBehaviour
         if (Instance == null) Instance = this;
         if (journalPanel != null) journalPanel.SetActive(false);
     }
+
     private void Start()
     {
         if (InventoryManager.Instance != null)
@@ -27,6 +30,7 @@ public class QuestJournalUIManager : MonoBehaviour
             InventoryManager.Instance.OnInventoryChanged += HandleInventoryChanged;
         }
     }
+
     private void HandleInventoryChanged()
     {
         if (IsOpen())
@@ -34,6 +38,7 @@ public class QuestJournalUIManager : MonoBehaviour
             RefreshJournal();
         }
     }
+
     private void OnDestroy()
     {
         if (InventoryManager.Instance != null)
@@ -73,34 +78,48 @@ public class QuestJournalUIManager : MonoBehaviour
     {
         if (QuestManager.Instance.activeQuests.Count == 0)
         {
-            // [ĐÃ SỬA]: Kéo chữ trống ra từ bảng dịch
             journalText.text = emptyJournalText.GetLocalizedString();
             return;
         }
 
-        // [ĐÃ SỬA]: Kéo tiêu đề từ bảng dịch
         journalText.text = $"<color=yellow>{headerText.GetLocalizedString()}</color>\n\n";
 
         foreach (QuestData q in QuestManager.Instance.activeQuests)
         {
             string progress = "";
-            if (q.questType == QuestType.FetchItem && q.requiredItem != null)
-            {
-                int count = InventoryManager.Instance.GetPersonalItemCount(q.requiredItem);
-                progress = $"{count}/{q.requiredAmount} {q.requiredItem.displayName}";
-            }
-            else if (q.questType == QuestType.Action)
-            {
-                int count = 0;
-                if (QuestManager.Instance.actionProgress.ContainsKey(q.questID)) count = QuestManager.Instance.actionProgress[q.questID];
 
-                // [ĐÃ SỬA]: Lấy actionDescription thông qua hàm GetActionDescription()
-                string actDesc = q.GetActionDescription();
-                string displayName = string.IsNullOrEmpty(actDesc) ? q.requiredAction : actDesc;
-                progress = $"{count}/{q.requiredAmount} {displayName}";
+            // [ĐÃ SỬA]: Quét qua danh sách các vật phẩm yêu cầu
+            if (q.questType == QuestType.FetchItem && q.requiredItems != null && q.requiredItems.Count > 0)
+            {
+                List<string> reqList = new List<string>();
+                foreach (var req in q.requiredItems)
+                {
+                    if (req.item != null)
+                    {
+                        int count = InventoryManager.Instance.GetPersonalItemCount(req.item);
+                        reqList.Add($"{count}/{req.amount} {req.item.displayName}");
+                    }
+                }
+                progress = string.Join("\n  - ", reqList);
+                if (reqList.Count > 1) progress = "\n  - " + progress; // Thêm căn lề nếu có nhiều dòng
+            }
+            else if (q.questType == QuestType.Action && q.requiredActions != null)
+            {
+                List<string> actList = new List<string>();
+                foreach (var act in q.requiredActions)
+                {
+                    int count = 0;
+                    string key = q.questID + "_" + act.actionName;
+                    if (QuestManager.Instance.actionProgress.ContainsKey(key)) count = QuestManager.Instance.actionProgress[key];
+
+                    string actDesc = act.actionDescription.GetLocalizedString();
+                    string displayName = string.IsNullOrEmpty(actDesc) ? act.actionName : actDesc;
+                    actList.Add($"{count}/{act.amount} {displayName}");
+                }
+                progress = string.Join("\n  - ", actList);
+                if (actList.Count > 1) progress = "\n  - " + progress;
             }
 
-            // [ĐÃ SỬA]: Gọi GetQuestName() và lấy chữ "Tiến độ" từ bảng dịch
             journalText.text += $"<b>{q.GetQuestName()}</b>\n{progressLabelText.GetLocalizedString()} {progress}\n\n";
         }
     }

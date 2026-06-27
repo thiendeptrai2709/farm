@@ -1,0 +1,692 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: NameItem_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: e2cb65efd6a4e7849b42de1cb27264d9, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 5013
+    m_Localized: Money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5012
+    m_Localized: Plow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5011
+    m_Localized: Plow 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5010
+    m_Localized: Hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5009
+    m_Localized: Hammer 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5008
+    m_Localized: Fishing Pole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5007
+    m_Localized: Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5006
+    m_Localized: Axe 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5005
+    m_Localized: Watering Can
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5004
+    m_Localized: Fertilizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5003
+    m_Localized: Wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5002
+    m_Localized: Rock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5001
+    m_Localized: Forest Wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4016
+    m_Localized: Wheat Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4015
+    m_Localized: Watermelon Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4014
+    m_Localized: Tomato Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4013
+    m_Localized: Radish Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4012
+    m_Localized: Pumpkin Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4011
+    m_Localized: Potato Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4010
+    m_Localized: Pineapple Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4009
+    m_Localized: Pear Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4008
+    m_Localized: Orange Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4007
+    m_Localized: Onion Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4006
+    m_Localized: Mango Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4005
+    m_Localized: Lemon Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4004
+    m_Localized: Garlic Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4003
+    m_Localized: Carrot Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4002
+    m_Localized: Avocado Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4001
+    m_Localized: Apple Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2016
+    m_Localized: Watermelon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2015
+    m_Localized: Tomato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2014
+    m_Localized: Radish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2013
+    m_Localized: Pumpkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2012
+    m_Localized: Potato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2011
+    m_Localized: Pineapple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2010
+    m_Localized: Pear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2009
+    m_Localized: Orange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2008
+    m_Localized: Onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2007
+    m_Localized: Mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2006
+    m_Localized: Lemon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2005
+    m_Localized: Garlic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2004
+    m_Localized: Wheat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2003
+    m_Localized: Carrot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2002
+    m_Localized: Avocado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2001
+    m_Localized: Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1012
+    m_Localized: Egg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1011
+    m_Localized: Chicken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1010
+    m_Localized: Well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1009
+    m_Localized: Farm Upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1008
+    m_Localized: Fence Middle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1007
+    m_Localized: Fence Gate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1006
+    m_Localized: Fence End
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1005
+    m_Localized: Feed Trough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1004
+    m_Localized: Animal Barn Upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1003
+    m_Localized: Medium Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1002
+    m_Localized: Big Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1001
+    m_Localized: Animal Barn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6001
+    m_Localized: Lost Hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9001
+    m_Localized: Load Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9201
+    m_Localized: Screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9301
+    m_Localized: Merchant Wallet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9302
+    m_Localized: In Stock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9303
+    m_Localized: Total
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9304
+    m_Localized: Total Earnings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9305
+    m_Localized: Inventory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9306
+    m_Localized: Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9307
+    m_Localized: '[E] Take a seat'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9401
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9402
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9403
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9404
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9405
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9406
+    m_Localized: Control
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9407
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9408
+    m_Localized: Sensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9409
+    m_Localized: Invert
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9410
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9411
+    m_Localized: Press any key to start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9412
+    m_Localized: Day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9413
+    m_Localized: '[E] Talk'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9414
+    m_Localized: Buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9415
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9416
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9417
+    m_Localized: '[E] Travel'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9418
+    m_Localized: Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9419
+    m_Localized: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9420
+    m_Localized: Finish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9421
+    m_Localized: Accept
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9422
+    m_Localized: Complete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9423
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9424
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9427
+    m_Localized: Resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9426
+    m_Localized: Unstuck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9428
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9429
+    m_Localized: No quests available
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9430
+    m_Localized: --- ACTIVE QUESTS ---
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9431
+    m_Localized: Progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9432
+    m_Localized: 'Requirement:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9433
+    m_Localized: 'Rewards:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9434
+    m_Localized: Gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9435
+    m_Localized: Just talk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9436
+    m_Localized: Exhausted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9437
+    m_Localized: Not enough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9438
+    m_Localized: Are you sure you want to drop this item?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9439
+    m_Localized: Press to place
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9440
+    m_Localized: '[B] Open menu'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9441
+    m_Localized: '[E] View Bus Schedule'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9442
+    m_Localized: '[E] Open chest'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9443
+    m_Localized: '[E] Rest in bed'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9444
+    m_Localized: '[E] Open workshop'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9445
+    m_Localized: Fishing Area (Needs Rod)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9446
+    m_Localized: '[E] Cast line'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9447
+    m_Localized: '[E] Stop fishing'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9448
+    m_Localized: ROUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9449
+    m_Localized: Prepare round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9450
+    m_Localized: Inventory full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9451
+    m_Localized: '[E] Till soil'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9452
+    m_Localized: '[E] Plant seed'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9454
+    m_Localized: '[E] View Market Notice'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9455
+    m_Localized: Bear is sleeping, feed it something...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9456
+    m_Localized: The bear cannot eat this...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9457
+    m_Localized: '[E] Feed bear'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9458
+    m_Localized: Hours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9459
+    m_Localized: '[E] Plant seed'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9460
+    m_Localized: '[E] Water'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9461
+    m_Localized: '[E] Fertilize'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9462
+    m_Localized: Growing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9463
+    m_Localized: '[E] Harvest'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9464
+    m_Localized: '[E] Remove plot'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9465
+    m_Localized: '[E] Chop sapling'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9466
+    m_Localized: '[E] Chop tree'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9467
+    m_Localized: '[E] Harvest'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9468
+    m_Localized: '[E] Water'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9469
+    m_Localized: '[E] Fertilize'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9470
+    m_Localized: Growing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9471
+    m_Localized: Regrowing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9472
+    m_Localized: Feeding trough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9473
+    m_Localized: '[E] Open feeding trough'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9474
+    m_Localized: Plant seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9475
+    m_Localized: Price
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9476
+    m_Localized: Level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9477
+    m_Localized: Unlock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9478
+    m_Localized: Spawning...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9479
+    m_Localized: Barn is full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9480
+    m_Localized: '[E] Buy animals'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9481
+    m_Localized: 'Capacity:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9482
+    m_Localized: Watering can is full!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9483
+    m_Localized: '[E] Refill Water'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9484
+    m_Localized: Water Well (Requires Watering Can)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9485
+    m_Localized: Requires Hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9486
+    m_Localized: Construct
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9487
+    m_Localized: '[E] Construct'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9488
+    m_Localized: Market Notification
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9490
+    m_Localized: Sleep Time Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9492
+    m_Localized: Bus Station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9493
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9494
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9495
+    m_Localized: Who dares to disturb my slumber? Find my scattered bones in this
+      forest...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9496
+    m_Localized: Durability
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9497
+    m_Localized: Grow time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9498
+    m_Localized: days
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9499
+    m_Localized: Yields fruit continuously
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9500
+    m_Localized: Multi-harvest crop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9501
+    m_Localized: Single harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9502
+    m_Localized: Restores Hunger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9503
+    m_Localized: Restores Thirst
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9504
+    m_Localized: Restores Health
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

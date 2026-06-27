@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.Localization; 
 public class AnimalPenUIManager : MonoBehaviour
 {
     public static AnimalPenUIManager Instance;
+
+    public LocalizedString locCapacity;
 
     [Header("UI Panels")]
     public GameObject uiPanel;
@@ -40,7 +43,9 @@ public class AnimalPenUIManager : MonoBehaviour
         uiPanel.SetActive(true);
         if (capacityText != null)
         {
-            capacityText.text = $"{pen.GetAliveAnimalCount()} / {pen.GetCurrentMaxCapacity()}";
+            // Nếu có chữ dịch thì ghép vào trước, nếu không có thì chỉ hiện mỗi số
+            string capTxt = locCapacity.IsEmpty ? "" : locCapacity.GetLocalizedString() + " ";
+            capacityText.text = $"{capTxt}{pen.GetAliveAnimalCount()} / {pen.GetCurrentMaxCapacity()}";
         }
         // Phát loa báo khóa Camera, hiện Chuột
         OnAnimalUIToggled?.Invoke(true);

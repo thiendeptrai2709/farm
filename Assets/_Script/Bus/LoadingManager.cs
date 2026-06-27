@@ -36,8 +36,8 @@ public class LoadingManager : MonoBehaviour
     {
         targetSpawnPointID = spawnID;
 
-        // Đồng bộ dữ liệu map hiện tại vào RAM trước khi chuyển scene
-        if (SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Menu" &&
+            SaveManager.Instance != null && SaveManager.Instance.GetCurrentData() != null)
         {
             GameData currentData = SaveManager.Instance.GetCurrentData();
 
@@ -76,7 +76,10 @@ public class LoadingManager : MonoBehaviour
             {
                 SkeletonQuestManager.Instance.SaveQuestData(currentData);
             }
-
+            if (QuestManager.Instance != null)
+            {
+                QuestManager.Instance.SaveQuestData(currentData);
+            }
             FoodTrough[] allTroughs = FindObjectsByType<FoodTrough>(FindObjectsSortMode.None);
             foreach (var trough in allTroughs)
             {
@@ -88,7 +91,19 @@ public class LoadingManager : MonoBehaviour
                 MarketManager.Instance.SaveShopData(currentData);
                 Debug.Log("[LoadingManager] Đã đồng bộ Chợ vào RAM trước khi chuyển Map!");
             }
-
+            ConstructionSite[] allSites = FindObjectsByType<ConstructionSite>(FindObjectsSortMode.None);
+            foreach (var site in allSites)
+            {
+                SavedConstructionSite existingSave = currentData.savedConstructionSites.Find(s => s.siteID == site.siteID);
+                if (existingSave != null)
+                {
+                    existingSave.state = (int)site.currentState;
+                }
+                else
+                {
+                    currentData.savedConstructionSites.Add(new SavedConstructionSite { siteID = site.siteID, state = (int)site.currentState });
+                }
+            }
             SaveManager.Instance.SaveAllNPCsToData(currentData);
         }
 
@@ -184,12 +199,6 @@ public class LoadingManager : MonoBehaviour
                 {
                     newMapMarketManager.LoadShopData(currentData);
                 }
-
-                if (SkeletonQuestManager.Instance != null)
-                {
-                    SkeletonQuestManager.Instance.LoadQuestData(currentData);
-                }
-
                 yield return null;
             }
         }
@@ -211,7 +220,15 @@ public class LoadingManager : MonoBehaviour
                     InventoryManager.Instance.selectedHotbarIndex = data.selectedHotbarIndex;
                     InventoryManager.Instance.RefreshInventoryUI();
                 }
-
+                if (PlayerStamina.Instance != null)
+                {
+                    if (data.maxStamina >= 100f) PlayerStamina.Instance.maxStamina = data.maxStamina;
+                    PlayerStamina.Instance.currentStamina = data.currentStamina;
+                    if (data.currentStamina <= 0)
+                        PlayerStamina.Instance.ConsumeStamina(0);
+                    else
+                        PlayerStamina.Instance.RestoreStamina(0);
+                }
                 if (BusUI.Instance != null && data.unlockedBusStops != null)
                 {
                     BusUI.Instance.discoveredStops = new List<string>(data.unlockedBusStops);
@@ -227,6 +244,15 @@ public class LoadingManager : MonoBehaviour
                 {
                     timeSys.hour = data.savedHour + (data.savedMinute / 60f);
                 }
+                if (SkeletonQuestManager.Instance != null)
+                {
+                    SkeletonQuestManager.Instance.LoadQuestData(data);
+                }
+                if (QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.LoadQuestData(data);
+                }
+
             }
             else
             {
@@ -319,11 +345,14 @@ public class LoadingManager : MonoBehaviour
                 }
 
                 NPCVillager[] villagers = FindObjectsByType<NPCVillager>(FindObjectsSortMode.None);
+                string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
                 int villagerCounter = 0;
                 foreach (var v in villagers)
                 {
-                    if (savedNPCPositions.TryGetValue(v.gameObject.name, out Vector3 savedPosition))
+                    // Lấy ra đúng cái ID có chứa tên Scene
+                    string uniqueID = currentScene + "_" + v.gameObject.name;
+                    if (savedNPCPositions.TryGetValue(uniqueID, out Vector3 savedPosition))
                     {
                         UnityEngine.AI.NavMeshAgent agent = v.GetComponent<UnityEngine.AI.NavMeshAgent>();
 
@@ -355,7 +384,8 @@ public class LoadingManager : MonoBehaviour
                 int merchantCounter = 0;
                 foreach (var m in merchants)
                 {
-                    if (savedNPCPositions.TryGetValue(m.gameObject.name, out Vector3 savedPosition))
+                    string uniqueID = currentScene + "_" + m.gameObject.name;
+                    if (savedNPCPositions.TryGetValue(uniqueID, out Vector3 savedPosition))
                     {
                         UnityEngine.AI.NavMeshAgent agent = m.GetComponent<UnityEngine.AI.NavMeshAgent>();
 

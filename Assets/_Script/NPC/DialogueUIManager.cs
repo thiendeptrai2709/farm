@@ -105,34 +105,23 @@ public class DialogueUIManager : MonoBehaviour
         StartDialogue(lines);
     }
 
-    // ==========================================
-    // TỰ ĐỘNG SETUP NÚT NHIỆM VỤ ("Quest" hay "Accept")
-    // ==========================================
     private void SetupQuestButton(QuestData quest, bool isStoryDialogue)
     {
         bool hasActiveQuest = quest != null && QuestManager.Instance.GetQuestStatus(quest) != QuestStatus.Completed;
-        questButton.gameObject.SetActive(hasActiveQuest);
-
-        TextMeshProUGUI btnText = questButton.GetComponentInChildren<TextMeshProUGUI>();
-        questButton.onClick.RemoveAllListeners();
 
         if (isStoryDialogue)
         {
-            // [ĐÃ SỬA]: Lấy chữ "Accept" từ bảng từ vựng
-            if (btnText != null) btnText.text = btnAcceptText.GetLocalizedString();
-
-            questButton.onClick.AddListener(() => {
-                if (quest != null && QuestManager.Instance.GetQuestStatus(quest) == QuestStatus.Available)
-                {
-                    QuestManager.Instance.AcceptQuest(quest);
-                }
-                TransitionToQuestUI();
-            });
+            // Tắt nút bấm để người chơi phải đọc liền mạch kịch bản hội thoại
+            questButton.gameObject.SetActive(false);
         }
         else
         {
-            // [ĐÃ SỬA]: Lấy chữ "Quest" từ bảng từ vựng
-            if (btnText != null) btnText.text = btnQuestText.GetLocalizedString();
+            questButton.gameObject.SetActive(hasActiveQuest);
+
+            TextMeshProUGUI btnText = questButton.GetComponentInChildren<TextMeshProUGUI>();
+            questButton.onClick.RemoveAllListeners();
+
+            if (btnText != null) btnText.text = btnQuestText.IsEmpty ? "Quest" : btnQuestText.GetLocalizedString();
 
             questButton.onClick.AddListener(StartQuestDialogueSequence);
         }
@@ -217,8 +206,14 @@ public class DialogueUIManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         if (QuestUIManager.Instance != null && currentAvailableQuest != null)
         {
-            QuestUIManager.Instance.OpenQuestUI(currentAvailableQuest, currentNPCTransform);
+            if (QuestManager.Instance.GetQuestStatus(currentAvailableQuest) != QuestStatus.Completed)
+            {
+                QuestUIManager.Instance.OpenQuestUI(currentAvailableQuest, currentNPCTransform);
+                return;
+            }
         }
+        // Chức năng: Giải phóng điều khiển cho người chơi khi đã hết nhiệm vụ
+        CloseDialogue();
     }
 
     private void OpenShopFromDialogue()
@@ -259,5 +254,7 @@ public class DialogueUIManager : MonoBehaviour
     {
         if (InventoryUI.Instance != null)
             InventoryUI.Instance.ToggleInGameUI(isVisible);
+        if (StaminaUIManager.Instance != null)
+            StaminaUIManager.Instance.ToggleVisibility(isVisible);
     }
 }

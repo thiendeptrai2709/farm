@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolItemData
   localizedDisplayName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8517577132138496
+      m_KeyId: 5008
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -25,13 +25,12 @@ MonoBehaviour:
   itemType: 0
   isStackable: 0
   maxStack: 99
-  sellPrice: 50
-  buyPrice: 73
+  sellPrice: 90
+  buyPrice: 180
   toolType: 7
   toolTier: 1
   baseDamage: 10
-  durability: 15
-  staminaCost: 5
+  durability: 40
   toolPrefab: {fileID: 4241650655213185724, guid: 7dfb6c68799fcb64b9d10faac2ba6cf6, type: 3}
   references:
     version: 2

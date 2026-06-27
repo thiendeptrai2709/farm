@@ -68,13 +68,20 @@ public class PickupItem : MonoBehaviour, IInteractable
                 {
                     SaveManager.Instance.GetCurrentData().pickedUpItemIDs.Add(uniqueID);
                 }
+                if (QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.ReportAction("Pickup_" + itemData.name, amount);
+                    if (itemData.itemType == ItemType.Material)
+                    {
+                        QuestManager.Instance.ReportAction("Pickup_Debris", amount);
+                    }
+                }
 
                 Debug.Log("Vừa nhặt: " + itemData.displayName);
                 Destroy(gameObject);
             }
             else
             {
-                // Nếu balo đầy, hàm AddItem trả về false, cục đồ vẫn nằm im dưới đất
                 Debug.Log("Không thể nhặt " + itemData.displayName + ", balo đã đầy!");
             }
         }

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SeedItemData
   localizedDisplayName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8366301081690112
+      m_KeyId: 4004
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -25,12 +25,12 @@ MonoBehaviour:
   itemType: 2
   isStackable: 1
   maxStack: 36
-  sellPrice: 7
-  buyPrice: 15
-  growTime: 5760
+  sellPrice: 13
+  buyPrice: 25
+  growTime: 300
   cropPrefab: {fileID: 5434023427737567617, guid: 6f6327aec8f7fc7498f79f2718d57722, type: 3}
   yieldItem: {fileID: 11400000, guid: 5c30c5412d626ea4aad92f65a0f7252c, type: 2}
-  yieldAmount: 10
+  yieldAmount: 1
   woodItem: {fileID: 0}
   woodAmount: 3
   fruitModelPrefab: {fileID: 0}

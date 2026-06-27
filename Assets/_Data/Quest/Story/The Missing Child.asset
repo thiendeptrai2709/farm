@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a0ba6983696b44789e1c1f915a5709, type: 3}
+  m_Name: The Missing Child
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questID: Quest_Title_MissingChild
+  isAutoStoryQuest: 1
+  questName:
+    m_TableReference:
+      m_TableCollectionName: GUID:a2eb61f0f8a3b3148a413dfa824ffce2
+    m_TableEntryReference:
+      m_KeyId: 106
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+    m_TableEntryReference:
+      m_KeyId: 6240082966011904
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  requiredPreviousQuest: {fileID: 11400000, guid: 9179be247a3feec44ace9fa4bc3e858d, type: 2}
+  requiredDay: 2
+  questType: 0
+  requiredItems:
+  - item: {fileID: 11400000, guid: ec21f1b5f412fe743ad86f8d7fb21c0f, type: 2}
+    amount: 1
+    consumeItem: 1
+  requiredActions: []
+  coinReward: 0
+  itemRewards:
+  - item: {fileID: 11400000, guid: 17ed0a15d584e5548916c4478c1468de, type: 2}
+    amount: 450
+  offerLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 102
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 103
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 104
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  inProgressLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 105
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  completeLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 107
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 108
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

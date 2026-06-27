@@ -99,12 +99,12 @@ public class InventoryManager : MonoBehaviour
     // ==========================================
     // LOGIC NHẶT ĐỒ (THÔNG MINH)
     // ==========================================
-    public bool AddItem(ItemData itemToAdd, int amountToAdd, bool playSound = true)
+    public bool AddItem(ItemData itemToAdd, int amountToAdd, bool playSound = true, float passedDurability = -1f)
     {
         if (!HasSpaceFor(itemToAdd, amountToAdd))
         {
             Debug.LogWarning("Balo đã đầy hoặc không đủ chỗ cho toàn bộ số lượng này!");
-            return false; // Trả về false ngay lập tức, KHÔNG cộng thêm bất kỳ cái gì vào túi!
+            return false;
         }
 
         int initialAmount = amountToAdd;
@@ -114,14 +114,14 @@ public class InventoryManager : MonoBehaviour
             amountToAdd = AddToExistingStacksOnly(hotbarSlots, itemToAdd, amountToAdd);
             if (amountToAdd <= 0)
             {
-                // Chỉ phát âm thanh nếu công tắc đang BẬT
                 if (playSound && AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Item_Pickup");
                 return true;
             }
         }
 
-        // 2. Chỗ thừa còn lại (hoặc đồ nhặt lần đầu) ném tất cả vào Balo
-        amountToAdd = AddToList(inventorySlots, itemToAdd, amountToAdd, -1);
+        // 2. Ném vào Balo kèm theo thông số độ bền
+        amountToAdd = AddToList(inventorySlots, itemToAdd, amountToAdd, passedDurability);
+
 
         if (amountToAdd < initialAmount)
         {
@@ -346,12 +346,10 @@ public class InventoryManager : MonoBehaviour
         }
         if (ShopUIManager.Instance != null && ShopUIManager.Instance.IsOpen())
         {
-            // Chỉ cho phép chuyển đồ từ Balo lên Bàn Giao Dịch, không cho chuyển ngược lại bằng Shift-Click từ đây
-            // (Việc rút lại đồ từ bàn giao dịch đã được xử lý bằng Click trái bên TradingSlotUI)
+            
             if (fromType == StorageType.Inventory || fromType == StorageType.Hotbar)
             {
-                bool success = ShopUIManager.Instance.TryAddTradeItemFromShiftClick(slotToMove.item, leftover, out leftover);
-
+                bool success = ShopUIManager.Instance.TryAddTradeItemFromShiftClick(slotToMove.item, leftover, out leftover, durToMove);
                 if (success)
                 {
                     if (leftover == 0)
@@ -636,7 +634,7 @@ public class InventoryManager : MonoBehaviour
         // Quét toàn bộ Rương trong game
         foreach (var chest in allChestsInWorld)
         {
-            if (chest != null && chest.chestSlots != null)
+            if (chest != null && chest.chestSlots != null && !chest.isHiddenChest)
             {
                 foreach (var slot in chest.chestSlots)
                 {
@@ -661,13 +659,12 @@ public class InventoryManager : MonoBehaviour
         // Rút máu từ Rương
         foreach (var chest in allChestsInWorld)
         {
-            if (chest != null && chest.chestSlots != null)
+            if (chest != null && chest.chestSlots != null && !chest.isHiddenChest)
             {
                 amountNeeded = DeductFromList(chest.chestSlots, targetItem, amountNeeded);
-                if (amountNeeded <= 0) break; // Đủ đồ rồi thì ngừng hút
+                if (amountNeeded <= 0) break;
             }
         }
-
         OnInventoryChanged?.Invoke();
     }
     private int DeductFromList(List<InventorySlot> list, ItemData targetItem, int amountNeeded)

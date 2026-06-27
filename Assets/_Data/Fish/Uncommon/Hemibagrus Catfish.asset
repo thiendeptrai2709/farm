@@ -25,8 +25,8 @@ MonoBehaviour:
   itemType: 5
   isStackable: 0
   maxStack: 1
-  sellPrice: 0
-  buyPrice: 0
+  sellPrice: 75
+  buyPrice: 98
   tier: 1
   allowedLocations: 04000000
   requiredTime: 2

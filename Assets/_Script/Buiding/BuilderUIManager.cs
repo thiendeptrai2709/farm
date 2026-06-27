@@ -4,10 +4,15 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 
 public class BuilderUIManager : MonoBehaviour
 {
     public static BuilderUIManager Instance;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString locPrice;
+    public LocalizedString locLevel;
 
     [Header("Main UI Panels")]
     public GameObject builderPanel;
@@ -187,11 +192,14 @@ public class BuilderUIManager : MonoBehaviour
         {
             int currentMoney = InventoryManager.Instance.GetTotalItemCount(coinItem);
 
+            // Lấy chữ dịch, nếu quên gài key thì mặc định là "Price:"
+            string priceTxt = locPrice.IsEmpty ? "Price:" : locPrice.GetLocalizedString();
+
             // Hiện số tiền: Xanh nếu đủ, Đỏ nếu thiếu
             if (currentMoney >= price)
-                detailDescText.text = $"Price: <color=#55FF55>{price}</color>";
+                detailDescText.text = $"{priceTxt} <color=#55FF55>{price}</color>";
             else
-                detailDescText.text = $"Price: <color=#FF5555>{price}</color>";
+                detailDescText.text = $"{priceTxt} <color=#FF5555>{price}</color>";
         }
     }
     private void RefreshRequirements()
@@ -237,12 +245,20 @@ public class BuilderUIManager : MonoBehaviour
 
         int currentGoldCost = currentSelectedBlueprint.GetCurrentUnlockPrice();
 
+        if (currentSelectedBlueprint.blueprintType == BlueprintType.FarmExpansion)
+        {
+            if (FarmExpansionManager.Instance != null)
+            {
+                FarmExpansionManager.Instance.StartExpansionMode(currentSelectedBlueprint);
+                CloseUI(false);
+                return; // Thoát ngang hàm này
+            }
+        }
         if (coinItem != null && currentGoldCost > 0)
         {
             InventoryManager.Instance.ConsumeItemsGlobal(coinItem, currentGoldCost);
         }
 
-        // [ÔNG ĐANG THIẾU ĐOẠN NÀY]: 2. TRỪ NGUYÊN LIỆU (Gỗ, Đá...)
         foreach (var req in currentSelectedBlueprint.unlockItemCosts)
         {
             int currentRequiredAmount = currentSelectedBlueprint.GetCurrentItemAmount(req.amount);
@@ -257,7 +273,14 @@ public class BuilderUIManager : MonoBehaviour
             {
                 FarmingZone.Instance.ExpandFarmBoundary(currentSelectedBlueprint.expandSize, currentSelectedBlueprint.centerOffset);
             }
+            if (QuestManager.Instance != null)
+            {
+                // Báo cáo chung chung là đã mở rộng vườn (Cho NV 8)
+                QuestManager.Instance.ReportAction("Upgrade_Workshop", 1);
 
+                // Mở rộng thêm: Nếu muốn check đích danh mở rộng cấp mấy (VD: Upgrade_Farm_1, Upgrade_Farm_2)
+                QuestManager.Instance.ReportAction($"Upgrade_Farm_{currentSelectedBlueprint.currentLevel + 1}", 1);
+            }
             // 2. Tăng cấp độ mở rộng
             currentSelectedBlueprint.currentLevel++;
 
@@ -272,7 +295,8 @@ public class BuilderUIManager : MonoBehaviour
             }
             else
             {
-                detailDescText.text = currentSelectedBlueprint.description + $" (Cấp {currentSelectedBlueprint.currentLevel}/{currentSelectedBlueprint.maxLevel})";
+                string lvlTxt = locLevel.IsEmpty ? "Cấp" : locLevel.GetLocalizedString();
+                detailDescText.text = currentSelectedBlueprint.description + $" ({lvlTxt} {currentSelectedBlueprint.currentLevel}/{currentSelectedBlueprint.maxLevel})";
                 SelectBlueprint(currentSelectedBlueprint, currentSelectedSlotUI, false);
             }
         }

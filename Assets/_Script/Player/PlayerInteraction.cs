@@ -63,9 +63,18 @@ public class PlayerInteraction : MonoBehaviour
             // Nếu là Object thật trên Scene thì check xem nó có đang bật không
             if (autoActionTarget is MonoBehaviour targetMono)
             {
-                isValid = targetMono.gameObject.activeInHierarchy;
+                // [ĐÃ FIX LỖI]: Bắt buộc phải kiểm tra targetMono != null theo chuẩn Unity 
+                // để phát hiện xem đồ vật đã bị Destroy (như lúc đập rương/hàng rào) hay chưa!
+                if (targetMono != null)
+                {
+                    isValid = targetMono.gameObject.activeInHierarchy;
+                }
+                else
+                {
+                    isValid = false; // Đã bị xóa -> Không hợp lệ
+                }
             }
-            // Nếu là Object ảo (như cây rừng) thì luôn hợp lệ để tiếp tục
+            // Nếu là Object ảo thuần C# (như cây rừng trên Terrain) thì luôn hợp lệ để tiếp tục
             else
             {
                 isValid = true;
@@ -86,6 +95,12 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (pendingInteractable != null)
         {
+            bool isDismantling = pendingInteractable is PlacedProp || (pendingInteractable as MonoBehaviour)?.GetComponent<PlacedProp>() != null;
+            if (isDismantling && PlayerStamina.Instance != null)
+            {
+                PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.axeCost);
+            }
+
             MonoBehaviour targetMono = pendingInteractable as MonoBehaviour;
 
             // Nếu nó là Object thật trên màn hình (như Luống đất, Cây trồng 4 ô, Rương...)
@@ -254,7 +269,7 @@ public class PlayerInteraction : MonoBehaviour
                     return true; // Rương rỗng (hoặc là Hàng rào/Lò rèn) -> Cho phép bổ!
                 }
             }
-            if (!(target is Chest) && !(target is FoodTrough)) return false;
+            if (!(target is Chest) && !(target is FoodTrough) && !(target is FenceGate)) return false;
         }
 
         if (target is FarmPlot plot)
@@ -358,7 +373,6 @@ public class PlayerInteraction : MonoBehaviour
         if (!IsActionable(target))
         {
             autoActionTarget = null;
-
             return;
         }
 
@@ -369,46 +383,85 @@ public class PlayerInteraction : MonoBehaviour
         bool isFishing = false;
 
         int selectedIndex = InventoryManager.Instance != null ? InventoryManager.Instance.selectedHotbarIndex : -1;
-        if (selectedIndex != -1)
+        ItemData holdingItem = selectedIndex != -1 ? InventoryManager.Instance.hotbarSlots[selectedIndex].item : null;
+
+        // ==========================================
+        // BƯỚC 1: KIỂM TRA THỂ LỰC VÀ CHẶN MỌI HOẠT ẢNH
+        // ==========================================
+        if (PlayerStamina.Instance != null)
         {
-            ItemData holdingItem = InventoryManager.Instance.hotbarSlots[selectedIndex].item;
+            float requiredStamina = 0f;
+
             if (holdingItem is ToolItemData tool)
             {
-                if (tool.toolType == ToolType.Hoe && (target is FarmingZone || target is FarmPlot))
+                if (tool.toolType == ToolType.Hoe && (target is FarmingZone || target is FarmPlot)) requiredStamina = PlayerStamina.Instance.hoeCost;
+                else if (tool.toolType == ToolType.Axe && (target is TreePit || target is TerrainTreeInteractable || (target as MonoBehaviour)?.GetComponent<PlacedProp>() != null)) requiredStamina = PlayerStamina.Instance.axeCost;
+                else if (tool.toolType == ToolType.WateringCan && (target is TreePit || target is FarmPlot)) requiredStamina = PlayerStamina.Instance.waterCost;
+                else if (tool.toolType == ToolType.FishingRod && target is FishingZone fishingZone)
+                {
+                    if (fishingZone.currentState == FishingZone.FishingState.NotFishing)
+                    {
+                        requiredStamina = PlayerStamina.Instance.fishCost;
+                    }
+                }
+            }
+
+            // [LỖI Ở ĐÂY ĐÃ ĐƯỢC FIX]: Check thêm nếu đang nhắm vào luống đất/cây (Bón phân, tưới nước ngầm)
+            if (target is FarmPlot plot)
+            {
+                if (plot.currentState == PlotState.Planted && (plot.CanBeWatered() || plot.CanBeFertilized()))
+                    requiredStamina = PlayerStamina.Instance.waterCost;
+            }
+            else if (target is TreePit pit)
+            {
+                if ((pit.currentState == TreePit.PitState.Planted || pit.currentState == TreePit.PitState.Grown_Empty) && (pit.CanBeWatered() || pit.CanBeFertilized()))
+                    requiredStamina = PlayerStamina.Instance.waterCost;
+            }
+
+            // CHẶN TẬN GỐC: NẾU THIẾU THỂ LỰC -> ĐỨNG IM
+            if (requiredStamina > 0 && PlayerStamina.Instance.currentStamina < requiredStamina)
+            {
+                if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+                autoActionTarget = null;
+                return; // Thoát ngay, không cho múa
+            }
+        }
+
+        // ==========================================
+        // BƯỚC 2: CHẠY ANIMATION (Vì đã chắc chắn đủ thể lực)
+        // ==========================================
+        if (holdingItem is ToolItemData toolAct)
+        {
+            if (toolAct.toolType == ToolType.Hoe && (target is FarmingZone || target is FarmPlot))
+            {
+                requiresLockAndEvent = true;
+                animToPlay = "Digging";
+                autoActionTarget = null;
+            }
+            else if (toolAct.toolType == ToolType.Axe)
+            {
+                if (target is TreePit || target is TerrainTreeInteractable)
                 {
                     requiresLockAndEvent = true;
-                    animToPlay = "Digging";
-                    autoActionTarget = null;
+                    animToPlay = "Chopping";
                 }
-                else if (tool.toolType == ToolType.Axe)
+                else
                 {
-                    if (target is TreePit || target is TerrainTreeInteractable)
+                    PlacedProp pProp = (target as MonoBehaviour)?.GetComponent<PlacedProp>();
+                    if (pProp != null)
                     {
                         requiresLockAndEvent = true;
                         animToPlay = "Chopping";
+                        target = pProp;
+                        if (InventoryManager.Instance != null) InventoryManager.Instance.DeductEquippedToolDurability(1f);
                     }
-                    else
-                    {
-                        // [MẸO TRÁO MỤC TIÊU]: Nếu đang cầm rìu chĩa vào đồ tự xây
-                        PlacedProp pProp = (target as MonoBehaviour)?.GetComponent<PlacedProp>();
-                        if (pProp != null)
-                        {
-                            requiresLockAndEvent = true;
-                            animToPlay = "Chopping";
-
-                            // Ghi đè: Ép cái target thành PlacedProp để nó chạy hàm Destroy thay vì hàm Mở rương!
-                            target = pProp;
-
-                            // Đập đồ cũng tụt máu rìu
-                            if (InventoryManager.Instance != null) InventoryManager.Instance.DeductEquippedToolDurability(1f);
-                        }
-                    }
-                }
-                else if (tool.toolType == ToolType.FishingRod && target is FishingZone)
-                {
-                    isFishing = true;
                 }
             }
+            else if (toolAct.toolType == ToolType.FishingRod && target is FishingZone)
+            {
+                isFishing = true;
+            }
+
         }
 
         if (isFishing)

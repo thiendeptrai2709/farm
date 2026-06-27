@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using UnityEngine.Localization; // [THÊM MỚI] Khai báo thư viện ngôn ngữ
+using UnityEngine.Localization;
 
 public class QuestUIManager : MonoBehaviour
 {
@@ -46,45 +46,69 @@ public class QuestUIManager : MonoBehaviour
         currentDisplayingQuest = quest;
         currentNPCTransform = npcTransform;
 
-        // [ĐÃ SỬA]: Gọi hàm hỗ trợ từ QuestData để lấy chữ đã dịch
         questNameText.text = quest.GetQuestName();
         descriptionText.text = quest.GetDescription();
 
-        // Hiển thị tiến độ thu thập
-        if (quest.questType == QuestType.FetchItem && quest.requiredItem != null)
+        // ==========================================
+        // 1. HIỂN THỊ TIẾN ĐỘ THU THẬP
+        // ==========================================
+        if (quest.questType == QuestType.FetchItem && quest.requiredItems != null && quest.requiredItems.Count > 0)
         {
-            int currentAmount = InventoryManager.Instance.GetPersonalItemCount(quest.requiredItem);
-            string colorHex = currentAmount >= quest.requiredAmount ? "#00FF00" : "#FF0000";
+            requirementText.text = $"{reqLabelText.GetLocalizedString()}\n";
 
-            // Lấy chữ "Yêu cầu:" từ từ điển
-            requirementText.text = $"{reqLabelText.GetLocalizedString()} {quest.requiredItem.displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
+            foreach (var req in quest.requiredItems)
+            {
+                if (req.item != null)
+                {
+                    int currentAmount = InventoryManager.Instance.GetPersonalItemCount(req.item);
+                    string colorHex = currentAmount >= req.amount ? "#00FF00" : "#FF0000";
+
+                    requirementText.text += $"- {req.item.displayName} (<color={colorHex}>{currentAmount}/{req.amount}</color>)\n";
+                }
+            }
         }
-        else if (quest.questType == QuestType.Action)
+        else if (quest.questType == QuestType.Action && quest.requiredActions != null)
         {
-            int currentAmount = 0;
-            if (QuestManager.Instance.actionProgress.ContainsKey(quest.questID))
-                currentAmount = QuestManager.Instance.actionProgress[quest.questID];
+            requirementText.text = $"{reqLabelText.GetLocalizedString()}\n";
+            foreach (var act in quest.requiredActions)
+            {
+                int currentAmount = 0;
+                string key = quest.questID + "_" + act.actionName;
+                if (QuestManager.Instance.actionProgress.ContainsKey(key))
+                    currentAmount = QuestManager.Instance.actionProgress[key];
 
-            string colorHex = currentAmount >= quest.requiredAmount ? "#00FF00" : "#FF0000";
+                string colorHex = currentAmount >= act.amount ? "#00FF00" : "#FF0000";
 
-            // [ĐÃ SỬA]: Lấy actionDescription đã dịch ra
-            string actDesc = quest.GetActionDescription();
-            string displayName = string.IsNullOrEmpty(actDesc) ? quest.requiredAction : actDesc;
+                string actDesc = act.actionDescription.GetLocalizedString();
+                string displayName = string.IsNullOrEmpty(actDesc) ? act.actionName : actDesc;
 
-            requirementText.text = $"{reqLabelText.GetLocalizedString()} {displayName} (<color={colorHex}>{currentAmount}/{quest.requiredAmount}</color>)";
+                requirementText.text += $"- {displayName} (<color={colorHex}>{currentAmount}/{act.amount}</color>)\n";
+            }
         }
         else
         {
             requirementText.text = justTalkText.GetLocalizedString();
         }
 
-        // Hiển thị phần thưởng
+        // ==========================================
+        // 2. HIỂN THỊ PHẦN THƯỞNG
+        // ==========================================
         rewardText.text = $"{rewardLabelText.GetLocalizedString()}";
         if (quest.coinReward > 0) rewardText.text += $"- {quest.coinReward}{goldText.GetLocalizedString()}\n";
 
-        // (ItemData sẽ cần được gắn Localization sau nếu m muốn dịch cả tên đồ vật)
-        if (quest.itemReward != null) rewardText.text += $"- {quest.itemRewardAmount}x {quest.itemReward.displayName}";
+        // [ĐÃ SỬA]: Quét qua danh sách các phần thưởng
+        if (quest.itemRewards != null)
+        {
+            foreach (var reward in quest.itemRewards)
+            {
+                if (reward.item != null && reward.amount > 0)
+                {
+                    rewardText.text += $"- {reward.amount}x {reward.item.displayName}\n";
+                }
+            }
+        }
 
+        // Cập nhật trạng thái nút bấm
         QuestStatus status = QuestManager.Instance.GetQuestStatus(quest);
 
         acceptButton.gameObject.SetActive(status == QuestStatus.Available);

@@ -58,7 +58,8 @@ public class TowerCutsceneManager : MonoBehaviour
             PlayerMovement.Instance.isActionLocked = true;
             SetPlayerRenderers(false);
         }
-
+        if (InventoryUI.Instance != null) InventoryUI.Instance.ToggleInGameUI(false);
+        if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ToggleVisibility(false);
         if (PlayerCameraManager.Instance != null && PlayerCameraManager.Instance.cameraInputProvider != null)
         {
             PlayerCameraManager.Instance.cameraInputProvider.enabled = false;
@@ -114,6 +115,8 @@ public class TowerCutsceneManager : MonoBehaviour
             SetPlayerRenderers(true);
         }
 
+        if (InventoryUI.Instance != null) InventoryUI.Instance.ToggleInGameUI(true);
+        if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ToggleVisibility(true);
         if (PlayerCameraManager.Instance != null && PlayerCameraManager.Instance.cameraInputProvider != null)
         {
             PlayerCameraManager.Instance.cameraInputProvider.enabled = true;

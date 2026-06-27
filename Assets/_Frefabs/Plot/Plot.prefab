@@ -124,45 +124,54 @@ MonoBehaviour:
   waterSplashEffect: {fileID: 6793377231561067602}
   textPlantSeed:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8355603614195712
+      m_KeyId: 9459
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   textWater:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8354773473353728
+      m_KeyId: 9460
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   textFertilize:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8354775369179136
+      m_KeyId: 9461
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   textGrowing:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8354800123961344
+      m_KeyId: 9462
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   textHarvest:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8354771531390976
+      m_KeyId: 9463
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  textRemovePlot:
+    m_TableReference:
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
+    m_TableEntryReference:
+      m_KeyId: 9464
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -318,7 +327,7 @@ GameObject:
   - component: {fileID: 7240276525248387095}
   - component: {fileID: 9050930404672949051}
   m_Layer: 7
-  m_Name: Image
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -341,7 +350,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 1}
+  m_SizeDelta: {x: 0.3208, y: 0.4624}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7240276525248387095
 CanvasRenderer:
@@ -371,7 +380,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3044591000743608628, guid: 17c26c066b7bfca40b0158b6ccfeecae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

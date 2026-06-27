@@ -100,6 +100,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae4644d9a61823b468f57da1f90f8664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BusVehicle
+  locInteractText:
+    m_TableReference:
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
+    m_TableEntryReference:
+      m_KeyId: 9417
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   startPoint: {fileID: 0}
   stopPoint: {fileID: 0}
   exitPoint: {fileID: 0}
@@ -119,6 +128,11 @@ MonoBehaviour:
   engineClip: {fileID: 8300000, guid: f349e2bd091cb2b41b2dd90e8d327dfb, type: 3}
   brakeClip: {fileID: 0}
   hornClip: {fileID: 8300000, guid: c4e9c46ee3ab3ae4e9a868e8b0e90497, type: 3}
+  frontOffset: 3
+  rearOffset: 3
+  references:
+    version: 2
+    RefIds: []
 --- !u!54 &580656179694210158
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1029074638991509936}
   - component: {fileID: 2341280060530610323}
   - component: {fileID: 4154826809031563316}
+  - component: {fileID: 3565924956099724708}
   m_Layer: 7
   m_Name: LemonTree
   m_TagString: Untagged
@@ -105,6 +106,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeVisuals
   fruitVisuals: {fileID: 9208161071081425728}
+--- !u!65 &3565924956099724708
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3193710792847570171}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 3, z: 0.5}
+  m_Center: {x: -0.044919193, y: 1.47, z: 0.005101204}
 --- !u!1 &8648125787508580942
 GameObject:
   m_ObjectHideFlags: 0

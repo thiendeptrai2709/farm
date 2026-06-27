@@ -12,6 +12,7 @@ public class FishingUIManager : MonoBehaviour
     public Sprite upSprite, downSprite, leftSprite, rightSprite;
     public Color normalColor = Color.white;
     public Color successColor = Color.green;
+    public Color invertedColor = Color.red;
 
     [Header("Giao diện UI Nấc (Tier Panel)")]
     public GameObject tierPanel;
@@ -65,7 +66,7 @@ public class FishingUIManager : MonoBehaviour
         return arrowSlots != null ? arrowSlots.Length : 0;
     }
 
-    public void SetupArrows(int sequenceLength, List<FishingZone.ArrowKey> targetSequence)
+    public void SetupArrows(int sequenceLength, List<FishingZone.ArrowKey> targetSequence, List<bool> invertedSequence = null)
     {
         if (arrowSlots == null) return;
 
@@ -74,7 +75,17 @@ public class FishingUIManager : MonoBehaviour
             if (i < sequenceLength && i < targetSequence.Count)
             {
                 arrowSlots[i].gameObject.SetActive(true);
-                arrowSlots[i].color = normalColor;
+
+                // Nếu có danh sách đảo ngược và nút ở vị trí này bị đánh dấu True -> Tô màu đỏ
+                if (invertedSequence != null && i < invertedSequence.Count && invertedSequence[i])
+                {
+                    arrowSlots[i].color = invertedColor;
+                }
+                else
+                {
+                    arrowSlots[i].color = normalColor;
+                }
+
                 arrowSlots[i].sprite = GetSpriteForArrow(targetSequence[i]);
             }
             else

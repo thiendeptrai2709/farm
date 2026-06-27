@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 
 public class TrashUIManager : MonoBehaviour
 {
     public static TrashUIManager Instance;
+
+    public LocalizedString locWarningText;
 
     [Header("UI Components")]
     public GameObject confirmPanel; // Kéo khối Panel (cái khung nền xám) vào đây
@@ -30,9 +33,12 @@ public class TrashUIManager : MonoBehaviour
         targetIndex = index;
         itemToTrash = item;
 
-        // Cập nhật thông tin lên bảng
         if (itemIcon != null) itemIcon.sprite = item.icon;
-        if (warningText != null) warningText.text = $"Do you want to destroy:\n<color=yellow>{item.displayName}</color>?";
+        if (warningText != null)
+        {
+            string prefixTxt = locWarningText.IsEmpty ? "Do you want to destroy:\n" : locWarningText.GetLocalizedString();
+            warningText.text = $"{prefixTxt}<color=yellow>{item.displayName}</color>?";
+        }
 
         confirmPanel.SetActive(true);
     }

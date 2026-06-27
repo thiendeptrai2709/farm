@@ -62,6 +62,13 @@ public class TimeSystem : MonoBehaviour
         }
         TreePit[] allTrees = FindObjectsByType<TreePit>(FindObjectsSortMode.None);
         foreach (TreePit tree in allTrees) tree.FastForwardTime(realSecondsToFastForward);
+
+        if (PlayerStamina.Instance != null)
+        {
+            PlayerStamina.Instance.RestoreStaminaByHours(inGameHoursSkipped);
+        }
+
+
         Debug.Log($"Đã ngủ dậy! Trôi qua {inGameHoursSkipped} giờ in-game. Ép cây trồng cộng thêm {realSecondsToFastForward} giây thật.");
     }
     public void AddBusTravelTime(float hoursToAdd = 1f)

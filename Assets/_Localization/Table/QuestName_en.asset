@@ -1,0 +1,257 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: QuestName_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: a2eb61f0f8a3b3148a413dfa824ffce2, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 83
+    m_Localized: The Journey Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84
+    m_Localized: Father's Tools
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85
+    m_Localized: The First Sowing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86
+    m_Localized: Garden Cleanup
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87
+    m_Localized: The First Harvest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 88
+    m_Localized: Planting Fruit Trees
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89
+    m_Localized: Apples and Wood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90
+    m_Localized: Garden Expansion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91
+    m_Localized: Your First Sale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92
+    m_Localized: Unlocking the Well
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93
+    m_Localized: Gone Fishing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 94
+    m_Localized: The Animal Barn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 99
+    m_Localized: Feeding Trough and Fences
+    m_Metadata:
+      m_Items: []
+  - m_Id: 106
+    m_Localized: The Missing Child
+    m_Metadata:
+      m_Items: []
+  - m_Id: 200
+    m_Localized: Arthur said I should take the bus to reach the farm my father left
+      for me.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201
+    m_Localized: Go to the bus stop in town.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202
+    m_Localized: I need to find the old tools in the storage shed that my father,
+      Richard, left behind.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 203
+    m_Localized: Search the chest in the shed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 204
+    m_Localized: I should start by tilling the soil and planting the wheat seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205
+    m_Localized: Plant 10 wheat seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206
+    m_Localized: The garden is a mess. I need to clear the scattered branches and
+      rocks with my bare hands.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207
+    m_Localized: Clear branches and rocks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208
+    m_Localized: I need to patiently wait for the wheat to grow, then harvest it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209
+    m_Localized: Harvest the wheat.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210
+    m_Localized: Arthur gave me some fruit tree seeds. I should plant them in the
+      garden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211
+    m_Localized: Plant fruit tree seeds.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212
+    m_Localized: I need to wait for the apple tree to mature to harvest the fruit,
+      and use the axe to chop trees for wood.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213
+    m_Localized: Harvest apples and collect wood.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 214
+    m_Localized: With the wood and stone gathered, I can go to the Workshop to upgrade
+      and expand the garden space.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 215
+    m_Localized: Expand the garden at the Workshop.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216
+    m_Localized: I can sell my harvested crops to the merchant to earn some money.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 217
+    m_Localized: Sell items to the merchant.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218
+    m_Localized: I need to unlock the old well to have a water source for my watering
+      can. Watering helps crops grow faster.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219
+    m_Localized: Unlock the old well.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220
+    m_Localized: Arthur gave me a fishing rod. I should try my luck and catch some
+      fish.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 221
+    m_Localized: Catch 5 fish.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 222
+    m_Localized: It's time to prepare for livestock. I need to unlock the animal
+      barn.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223
+    m_Localized: Unlock the animal barn.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 224
+    m_Localized: To protect the crops, I must build a feeding trough and fences for
+      the animals before they arrive.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225
+    m_Localized: Build a feeding trough and fences.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 230
+    m_Localized: A Warm Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231
+    m_Localized: A homeless man in the forest needs some sturdy forest wood to stay
+      warm.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 232
+    m_Localized: Gather and give forest wood to the homeless man.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237
+    m_Localized: The Forest Catch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 238
+    m_Localized: Catch some unique fish from the forest lake to share a warm meal
+      with the homeless man.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 239
+    m_Localized: Catch and give forest fish to the homeless man.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 244
+    m_Localized: Fresh Radishes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245
+    m_Localized: Clara needs some fresh radishes from my farm to make her special
+      stew.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246
+    m_Localized: Harvest and give radishes to Clara.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251
+    m_Localized: Baked Potatoes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252
+    m_Localized: Clara wants some potatoes from my farm to make baked potatoes for
+      dinner.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253
+    m_Localized: Harvest and give potatoes to Clara.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258
+    m_Localized: Sweet Mangoes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259
+    m_Localized: Clara wants some ripe mangoes from my farm for dessert.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 260
+    m_Localized: Harvest and give mangoes to Clara.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

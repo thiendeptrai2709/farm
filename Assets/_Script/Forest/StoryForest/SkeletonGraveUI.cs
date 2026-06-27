@@ -2,9 +2,13 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization; // [THÊM MỚI]
 
 public class SkeletonGraveUI : MonoBehaviour
 {
+
+    public LocalizedString locQuestText;
+
     [Header("UI Elements")]
     [Tooltip("Kéo khối Panel TỔNG (chứa cả 2 cái dưới) vào đây")]
     public GameObject panelUI;
@@ -119,7 +123,9 @@ public class SkeletonGraveUI : MonoBehaviour
                 else
                 {
                     if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-                    descriptionText.text = questText;
+
+                    // Bốc chữ từ bảng dịch ra hiển thị luôn (trường hợp đã nhận quest rồi)
+                    descriptionText.text = locQuestText.IsEmpty ? questText : locQuestText.GetLocalizedString();
 
                     if (textPanel != null) textPanel.SetActive(true);
                     if (listPanel != null) listPanel.SetActive(true);
@@ -141,7 +147,10 @@ public class SkeletonGraveUI : MonoBehaviour
 
         descriptionText.text = "";
 
-        foreach (char c in questText.ToCharArray())
+        // Bốc chữ từ bảng dịch ra để cho chạy hiệu ứng gõ phím (trường hợp mới nhận quest)
+        string finalQuestText = locQuestText.IsEmpty ? questText : locQuestText.GetLocalizedString();
+
+        foreach (char c in finalQuestText.ToCharArray())
         {
             descriptionText.text += c;
             yield return new WaitForSeconds(typeSpeed);

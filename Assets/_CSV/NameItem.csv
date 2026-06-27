@@ -1,0 +1,171 @@
+Key,Id,English(en),Vietnamese(vi)
+building_animal_barn,1001,Animal Barn,Chuồng gia súc
+building_big_chest,1002,Big Chest,Rương lớn
+building_chest_medium,1003,Medium Chest,Rương vừa
+building_chicken_coop,1004,Animal Barn Upgrade,Nâng cấp chuồng gia súc
+building_feed_trough,1005,Feed Trough,Máng ăn
+building_fence_end,1006,Fence End,Đầu hàng rào
+building_fence_gate,1007,Fence Gate,Cổng rào
+building_fence_mid,1008,Fence Middle,Thân hàng rào
+building_upgrade_farm_lv1,1009,Farm Upgrade,Nâng cấp nông trại
+building_well,1010,Well,Giếng nước
+entity_chicken,1011,Chicken,Gà
+item_egg,1012,Egg,Trứng
+fruit_apple,2001,Apple,Táo
+fruit_avocado,2002,Avocado,Bơ
+fruit_carrot,2003,Carrot,Cà rốt
+fruit_wheat,2004,Wheat,Lúa mì
+fruit_garlic,2005,Garlic,Tỏi
+fruit_lemon,2006,Lemon,Chanh
+fruit_mango,2007,Mango,Xoài
+fruit_onion,2008,Onion,Hành tây
+fruit_orange,2009,Orange,Cam
+fruit_pear,2010,Pear,Lê
+fruit_pineapple,2011,Pineapple,Dứa
+fruit_potato,2012,Potato,Khoai tây
+fruit_pumpkin,2013,Pumpkin,Bí ngô
+fruit_radish,2014,Radish,Củ cải
+fruit_tomato,2015,Tomato,Cà chua
+fruit_watermelon,2016,Watermelon,Dưa hấu
+seed_apple,4001,Apple Seed,Hạt giống Táo
+seed_avocado,4002,Avocado Seed,Hạt giống Bơ
+seed_carrot,4003,Carrot Seed,Hạt giống Cà rốt
+seed_garlic,4004,Garlic Seed,Hạt giống Tỏi
+seed_lemon,4005,Lemon Seed,Hạt giống Chanh
+seed_mango,4006,Mango Seed,Hạt giống Xoài
+seed_onion,4007,Onion Seed,Hạt giống Hành tây
+seed_orange,4008,Orange Seed,Hạt giống Cam
+seed_pear,4009,Pear Seed,Hạt giống Lê
+seed_pineapple,4010,Pineapple Seed,Hạt giống Dứa
+seed_potato,4011,Potato Seed,Hạt giống Khoai tây
+seed_pumpkin,4012,Pumpkin Seed,Hạt giống Bí ngô
+seed_radish,4013,Radish Seed,Hạt giống Củ cải
+seed_tomato,4014,Tomato Seed,Hạt giống Cà chua
+seed_watermelon,4015,Watermelon Seed,Hạt giống Dưa hấu
+seed_wheat,4016,Wheat Seed,Hạt giống Lúa mì
+material_forest_wood,5001,Forest Wood,Gỗ rừng
+material_rock,5002,Rock,Đá
+material_wood,5003,Wood,Gỗ
+speed_fertilizer,5004,Fertilizer,Phân bón
+speed_watering_can,5005,Watering Can,Bình tưới nước
+tool_axe_1,5006,Axe 1,Rìu 1
+tool_axe,5007,Axe,Rìu
+tool_fishing_pole,5008,Fishing Pole,Cần câu
+tool_hammer_1,5009,Hammer 1,Búa 1
+tool_hammer,5010,Hammer,Búa
+tool_plow_1,5011,Plow 1,Cày 1
+tool_plow,5012,Plow,Cày
+currency_money,5013,Money,Tiền
+item_hat,6001,Lost Hat,Chiếc mũ bị bỏ lại
+ui_load_game,9001,Load Game,Tải bản lưu
+ui_screen,9201,Screen,Màn hình
+merchant_wallet,9301,Merchant Wallet,Ví thương nhân
+in_stock,9302,In Stock,Trong kho
+total,9303,Total,Tổng
+total_earnings,9304,Total Earnings,Tổng thu nhập
+inventory_items,9305,Inventory,Túi đồ
+title_chest,9306,Chest,Rương
+action_sit,9307,[E] Take a seat,[E] Ngồi xuống
+ui_play,9401,Play,Chơi
+ui_settings,9402,Settings,Cài đặt
+ui_quit,9403,Quit,Thoát
+ui_audio,9404,Audio,Âm thanh
+ui_graphics,9405,Graphics,Đồ họa
+ui_control,9406,Control,Điều khiển
+ui_music,9407,Music,Nhạc
+ui_sensitivity,9408,Sensitivity,Độ nhạy
+ui_invert,9409,Invert,Đảo ngược
+ui_language,9410,Language,Ngôn ngữ
+ui_press_any_key,9411,Press any key to start,Nhấn phím bất kỳ để bắt đầu
+ui_day,9412,Day,Ngày
+action_talk,9413,[E] Talk,[E] Nói chuyện
+action_buy,9414,Buy,Mua
+action_sell,9415,Sell,Bán
+action_confirm,9416,Confirm,Xác nhận
+action_travel,9417,[E] Travel,[E] Lên xe
+ui_shop,9418,Shop,Cửa hàng
+ui_quest,9419,Quest,Nhiệm vụ
+ui_finish,9420,Finish,Kết thúc
+action_accept,9421,Accept,Chấp nhận
+action_complete,9422,Complete,Hoàn thành
+ui_save_game,9423,Save Game,Lưu game
+ui_menu,9424,Menu,Menu
+action_unstuck,9426,Unstuck,Thoát kẹt
+ui_resume,9427,Resume,Tiếp tục
+action_cancel,9428,Cancel,Hủy
+ui_empty_journal,9429,No quests available,Bạn không có nhiệm vụ nào
+ui_journal_header,9430,--- ACTIVE QUESTS ---,--- NHIỆM VỤ ĐANG LÀM ---
+ui_progress_label,9431,Progress,Tiến độ
+ui_requirement,9432,Requirement:,Yêu cầu:
+ui_rewards,9433,Rewards:,Phần thưởng:
+ui_gold,9434,Gold,Vàng
+ui_just_talk,9435,Just talk,Chỉ cần nói chuyện
+ui_exhausted,9436,Exhausted,Kiệt sức
+ui_not_enough,9437,Not enough,Không đủ
+ui_drop_warning,9438,Are you sure you want to drop this item?,Bạn có chắc muốn vứt bỏ vật phẩm này?
+ui_placing_hint,9439,Press to place,Nhấn để đặt
+ui_open_menu_hint,9440,[B] Open menu,[B] Mở menu
+action_bus_schedule,9441,[E] View Bus Schedule,[E] Xem lịch trình Xe Bus
+action_open_chest,9442,[E] Open chest,[E] Mở rương
+action_open_bed,9443,[E] Rest in bed,[E] Nghỉ ngơi trên giường
+action_open_workshop,9444,[E] Open workshop,[E] Mở xưởng
+ui_interact_need_rod,9445,Fishing Area (Needs Rod),Khu vực Câu cá (Cần cầm Cần Câu)
+ui_cast_rod,9446,[E] Cast line,[E] Quăng cần
+ui_cancel_fishing,9447,[E] Stop fishing,[E] Hủy câu
+ui_round,9448,ROUND,HIỆP
+ui_prepare_round,9449,Prepare round,Chuẩn bị hiệp
+ui_inventory_full,9450,Inventory full,Túi đồ đã đầy
+ui_till_soil,9451,[E] Till soil,[E] Xới đất
+ui_plant,9452,[E] Plant seed,[E] Gieo hạt
+ui_market_notice,9454,[E] View Market Notice,[E] Xem Thông Báo Chợ
+ui_need_food,9455,"Bear is sleeping, feed it something...","Gấu đang ngủ, hãy cầm gì đó cho nó ăn..."
+ui_wrong_food,9456,The bear cannot eat this...,Món này gấu không ăn được...
+ui_feed_bear,9457,[E] Feed bear,[E] Cho gấu ăn
+ui_hours,9458,Hours,Giờ
+ui_plant_seed,9459,"[E] Plant seed","[E] Gieo hạt"
+ui_water,9460,"[E] Water","[E] Tưới nước"
+ui_fertilize,9461,"[E] Fertilize","[E] Bón phân"
+ui_growing,9462,"Growing...","Đang phát triển..."
+ui_harvest,9463,"[E] Harvest","[E] Thu hoạch"
+ui_remove_plot,9464,"[E] Remove plot","[E] Xóa ô đất"
+ui_chop_sapling,9465,"[E] Chop sapling","[E] Chặt cây con"
+ui_chop_tree,9466,"[E] Chop tree","[E] Chặt cây"
+ui_harvest_tree,9467,"[E] Harvest","[E] Thu hoạch"
+ui_water_tree,9468,"[E] Water","[E] Tưới nước"
+ui_fertilize_tree,9469,"[E] Fertilize","[E] Bón phân"
+ui_growing,9470,"Growing...","Đang phát triển..."
+ui_regrowing,9471,"Regrowing...","Đang tái sinh..."
+ui_feeding_trough,9472,"Feeding trough","Máng ăn"
+ui_open_feeding_trough,9473,"[E] Open feeding trough","[E] Mở máng ăn"
+ui_plant_no_key,9474,"Plant seed","Gieo hạt"
+ui_price,9475,"Price","Giá"
+ui_level,9476,"Level","Cấp"
+ui_unlock,9477,"Unlock","Mở khóa"
+ui_spawning,9478,"Spawning...","Đang xuất hiện..."
+ui_barn_full,9479,"Barn is full","Chuồng đã đầy"
+ui_open_buy_panel,9480,"[E] Buy animals","[E] Mua thú"
+ui_pen_capacity,9481,"Capacity:","Sức chứa:"
+ui_well_full,9482,"Watering can is full!","Bình đã đầy nước!"
+ui_well_refill,9483,"[E] Refill Water","[E] Múc Nước"
+ui_well_need_can,9484,"Water Well (Requires Watering Can)","Giếng Nước (Cần cầm Bình Tưới)"
+ui_need_hammer,9485,"Requires Hammer","Yêu cầu cầm búa"
+ui_construct,9486,"Construct","Thi công"
+ui_construct_e,9487,"[E] Construct","[E] Thi công"
+ui_market_notification,9488,"Market Notification","Thông báo chợ"
+ui_sleep_panel_title,9490,"Sleep Time Settings","Cài đặt thời gian ngủ"
+ui_bus_panel_title,9492,"Bus Station","Trạm xe bus"
+ui_yes,9493,"Yes","Có"
+ui_no,9494,"No","Không"
+quest_skeleton_dialogue,9495,"Who dares to disturb my slumber? Find my scattered bones in this forest...","Kẻ nào dám đánh thức giấc ngủ của ta? Hãy tìm lại các mảnh xương đang lưu lạc trong khu rừng này..."
+ui_tooltip_durability,9496,"Durability","Độ bền"
+ui_tooltip_grow_time,9497,"Grow time","Thời gian mọc"
+ui_tooltip_days,9498,"days","ngày"
+ui_tooltip_durability,9496,"Durability","Độ bền"
+ui_tooltip_grow_time,9497,"Grow time","Thời gian mọc"
+ui_tooltip_days,9498,"days","ngày"
+ui_tooltip_yields_continuously,9499,"Yields fruit continuously","Thu hoạch liên tục"
+ui_tooltip_multi_harvest,9500,"Multi-harvest crop","Thu hoạch nhiều lần"
+ui_tooltip_single_harvest,9501,"Single harvest","Thu hoạch một lần"
+ui_tooltip_restore_hunger,9502,"Restores Hunger","Phục hồi Độ đói"
+ui_tooltip_restore_thirst,9503,"Restores Thirst","Phục hồi Độ khát"
+ui_tooltip_restore_health,9504,"Restores Health","Phục hồi Máu"

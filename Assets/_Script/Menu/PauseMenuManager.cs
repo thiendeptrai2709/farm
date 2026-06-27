@@ -78,10 +78,6 @@ public class PauseMenuManager : MonoBehaviour
         if (InventoryManager.Instance != null && InventoryManager.Instance.currentOpenChest != null)
             InventoryManager.Instance.CloseChest();
 
-        // Đóng Balo cá nhân (Tên file UI của bác có thể là InventoryUI, hãy kiểm tra lại cho chuẩn)
-        // if (InventoryUI.Instance != null && InventoryUI.Instance.IsOpen()) 
-        //     InventoryUI.Instance.CloseUI();
-
         // Đóng UI Luống Đất
         if (FarmPlotUIManager.Instance != null && FarmPlotUIManager.Instance.IsOpen())
             FarmPlotUIManager.Instance.ClosePlotUI();
@@ -150,30 +146,15 @@ public class PauseMenuManager : MonoBehaviour
 
     public void ReturnToMenu()
     {
-        if (!hasSaved)
-        {
-            isAttemptingToQuit = false;
-            unsavedWarningPanel.SetActive(true);
-        }
-        else
-        {
-            ExecuteReturnToMenu();
-        }
+        isAttemptingToQuit = false;
+        unsavedWarningPanel.SetActive(true);
     }
 
     public void QuitGame()
     {
-        if (!hasSaved)
-        {
-            isAttemptingToQuit = true;
-            unsavedWarningPanel.SetActive(true);
-        }
-        else
-        {
-            ExecuteQuitGame();
-        }
+        isAttemptingToQuit = true;
+        unsavedWarningPanel.SetActive(true);
     }
-
     public void ConfirmSaveAndExit()
     {
         SaveGame();

@@ -27,12 +27,10 @@ public class PlayerAudio : MonoBehaviour
 
     private void Update()
     {
-        // 1. ĐIỀU KIỆN DỪNG: 
-        // - Nếu bị khóa hành động (isActionLocked)
-        // - Hoặc không bấm phím di chuyển (MoveInput.magnitude gần bằng 0)
+        
         if (playerMovement.isActionLocked || inputHandler.MoveInput.magnitude < 0.1f)
         {
-            stepTimer = 0f; // Trả đồng hồ về 0 chờ lần di chuyển tiếp theo
+            stepTimer = 0.15f;
             return;
         }
 
@@ -69,10 +67,10 @@ public class PlayerAudio : MonoBehaviour
 
     private void PlayFootstepSFX()
     {
-        // Gắn vào Timer rồi thì tiếng kêu mượt 100%, không cần phải viết thêm logic Cooldown chống dội âm nữa
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySFX("Footstep");
+            string sfxName = GetSurfaceType();
+            AudioManager.Instance.PlaySFX(sfxName);
         }
     }
 
@@ -83,5 +81,58 @@ public class PlayerAudio : MonoBehaviour
         {
             AudioManager.Instance.PlaySFX("Jump");
         }
+    }
+    private string GetSurfaceType()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 1f))
+        {
+            Terrain terrain = hit.collider.GetComponent<Terrain>();
+            if (terrain != null)
+            {
+                int texIndex = GetDominantTerrainTexture(terrain, hit.point);
+
+                // Khớp đúng với Layer Palette trong hình của m:
+                if (texIndex == 0) return "Footstep_Grass"; // Index 0: Lớp màu xanh lá (Mặt đất)
+                if (texIndex == 1) return "Footstep_Sand";  // Index 1: Lớp màu vàng (Cát)
+
+                return "Footstep_Grass"; // Mặc định trả về tiếng mặt đất nếu có lỗi
+            }
+            else
+            {
+                if (hit.collider.CompareTag("Wood")) return "Footstep_Wood";
+                if (hit.collider.CompareTag("Stone")) return "Footstep_Stone";
+            }
+        }
+
+        return "Footstep_Grass";
+    }
+    private int GetDominantTerrainTexture(Terrain terrain, Vector3 worldPos)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        Vector3 terrainPos = terrain.transform.position;
+
+        int mapX = Mathf.RoundToInt(((worldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
+        int mapZ = Mathf.RoundToInt(((worldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
+
+        if (mapX < 0 || mapZ < 0 || mapX >= terrainData.alphamapWidth || mapZ >= terrainData.alphamapHeight)
+            return 0;
+
+        float[,,] splatmapData = terrainData.GetAlphamaps(mapX, mapZ, 1, 1);
+
+        float maxMix = 0;
+        int maxIndex = 0;
+
+        for (int i = 0; i < splatmapData.GetUpperBound(2) + 1; i++)
+        {
+            if (splatmapData[0, 0, i] > maxMix)
+            {
+                maxIndex = i;
+                maxMix = splatmapData[0, 0, i];
+            }
+        }
+
+        return maxIndex;
     }
 }

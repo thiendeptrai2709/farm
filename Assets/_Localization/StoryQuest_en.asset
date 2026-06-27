@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: StoryQuest_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 1401744f5dbd7ac4fa86402eb4d68c19, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 107
+    m_Localized: You found his hat in the forest? Oh no... this means he really went
+      in there.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 108
+    m_Localized: Thank you for finding this trace. We need to figure out where he
+      went next.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 229
+    m_Localized: Excellent wood! You are much more capable than you look. Thanks,
+      kid, this fire will save my life tonight.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 228
+    m_Localized: Did you manage to get that forest wood? I'm really counting on you
+      now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 227
+    m_Localized: Since you're here and clearly capable, could you do me a favor?
+      It gets freezing at night. Can you chop some sturdy forest wood for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226
+    m_Localized: Oh, it's you... I didn't expect you to actually make it into the
+      forest. I suppose I was a bit too harsh before.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 105
+    m_Localized: Please head to the forest and look for him. Just any clue would
+      help.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 104
+    m_Localized: Could you go to the forest and see if there are any traces of him?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 103
+    m_Localized: He kept talking about the forest yesterday. I have a bad feeling
+      about this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 102
+    m_Localized: Please help me! My child has been missing since this morning, and
+      I can't find him anywhere.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 233
+    m_Localized: Now that the fire is burning nicely, my stomach is starting to complain.
+      The stream deeper in this forest holds some very special fish.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234
+    m_Localized: With your skills, do you think you could catch a few of those forest
+      fish for a decent meal?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 235
+    m_Localized: The fish in that lake are quite crafty. Take your time, I'll keep
+      the fire ready.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236
+    m_Localized: Look at the size of these! Roasted over forest wood, this is going
+      to be the best meal I've had in months. Thank you.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

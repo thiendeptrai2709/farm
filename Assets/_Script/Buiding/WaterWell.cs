@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
-
+using UnityEngine.Localization; 
 public class WaterWell : MonoBehaviour, IInteractable
 {
     [Header("Hiệu ứng múc nước")]
-    public ParticleSystem refillSplashEffect; // Kéo thả hiệu ứng nước vào đây (nếu có)
+    public ParticleSystem refillSplashEffect;
+
+    [Header("Đa Ngôn Ngữ")]
+    public LocalizedString locWellFull;
+    public LocalizedString locWellRefill;
+    public LocalizedString locWellNeedCan;
 
     public string GetInteractText()
     {
@@ -17,18 +22,17 @@ public class WaterWell : MonoBehaviour, IInteractable
                 // Nếu bình đã đầy thì báo đầy
                 if (slot.currentDurability >= tool.durability)
                 {
-                    return "Bình đã đầy nước!";
+                    return locWellFull.IsEmpty ? "Bình đã đầy nước!" : locWellFull.GetLocalizedString();
                 }
 
                 // Nếu bình vơi thì hiện nút múc
-                return "[E] Múc Nước";
+                return locWellRefill.IsEmpty ? "[E] Múc Nước" : locWellRefill.GetLocalizedString();
             }
         }
 
         // Nếu cất tay không hoặc cầm Rìu/Cuốc thì hiện cái này
-        return "Giếng Nước (Cần cầm Bình Tưới)";
+        return locWellNeedCan.IsEmpty ? "Giếng Nước (Cần cầm Bình Tưới)" : locWellNeedCan.GetLocalizedString();
     }
-
     public void Interact()
     {
         // Chặn cổng 1: Tay không thì cút

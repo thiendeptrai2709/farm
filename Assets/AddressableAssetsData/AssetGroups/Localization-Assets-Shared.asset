@@ -15,13 +15,33 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-Shared
   m_GUID: 491c77e035defa6458da64b8cdad6bd4
   m_SerializeEntries:
+  - m_GUID: 1401744f5dbd7ac4fa86402eb4d68c19
+    m_Address: Assets/_Localization/StoryQuest Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8abfb9f671922ad448ec1b2b41583619
     m_Address: Assets/_Localization/Table/FishName Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2eb61f0f8a3b3148a413dfa824ffce2
+    m_Address: Assets/_Localization/Table/QuestName Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b128b4439333ee54ea4f487b9b6033f3
     m_Address: Assets/_Localization/Table/UIText Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e2cb65efd6a4e7849b42de1cb27264d9
+    m_Address: Assets/_Localization/Table/NameItem Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fdf1f23efff172c4fbff78f565d559e3
+    m_Address: Assets/_Localization/Table/NPC Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

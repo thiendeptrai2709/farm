@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimalData
   localizedAnimalName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8530068331487232
+      m_KeyId: 1011
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
   icon: {fileID: 21300000, guid: 8d40175e55e255649831b48ef9c309ec, type: 3}
-  spawnTime: 10
+  spawnTime: 1440
   animalPrefab: {fileID: 8240478364608380899, guid: 096676b7b9feb6b4a8d86d7b1b48a2db, type: 3}
   references:
     version: 2

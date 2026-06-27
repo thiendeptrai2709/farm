@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Localization;
 
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(Rigidbody))]
 public class BusVehicle : MonoBehaviour, IInteractable
 {
+    public LocalizedString locInteractText;
+
     [Header("Cài đặt Di chuyển")]
     public Transform startPoint;
     public Transform stopPoint;
@@ -205,7 +208,11 @@ public class BusVehicle : MonoBehaviour, IInteractable
     public string GetInteractText()
     {
         if (currentState != BusState.AtStop) return "";
-        return $"[E] Lên xe đi tới {targetScene}";
+
+        // Bốc chữ từ bảng dịch, nếu quên chưa gài key thì dùng chữ gốc tiếng Việt
+        string prefixText = locInteractText.IsEmpty ? "[E] Lên xe đi tới" : locInteractText.GetLocalizedString();
+
+        return $"{prefixText} {targetScene}";
     }
 
     public void Interact()
@@ -217,7 +224,7 @@ public class BusVehicle : MonoBehaviour, IInteractable
 
             if (QuestManager.Instance != null && targetScene == "Farm")
             {
-                QuestManager.Instance.ReportAction("Travel_To_Farm");
+                QuestManager.Instance.ReportAction("Travel_To_Farm", 1);
             }
 
             LoadingManager.Instance.LoadScene(targetScene, targetSpawnID);

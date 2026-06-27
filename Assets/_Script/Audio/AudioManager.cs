@@ -93,10 +93,28 @@ public class AudioManager : MonoBehaviour
     public void PlaySFX(string name)
     {
         if (isMuted) return;
+
+        // Cố gắng tìm tên âm thanh trong từ điển
         if (sfxDictionary.TryGetValue(name, out AudioData data))
         {
+            if (data.clip == null)
+            {
+                Debug.LogError($"[AudioManager] LỖI: Cục '{name}' có trong danh sách nhưng bị TRỐNG file âm thanh (AudioClip). Kéo file mp3 vào đi!");
+                return;
+            }
+
+            if (data.volume == 0 || sfxVolume == 0)
+            {
+                Debug.LogWarning($"[AudioManager] CẢNH BÁO: Cục '{name}' đang bị set Volume = 0 nên không nghe thấy gì đâu!");
+            }
+
             sfxSource.pitch = data.pitch * Random.Range(0.9f, 1.1f);
             sfxSource.PlayOneShot(data.clip, data.volume * sfxVolume);
+        }
+        else
+        {
+            // Nếu không tìm thấy, réo tên lên Console ngay lập tức
+            Debug.LogError($"[AudioManager] TỊT NGÒI! Không tìm thấy âm thanh nào tên là '{name}' trong kho sfxData. Hãy check lại ô Sound Name trong Inspector!");
         }
     }
 
@@ -179,5 +197,25 @@ public class AudioManager : MonoBehaviour
     public void StopMusic()
     {
         if (musicSource != null && musicSource.isPlaying) musicSource.Stop();
+    }
+    public AudioSource Play3DLoopSFX(string name, Transform targetTransform)
+    {
+        if (isMuted) return null;
+        if (sfxDictionary.TryGetValue(name, out AudioData data))
+        {
+            // Gắn trực tiếp 1 cái AudioSource vào người NPC để nó di chuyển theo và dễ quản lý
+            AudioSource tempSource = targetTransform.gameObject.AddComponent<AudioSource>();
+            tempSource.clip = data.clip;
+            tempSource.volume = data.volume * sfxVolume;
+            tempSource.pitch = data.pitch;
+            tempSource.spatialBlend = 1f; // Bật 3D
+            tempSource.minDistance = 2f;
+            tempSource.maxDistance = 20f;
+            tempSource.rolloffMode = AudioRolloffMode.Linear;
+            tempSource.loop = true; // BẬT LẶP LẠI (LOOP)
+            tempSource.Play();
+            return tempSource; // Trả về cái loa để file NPCVillager cầm lấy mà điều khiển
+        }
+        return null;
     }
 }

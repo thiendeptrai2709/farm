@@ -30,6 +30,7 @@ public class HammerBuildManager : MonoBehaviour
     private BuildingBlueprint blueprintToPlace;
     private GameObject currentHologram;
     private MeshRenderer[] hologramRenderers;
+    private float customYRotation = 0f;
 
     public TextMeshProUGUI buildHintText; 
     public string farmSceneName = "Farm";
@@ -130,6 +131,7 @@ public class HammerBuildManager : MonoBehaviour
 
         blueprintToPlace = blueprint;
         isPlacing = true;
+        customYRotation = 0f;
 
         currentHologram = Instantiate(blueprint.prefabToBuild);
 
@@ -141,23 +143,23 @@ public class HammerBuildManager : MonoBehaviour
 
     private void HandleHologramPlacement()
     {
+        float scroll = Mouse.current.scroll.ReadValue().y;
+        if (scroll > 0) customYRotation += 15f;
+        if (scroll < 0) customYRotation -= 15f;
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
         {
             Vector3 rawPos = hit.point;
 
-            // Đưa vị trí chuột qua bộ lọc Nam Châm. Biến isSnapped sẽ báo true nếu bị hút vào đồ khác.
             bool isSnapped;
             Vector3 snappedPos = ApplyMagneticSnap(rawPos, out isSnapped);
 
             currentHologram.transform.position = snappedPos;
 
-            // Nếu KHÔNG bị hút nam châm thì mới cho phép lăn chuột xoay góc tự do 15 độ
-            // Nếu BỊ HÚT thì nó phải nằm thẳng hàng với món đồ cũ, cấm xoay!
             if (!isSnapped)
             {
-                if (Mouse.current.scroll.ReadValue().y > 0) currentHologram.transform.Rotate(0, 15f, 0);
-                if (Mouse.current.scroll.ReadValue().y < 0) currentHologram.transform.Rotate(0, -15f, 0);
+                currentHologram.transform.rotation = Quaternion.Euler(0, customYRotation, 0);
             }
 
             Vector3 playerPosXZ = new Vector3(transform.position.x, 0, transform.position.z);
@@ -174,7 +176,20 @@ public class HammerBuildManager : MonoBehaviour
 
             if (inputHandler.ClickTriggered && isValid)
             {
-                ConfirmPlacement(currentHologram.transform.position, currentHologram.transform.rotation);
+                // [CHẶN THỂ LỰC TRƯỚC KHI XÂY]
+                if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.axeCost)
+                {
+                    // Chức năng: Đẩy việc thông báo sang cho thằng UI Manager lo
+                    if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+                }
+                else
+                {
+                    // Nếu đủ sức, trừ thể lực và bắt đầu đặt đồ
+                    if (PlayerStamina.Instance != null)
+                        PlayerStamina.Instance.ConsumeStamina(PlayerStamina.Instance.axeCost);
+
+                    ConfirmPlacement(currentHologram.transform.position, currentHologram.transform.rotation);
+                }
             }
         }
 
@@ -184,18 +199,65 @@ public class HammerBuildManager : MonoBehaviour
         }
     }
 
-    // ========================================================
-    // CƠ CHẾ NAM CHÂM THÔNG MINH (TỰ ĐO KÍCH THƯỚC)
-    // ========================================================
     private Vector3 ApplyMagneticSnap(Vector3 rawPos, out bool isSnapped)
     {
         isSnapped = false;
 
-        // Bắt buộc đồ vật của bạn phải gắn BoxCollider để tính năng này đo được kích thước!
+        // Chức năng: Kiểm tra ưu tiên hít bằng hệ thống Socket_A và Socket_B
+        Transform holoSocketA = currentHologram.transform.Find("Socket_A");
+        Transform holoSocketB = currentHologram.transform.Find("Socket_B");
+
+        if (holoSocketA != null && holoSocketB != null)
+        {
+            Collider[] nearbyCols = Physics.OverlapSphere(rawPos, magneticSnapRange, obstacleLayer);
+            Transform bestTargetSocket = null;
+            float minSocketDist = float.MaxValue;
+
+            foreach (var col in nearbyCols)
+            {
+                if (col.gameObject == currentHologram) continue;
+
+                Transform sA = col.transform.Find("Socket_A");
+                Transform sB = col.transform.Find("Socket_B");
+
+                if (sA == null && col.transform.parent != null)
+                {
+                    sA = col.transform.parent.Find("Socket_A");
+                    sB = col.transform.parent.Find("Socket_B");
+                }
+
+                if (sA != null)
+                {
+                    float dA = Vector3.Distance(rawPos, sA.position);
+                    if (dA < minSocketDist) { minSocketDist = dA; bestTargetSocket = sA; }
+                }
+                if (sB != null)
+                {
+                    float dB = Vector3.Distance(rawPos, sB.position);
+                    if (dB < minSocketDist) { minSocketDist = dB; bestTargetSocket = sB; }
+                }
+            }
+
+            if (bestTargetSocket != null)
+            {
+                // Chức năng: Ghép nối ngược đầu Socket
+                Transform holoMatchSocket = (bestTargetSocket.name == "Socket_A") ? holoSocketB : holoSocketA;
+
+                currentHologram.transform.rotation = bestTargetSocket.parent.rotation * Quaternion.Euler(0, customYRotation, 0);
+
+                Vector3 worldOffset = currentHologram.transform.rotation * holoMatchSocket.localPosition;
+                Vector3 finalPos = bestTargetSocket.position - worldOffset;
+
+                finalPos.y = rawPos.y;
+                isSnapped = true;
+                return finalPos;
+            }
+        }
+
+        // Chức năng: Dự phòng hít bằng BoxCollider cũ nếu vật thể không có Socket
         BoxCollider holoBox = currentHologram.GetComponentInChildren<BoxCollider>();
         if (holoBox == null) return rawPos;
 
-        // Quét tìm đồ vật xung quanh trong bán kính 3 mét
         Collider[] nearbyObstacles = Physics.OverlapSphere(rawPos, magneticSnapRange, obstacleLayer);
         BoxCollider closestObj = null;
         float minDistance = float.MaxValue;
@@ -205,7 +267,7 @@ public class HammerBuildManager : MonoBehaviour
             if (currentHologram != null && col.gameObject == currentHologram) continue;
 
             BoxCollider box = col as BoxCollider;
-            if (box == null) continue; // Chỉ hút những đồ có BoxCollider
+            if (box == null) continue;
 
             float dist = Vector3.Distance(rawPos, col.transform.position);
             if (dist < minDistance)
@@ -215,17 +277,14 @@ public class HammerBuildManager : MonoBehaviour
             }
         }
 
-        // Đã tìm thấy một món đồ cũ ở gần
         if (closestObj != null)
         {
-            // Lấy KÍCH THƯỚC THẬT (chiều dài, rộng) của cả 2 món đồ
             Vector3 anchorSize = Vector3.Scale(closestObj.size, closestObj.transform.lossyScale);
             Vector3 holoSize = Vector3.Scale(holoBox.size, currentHologram.transform.lossyScale);
 
             Vector3 anchorPos = closestObj.transform.position;
             Vector3 dir = rawPos - anchorPos;
 
-            // Xác định xem chuột đang nằm ở mặt Cạnh Hông (Trục X) hay mặt Trước Sau (Trục Z) của món đồ cũ
             float dotX = Vector3.Dot(dir, closestObj.transform.right);
             float dotZ = Vector3.Dot(dir, closestObj.transform.forward);
 
@@ -233,48 +292,67 @@ public class HammerBuildManager : MonoBehaviour
 
             if (Mathf.Abs(dotX) > Mathf.Abs(dotZ))
             {
-                // Nối vào Cạnh Hông -> Khoảng cách Khít = Nửa thân cục cũ + Nửa thân cục đang cầm
                 float distanceToKhit = (anchorSize.x / 2f) + (holoSize.x / 2f);
                 snappedPos += closestObj.transform.right * Mathf.Sign(dotX) * distanceToKhit;
             }
             else
             {
-                // Nối vào Trước/Sau
                 float distanceToKhit = (anchorSize.z / 2f) + (holoSize.z / 2f);
                 snappedPos += closestObj.transform.forward * Mathf.Sign(dotZ) * distanceToKhit;
             }
 
-            // Ép món đồ đang cầm xoay theo y hệt góc của đồ cũ để nối với nhau tạo thành đường thẳng
-            currentHologram.transform.rotation = closestObj.transform.rotation;
+            currentHologram.transform.rotation = closestObj.transform.rotation * Quaternion.Euler(0, customYRotation, 0);
 
-            snappedPos.y = rawPos.y; // Chốt lại độ cao mặt đất
+            snappedPos.y = rawPos.y;
             isSnapped = true;
             return snappedPos;
         }
 
         return rawPos;
     }
-
-    // ========================================================
-    // KIỂM TRA VA CHẠM THÔNG MINH (TỰ ĐO THEO SIZE MÓN ĐỒ)
-    // ========================================================
     private bool CheckPlacementValid(GameObject hologram)
     {
         BoxCollider box = hologram.GetComponentInChildren<BoxCollider>();
-        if (box == null) return true; // Nếu lỡ quên gắn Collider thì cho đặt tự do
+        if (box == null) return true;
 
-        // Tính kích thước thật
         Vector3 actualSize = Vector3.Scale(box.size, hologram.transform.lossyScale);
-
-        // Thu nhỏ cái Hộp va chạm ảo xuống còn 90%. 
-        // Bắt buộc phải có dòng này để khi 2 món đồ ghép khít vào nhau 100%, cái hộp va chạm không vô tình liếm sang đồ bên cạnh và báo lỗi Đỏ!
         Vector3 collisionBoxSize = actualSize * 0.9f;
-
-        // Lấy đúng tâm của BoxCollider (phòng trường hợp cái tâm lệch so với gốc tọa độ)
         Vector3 center = hologram.transform.TransformPoint(box.center);
 
-        // Trả về True nếu xung quanh không vướng thứ gì
-        return !Physics.CheckBox(center, collisionBoxSize / 2f, hologram.transform.rotation, obstacleLayer);
+        if (Physics.CheckBox(center, collisionBoxSize / 2f, hologram.transform.rotation, obstacleLayer))
+            return false;
+
+        // Chức năng: Ngăn cấm đặt công trình đè lên các cành cây, tảng đá nhặt được
+        Collider[] hits = Physics.OverlapBox(center, collisionBoxSize / 2f, hologram.transform.rotation);
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject == hologram) continue;
+            if (hit.GetComponentInParent<PickupItem>() != null) return false;
+        }
+
+        // Chức năng: Cấm tuyệt đối xây dựng lọt vào vùng Quy Hoạch Kịch Kim của vườn (kể cả phần đất chưa nâng cấp)
+        if (FarmingZone.Instance != null && FarmingZone.Instance.maxFarmBoundary != null)
+        {
+            Bounds maxGardenBounds = FarmingZone.Instance.maxFarmBoundary.bounds;
+
+            Vector3 safeGardenSize = new Vector3(
+                Mathf.Max(0f, maxGardenBounds.size.x - 0.1f),
+                1000f,
+                Mathf.Max(0f, maxGardenBounds.size.z - 0.1f)
+            );
+
+            Bounds forbiddenZoningBox = new Bounds(
+                new Vector3(maxGardenBounds.center.x, 0f, maxGardenBounds.center.z),
+                safeGardenSize
+            );
+
+            if (forbiddenZoningBox.Intersects(box.bounds))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void UpdateHologramColor(bool isValid)
@@ -336,7 +414,11 @@ public class HammerBuildManager : MonoBehaviour
                 PlacedPropManager.Instance.RegisterProp(newProp, blueprintToPlace.prefabToBuild.name);
             }
         }
-
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.ReportAction("Build_" + blueprintToPlace.prefabToBuild.name, 1);
+        }
+        customYRotation = 0f;
         if (HasEnoughMaterials(blueprintToPlace))
         {
             // Vẫn còn đủ đồ -> Không làm gì cả, giữ nguyên trạng thái bóng mờ để người chơi click tiếp!

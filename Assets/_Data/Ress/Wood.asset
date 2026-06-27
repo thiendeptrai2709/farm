@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaterialItemData
   localizedDisplayName:
     m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
     m_TableEntryReference:
-      m_KeyId: 8517535189098496
+      m_KeyId: 5003
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -25,8 +25,8 @@ MonoBehaviour:
   itemType: 3
   isStackable: 1
   maxStack: 36
-  sellPrice: 10
-  buyPrice: 12
+  sellPrice: 8
+  buyPrice: 10
   materialCategory: 0
   references:
     version: 2

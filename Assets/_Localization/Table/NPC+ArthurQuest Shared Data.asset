@@ -1,0 +1,412 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: NPC+ArthurQuest Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: NPC+ArthurQuest
+  m_TableCollectionNameGuidString: fdf1f23efff172c4fbff78f565d559e3
+  m_Entries:
+  - m_Id: 1
+    m_Key: NPC_Barnaby_Greeting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Key: NPC_Barnaby_Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Key: NPC_Barnaby_Farewell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Key: NPC_Gareth_Greeting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Key: NPC_Gareth_Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Key: NPC_Gareth_Farewell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Key: NPC_Mason_Greeting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Key: NPC_Mason_Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: NPC_Mason_Farewell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: NPC_Flora_Greeting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: NPC_Flora_Trade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Key: NPC_Flora_Farewell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Key: NPC_Thomas_Greeting1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Key: NPC_Thomas_Greeting2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Key: NPC_Thomas_BusInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: NPC_Clara_Greeting1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Key: NPC_Clara_Wander
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Key: NPC_Clara_Advice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Key: NPC_Victor_Greeting1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Key: NPC_Victor_Advice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Key: NPC_Victor_Clinic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Key: NPC_Silas_PreForest1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Key: NPC_Silas_PreForest2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Key: NPC_Silas_PreForest3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Key: NPC_Martha_Normal1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Key: NPC_Martha_Normal2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Key: NPC_Martha_Normal3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Key: NPC_Oliver_Normal1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Key: NPC_Oliver_Normal2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Key: NPC_Oliver_Normal3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Key: NPC_Arthur_MeetTown1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Key: Quest_Arthur_Q1_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Key: Quest_Arthur_Q1_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Key: Quest_Arthur_Q1_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Key: Quest_Arthur_Q1_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Key: Quest_Arthur_Q2_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Key: Quest_Arthur_Q2_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Key: Quest_Arthur_Q2_Offer3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Key: Quest_Arthur_Q2_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42
+    m_Key: Quest_Arthur_Q2_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43
+    m_Key: Quest_Arthur_Q3_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44
+    m_Key: Quest_Arthur_Q3_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Key: Quest_Arthur_Q3_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Key: Quest_Arthur_Q3_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Key: Quest_Arthur_Q4_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Key: Quest_Arthur_Q4_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Key: Quest_Arthur_Q4_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Key: Quest_Arthur_Q4_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Key: Quest_Arthur_Q5_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Key: Quest_Arthur_Q5_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Key: Quest_Arthur_Q5_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Key: Quest_Arthur_Q5_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Key: Quest_Arthur_Q6_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Key: Quest_Arthur_Q6_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Key: Quest_Arthur_Q6_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Key: Quest_Arthur_Q6_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Key: Quest_Arthur_Q7_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Key: Quest_Arthur_Q7_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Key: Quest_Arthur_Q7_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Key: Quest_Arthur_Q7_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Key: Quest_Arthur_Q8_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Key: Quest_Arthur_Q8_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Key: Quest_Arthur_Q8_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Key: Quest_Arthur_Q8_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Key: Quest_Arthur_Q9_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Key: Quest_Arthur_Q9_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69
+    m_Key: Quest_Arthur_Q9_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Key: Quest_Arthur_Q9_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 71
+    m_Key: Quest_Arthur_Q10_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72
+    m_Key: Quest_Arthur_Q10_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73
+    m_Key: Quest_Arthur_Q10_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74
+    m_Key: Quest_Arthur_Q10_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75
+    m_Key: Quest_Arthur_Q11_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76
+    m_Key: Quest_Arthur_Q11_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77
+    m_Key: Quest_Arthur_Q11_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 78
+    m_Key: Quest_Arthur_Q11_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79
+    m_Key: Quest_Arthur_Q12_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80
+    m_Key: Quest_Arthur_Q12_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81
+    m_Key: Quest_Arthur_Q12_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82
+    m_Key: Quest_Arthur_Q12_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 95
+    m_Key: Quest_Arthur_Q13_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 96
+    m_Key: Quest_Arthur_Q13_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97
+    m_Key: Quest_Arthur_Q13_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98
+    m_Key: Quest_Arthur_Q13_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240
+    m_Key: Quest_Clara_Radish_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 241
+    m_Key: Quest_Clara_Radish_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 242
+    m_Key: Quest_Clara_Radish_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 243
+    m_Key: Quest_Clara_Radish_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247
+    m_Key: Quest_Clara_Potato_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248
+    m_Key: Quest_Clara_Potato_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249
+    m_Key: Quest_Clara_Potato_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250
+    m_Key: Quest_Clara_Potato_Complete1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254
+    m_Key: Quest_Clara_Mango_Offer1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 255
+    m_Key: Quest_Clara_Mango_Offer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256
+    m_Key: Quest_Clara_Mango_InProgress1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257
+    m_Key: Quest_Clara_Mango_Complete1
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7524124534178840703
+  references:
+    version: 2
+    RefIds:
+    - rid: 7524124534178840703
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1781863011634

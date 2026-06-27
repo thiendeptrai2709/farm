@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 
 public class FarmPlotUIManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class FarmPlotUIManager : MonoBehaviour
     [Header("UI Panels & Elements")]
     public GameObject plotPanel;
     public Image seedIcon;       // Cục ảnh hạt giống sẽ hiện lên khi thả vào
+    public TextMeshProUGUI seedNameText; // [THÊM MỚI]: Text hiển thị tên hạt giống
     public Button plantButton;   // Nút bấm "Plant"
     public Button closeButton;   // Nút bấm "X" để tắt
 
@@ -72,11 +74,15 @@ public class FarmPlotUIManager : MonoBehaviour
         sourceStorage = default;
         sourceIndex = -1;
 
-        // Xóa ảnh
+        // Xóa ảnh và Xóa Text
         if (seedIcon != null)
         {
             seedIcon.sprite = null;
             seedIcon.enabled = false;
+        }
+        if (seedNameText != null)
+        {
+            seedNameText.text = ""; // Xóa trắng tên khi chưa chọn hạt
         }
 
         // Khóa nút Trồng
@@ -121,6 +127,10 @@ public class FarmPlotUIManager : MonoBehaviour
         {
             seedIcon.sprite = seedData.icon;
             seedIcon.enabled = true;
+        }
+        if (seedNameText != null)
+        {
+            seedNameText.text = seedData.displayName; // Lấy tên đã được dịch
         }
 
         // Mở khóa nút Bấm Trồng
@@ -186,6 +196,10 @@ public class FarmPlotUIManager : MonoBehaviour
         {
             seedIcon.sprite = seedData.icon;
             seedIcon.enabled = true;
+        }
+        if (seedNameText != null)
+        {
+            seedNameText.text = seedData.displayName; // Lấy tên đã được dịch
         }
         if (seedDropSlot != null)
         {

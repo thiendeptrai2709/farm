@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a0ba6983696b44789e1c1f915a5709, type: 3}
+  m_Name: The Forest Catch
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  questID: Quest_Title_Homeless_Fish
+  isAutoStoryQuest: 1
+  questName:
+    m_TableReference:
+      m_TableCollectionName: GUID:a2eb61f0f8a3b3148a413dfa824ffce2
+    m_TableEntryReference:
+      m_KeyId: 237
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:a2eb61f0f8a3b3148a413dfa824ffce2
+    m_TableEntryReference:
+      m_KeyId: 238
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  requiredPreviousQuest: {fileID: 11400000, guid: 95e644033b20c994da5f18fa5ef47d8f, type: 2}
+  requiredDay: 0
+  questType: 0
+  requiredItems:
+  - item: {fileID: 11400000, guid: cc8489fd381d3634fa58086d7e39aca3, type: 2}
+    amount: 2
+    consumeItem: 1
+  - item: {fileID: 11400000, guid: 474e5aa6ea0404e45a45fac2a31d9321, type: 2}
+    amount: 3
+    consumeItem: 1
+  - item: {fileID: 11400000, guid: e158378e7700d08418f2ae5220445aa8, type: 2}
+    amount: 5
+    consumeItem: 1
+  requiredActions: []
+  coinReward: 0
+  itemRewards:
+  - item: {fileID: 11400000, guid: 17ed0a15d584e5548916c4478c1468de, type: 2}
+    amount: 320
+  offerLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 233
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 234
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  inProgressLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 235
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  completeLines:
+  - m_TableReference:
+      m_TableCollectionName: GUID:1401744f5dbd7ac4fa86402eb4d68c19
+    m_TableEntryReference:
+      m_KeyId: 236
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []

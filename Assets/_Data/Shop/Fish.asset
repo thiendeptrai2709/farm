@@ -12,20 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b27825fe41f6a4e88bd28809721530, type: 3}
   m_Name: Fish
   m_EditorClassIdentifier: Assembly-CSharp::ShopData
-  localizedNpcName:
-    m_TableReference:
-      m_TableCollectionName: GUID:b128b4439333ee54ea4f487b9b6033f3
-    m_TableEntryReference:
-      m_KeyId: 15254157553229824
-      m_Key: 
-    m_FallbackState: 0
-    m_WaitForCompletion: 0
-    m_LocalVariables: []
-  merchantMoney: 1984
-  minDailyMoney: 500
-  maxDailyMoney: 2000
+  npcName: Barnaby
+  merchantMoney: 2978
+  minDailyMoney: 10000
+  maxDailyMoney: 100000
   maxShopSlots: 10
-  itemsForSale: []
+  itemsForSale:
+  - item: {fileID: 11400000, guid: 5af0f2f2488fd8b41bffba0fb6d04e7b, type: 2}
+    currentQuantity: 9
+  - item: {fileID: 11400000, guid: fcb7e43650cadf745966b9950360477c, type: 2}
+    currentQuantity: 2
+  - item: {fileID: 11400000, guid: 6a516b6bf16609a4d9826f6d7e72b224, type: 2}
+    currentQuantity: 1
+  - item: {fileID: 11400000, guid: 238194f49a1301e4595658d4ff64ac65, type: 2}
+    currentQuantity: 1
+  - item: {fileID: 11400000, guid: ebe2b190ccc3ed240b3348d846c96cdb, type: 2}
+    currentQuantity: 7
+  - item: {fileID: 11400000, guid: 8eeefd20dc9f90b4d8b3a9184692c52b, type: 2}
+    currentQuantity: 5
+  - item: {fileID: 11400000, guid: fdf4a92329f957541aa5e9dc334a0c01, type: 2}
+    currentQuantity: 10
+  - item: {fileID: 11400000, guid: cc8489fd381d3634fa58086d7e39aca3, type: 2}
+    currentQuantity: 3
+  - item: {fileID: 11400000, guid: 99814633cfd52734cadc1a22fd268ce7, type: 2}
+    currentQuantity: 7
+  - item: {fileID: 11400000, guid: 37f5b6a41e7eae44eb9e148da2898cfa, type: 2}
+    currentQuantity: 2
   possibleItemsToSell:
   - {fileID: 11400000, guid: cc8489fd381d3634fa58086d7e39aca3, type: 2}
   - {fileID: 11400000, guid: 84a497b49bc60f64387375faa3ed7f88, type: 2}
@@ -50,8 +62,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 238194f49a1301e4595658d4ff64ac65, type: 2}
   - {fileID: 11400000, guid: fcb7e43650cadf745966b9950360477c, type: 2}
   - {fileID: 11400000, guid: 6fc9955d438ed5b40ab5926f5bee0463, type: 2}
+  - {fileID: 11400000, guid: d63bb4a8409b23f4a97d112536f2bf11, type: 2}
+  - {fileID: 11400000, guid: ac86da6d7ca5fc8418f7a596263f7e27, type: 2}
+  - {fileID: 11400000, guid: 1e61cfe13684c0c49a2db14f0b91ed43, type: 2}
+  - {fileID: 11400000, guid: 2883c7de5f264ef42aaa1bbf1e3379f1, type: 2}
+  - {fileID: 11400000, guid: dc52daf8a4c521248a79e3fb4f13358f, type: 2}
+  - {fileID: 11400000, guid: 61f320a35b0efe04b8ad5c008c0ba424, type: 2}
+  - {fileID: 11400000, guid: e158378e7700d08418f2ae5220445aa8, type: 2}
+  - {fileID: 11400000, guid: f112c79d9e667d941a7683392f63481e, type: 2}
   minQuantity: 1
   maxQuantity: 10
-  references:
-    version: 2
-    RefIds: []

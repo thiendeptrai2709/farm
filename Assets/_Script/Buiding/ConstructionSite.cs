@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
-
+using UnityEngine.Localization;
 // Kế thừa IInteractable để dùng chung hệ thống tương tác bằng phím E
 public class ConstructionSite : MonoBehaviour, IInteractable
 {
     public string siteID;
+
+    
+    public LocalizedString locInteractText;
+    public LocalizedString locNeedHammer;
 
     [Header("Bản vẽ của khu đất này")]
     public BuildingBlueprint myBlueprint;
@@ -63,6 +67,15 @@ public class ConstructionSite : MonoBehaviour, IInteractable
         // UI Nộp đồ báo là đã đủ đồ, khánh thành đi!
         currentState = SiteState.Completed;
         UpdateVisuals();
+        if (QuestManager.Instance != null && myBlueprint != null)
+        {
+            // Báo cáo chung chung là vừa xây xong một cái gì đó
+            QuestManager.Instance.ReportAction("Build_Any", 1);
+
+            // Báo cáo đích danh tên của cái nhà vừa xây (Dùng tên file Blueprint làm mã)
+            // VD: Xây giếng nước -> Báo cáo "Build_Blueprint_Well"
+            QuestManager.Instance.ReportAction("Build_" + myBlueprint.name, 1);
+        }
     }
 
     private void UpdateVisuals()
@@ -80,31 +93,58 @@ public class ConstructionSite : MonoBehaviour, IInteractable
             this.enabled = false;
         }
     }
-
-    // ==========================================
-    // HỆ THỐNG TƯƠNG TÁC PHÍM E (CỦA ÔNG)
-    // ==========================================
-
     public string GetInteractText()
     {
-        // Chỉ hiện chữ [E] Thi Công khi nó đang là Hàng Rào
-        return (currentState == SiteState.Pending) ? $"[E] Thi Công {myBlueprint.buildingName}" : "";
+        if (currentState == SiteState.Pending)
+        {
+            if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.axeCost)
+            {
+                return ""; // Đuối sức thì giấu chữ luôn
+            }
+
+            // Kiểm tra xem trên tay có đang cầm Búa không
+            bool isHoldingHammer = false;
+            if (InventoryManager.Instance != null && InventoryManager.Instance.selectedHotbarIndex != -1)
+            {
+                ItemData holdingItem = InventoryManager.Instance.hotbarSlots[InventoryManager.Instance.selectedHotbarIndex].item;
+                if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Hammer)
+                {
+                    isHoldingHammer = true;
+                }
+            }
+
+            // Xử lý hiển thị chữ dựa vào việc có búa hay không
+            if (isHoldingHammer)
+            {
+                string prefix = locInteractText.IsEmpty ? "[E] Thi Công" : locInteractText.GetLocalizedString();
+                return $"{prefix} {myBlueprint.buildingName}";
+            }
+            else
+            {
+                return locNeedHammer.IsEmpty ? "Cần cầm Búa (Hammer)" : locNeedHammer.GetLocalizedString();
+            }
+        }
+        return "";
     }
 
     public void Interact()
     {
-        // 1. Lấy vị trí ô Hotbar đang chọn
         int selectedIndex = InventoryManager.Instance.selectedHotbarIndex;
 
-        // 2. Kiểm tra xem tay có đang cầm đồ không
         if (selectedIndex != -1)
         {
             ItemData holdingItem = InventoryManager.Instance.hotbarSlots[selectedIndex].item;
 
-            // 3. Kiểm tra xem món đó có phải là Tool và có phải là Búa (Hammer) không
             if (holdingItem is ToolItemData tool && tool.toolType == ToolType.Hammer)
             {
-                // [ĐÚNG LÀ BÚA] -> Cho phép mở bảng UI nộp vật liệu!
+                // [CHẶN THỂ LỰC]: Kiểm tra máu TRƯỚC KHI bung bảng UI
+                if (PlayerStamina.Instance != null && PlayerStamina.Instance.currentStamina < PlayerStamina.Instance.axeCost)
+                {
+                    if (StaminaUIManager.Instance != null) StaminaUIManager.Instance.ShowNotEnoughWarning();
+                    return; // Đuối sức -> cấm mở bảng
+                }
+
+                // Đủ sức, đúng búa -> Mở bảng UI
                 SiteConstructionUIManager.Instance.OpenUI(this);
             }
             else

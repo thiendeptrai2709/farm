@@ -57,6 +57,40 @@ public class PlayerInputHandler : MonoBehaviour
 
         ScrollValue = controls.Player.HotbarScroll.ReadValue<Vector2>().y;
 
+        bool isExpansionOpen = (FarmExpansionManager.Instance != null && FarmExpansionManager.Instance.IsExpansionModeActive());
+
+        if (PauseMenuManager.isCutscenePlaying || isExpansionOpen )
+        {
+            MoveInput = Vector2.zero;
+            IsRunning = false;
+
+            InventoryTriggered = false;   // Cấm mở Balo
+            BuildMenuTriggered = false;   // Cấm mở Xây dựng
+            JournalTriggered = false;     // Cấm mở Sổ tay
+            MenuTriggered = false;        // Cấm mở Menu
+            InteractTriggered = false;    // Cấm bấm E tương tác bậy bạ
+            ClickTriggered = false;       // Cấm vung tool
+            JumpTriggered = false;        // Cấm nhảy
+            ScrollValue = 0f;             // Cấm lăn chuột đổi đồ luôn
+            OnSplitActionTriggered = null; // Cấm tách đồ
+            OnTrashActionTriggered = null; // Cấm vứt đồ
+        }
+        FishingZone fishingZone = FindFirstObjectByType<FishingZone>();
+        if (fishingZone != null && fishingZone.currentState != FishingZone.FishingState.NotFishing)
+        {
+            MoveInput = Vector2.zero;
+            IsRunning = false;
+
+            InventoryTriggered = false;
+            BuildMenuTriggered = false;
+            JournalTriggered = false;
+            MenuTriggered = false;
+            ClickTriggered = false;
+            JumpTriggered = false;
+            ScrollValue = 0f;
+            OnSplitActionTriggered = null;
+            OnTrashActionTriggered = null;
+        }
         if (ClickTriggered && InventoryManager.Instance != null && !InventoryManager.Instance.isEating)
         {
             // Kiểm tra xem có đang mở UI nào đè lên game không (tránh click xuyên UI)
@@ -107,7 +141,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             OnSplitActionTriggered?.Invoke();
         }
-        if (controls.Player.TrashItem.WasPressedThisFrame()) // NHỚ ĐẶT TÊN TRONG INPUT SYSTEM LÀ TrashItem
+        if (controls.Player.TrashItem.WasPressedThisFrame()) 
         {
             OnTrashActionTriggered?.Invoke();
         }
@@ -115,7 +149,8 @@ public class PlayerInputHandler : MonoBehaviour
         bool isPlacingBuilding = (HammerBuildManager.Instance != null && HammerBuildManager.Instance.IsCurrentlyPlacing());
         bool isHammerUIOpen = (HammerUIManager.Instance != null && HammerUIManager.Instance.IsOpen());
         bool isBusUIOpen = (BusUI.Instance != null && BusUI.Instance.IsOpen());
-        if (!isPlacingBuilding && !isHammerUIOpen && !isBusUIOpen)
+        bool isNoticeBoardOpen = (NoticeBoardUIManager.Instance != null && NoticeBoardUIManager.Instance.IsOpen());
+        if (!isPlacingBuilding && !isHammerUIOpen && !isBusUIOpen && !isNoticeBoardOpen)
         {
             InventoryManager.Instance.ScrollHotbar(ScrollValue);
         }

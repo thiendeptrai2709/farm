@@ -4,7 +4,7 @@ using UnityEngine.Localization;
 public class BusStop : MonoBehaviour, IInteractable
 {
     public BusVehicle myBus;
-    public LocalizedString interactText; // Chức năng: Lưu trữ key đa ngôn ngữ
+    public LocalizedString interactText; 
     public string stationRoutingData;
     public string GetInteractText()
     {

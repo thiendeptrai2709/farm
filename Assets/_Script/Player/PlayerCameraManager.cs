@@ -22,6 +22,7 @@ public class PlayerCameraManager : MonoBehaviour
     private bool isPauseMenuOpen = false;
     private bool isSleepUIOpen = false;
     private bool isNoticeBoardOpen = false;
+    private bool isFarmExpansionOpen = false;
 
     public Behaviour cameraInputProvider;
     public GameObject cameraObject;
@@ -139,6 +140,11 @@ public class PlayerCameraManager : MonoBehaviour
         isNoticeBoardOpen = isOpen;
         UpdateCursorState();
     }
+    public void SetFarmExpansionOpenState(bool isOpen)
+    {
+        isFarmExpansionOpen = isOpen;
+        UpdateCursorState();
+    }
     private void Update()
     {
         // 1. NÚT TAB: Bật/Tắt túi đồ
@@ -208,7 +214,7 @@ public class PlayerCameraManager : MonoBehaviour
     // Hàm tổng hợp: Chỉ khóa chuột khi TẤT CẢ các bảng UI đều đang tắt
     private void UpdateCursorState()
     {
-        if (isPauseMenuOpen || isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen || isSleepUIOpen || isNoticeBoardOpen)
+        if (isFarmExpansionOpen || isPauseMenuOpen || isInventoryOpen || isChestOpen || isPlotUIOpen || isShopOpen || isBuilderOpen || isSiteUIOpen || isHammerOpen || isAnimalUIOpen || isFoodTroughOpen || isBusUIOpen || isSleepUIOpen || isNoticeBoardOpen)
         {
             SetCursorState(false); // Nhả chuột ra để kéo thả UI
 

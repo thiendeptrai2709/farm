@@ -103,6 +103,8 @@ public class GameData
     public int savedHour;
     public int savedMinute;
     public int selectedHotbarIndex;
+    public float currentStamina;
+    public float maxStamina;
 
     public List<SavedSlotData> hotbarData;
     public List<SavedSlotData> inventoryData;
@@ -165,6 +167,8 @@ public class GameData
         savedNPCs = new List<SavedNPCData>();
         unlockedBusStops = new List<string>();
         selectedHotbarIndex = -1;
+        currentStamina = 100f;
+        maxStamina = 100f;
         collectedBoneIDs = new List<string>();
         isSkeletonRisen = false;
         isQuestStarted = false;

@@ -12,18 +12,10 @@ public class ShopInventoryItem
 [CreateAssetMenu(fileName = "New Shop", menuName = "Market/Shop Data")]
 public class ShopData : ScriptableObject
 {
-    [Header("Đa Ngôn Ngữ")]
-    public LocalizedString localizedNpcName; // [THÊM MỚI] Biến chứa Key dịch tên chủ sạp
 
     [Header("Thông tin chủ sạp")]
-    // Chức năng: Đọc tên NPC từ bảng dịch, nếu rỗng thì lấy tạm tên file ScriptableObject
-    public string npcName
-    {
-        get
-        {
-            return localizedNpcName.IsEmpty ? name : localizedNpcName.GetLocalizedString();
-        }
-    }
+    public string npcName = "Chủ Sạp";
+   
 
     [Header("Ví tiền của NPC (Hiển thị UI)")]
     public int merchantMoney = 1000;
