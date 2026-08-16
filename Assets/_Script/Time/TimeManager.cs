@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using TMPro;
 using System; // THÊM DÒNG NÀY: Để dùng thư viện Sự kiện (Action)
+using UnityEngine.Localization;
 
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance;
+    public LocalizedString locDayPrefix;
 
     [Header("Thời gian trong Game")]
     public int daysInGame = 1;
@@ -39,6 +41,10 @@ public class TimeManager : MonoBehaviour
     }
     private void UpdateDayUI()
     {
-        if (dayUI != null) dayUI.text = "Day: " + daysInGame;
+        if (dayUI != null)
+        {
+            string prefix = locDayPrefix.IsEmpty ? "Day:" : locDayPrefix.GetLocalizedString();
+            dayUI.text = $"{prefix} {daysInGame}";
+        }
     }
 }

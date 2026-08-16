@@ -7288,8 +7288,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5aad4633346de9478d5766205bc465d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
+  locDayPrefix:
+    m_TableReference:
+      m_TableCollectionName: GUID:e2cb65efd6a4e7849b42de1cb27264d9
+    m_TableEntryReference:
+      m_KeyId: 9412
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   daysInGame: 1
   dayUI: {fileID: 7340575466139544856}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &2799021537490195095
 GameObject:
   m_ObjectHideFlags: 0
@@ -7568,7 +7580,7 @@ GameObject:
   - component: {fileID: 3459745099808109657}
   - component: {fileID: 4640846755545867640}
   m_Layer: 0
-  m_Name: QuestListManager
+  m_Name: QuestListUiManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

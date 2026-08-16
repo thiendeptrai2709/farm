@@ -35,13 +35,7 @@ public class QuestManager : MonoBehaviour
         if (!activeQuests.Contains(quest) && !completedQuests.Contains(quest.questID))
         {
             activeQuests.Add(quest);
-            if (quest.questType == QuestType.Action && quest.requiredActions != null)
-            {
-                foreach (var act in quest.requiredActions)
-                {
-                    actionProgress[quest.questID + "_" + act.actionName] = 0;
-                }
-            }
+            // [ĐÃ SỬA]: Không reset tiến độ action về 0 nữa, để giữ lại những việc người chơi đã làm từ trước.
             Debug.Log($"Đã nhận nhiệm vụ: {quest.questName}");
             if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Quest_Accept");
         }
@@ -119,7 +113,8 @@ public class QuestManager : MonoBehaviour
             if (quest.requiredActions == null || quest.requiredActions.Count == 0) return true;
             foreach (var act in quest.requiredActions)
             {
-                string key = quest.questID + "_" + act.actionName;
+                // [ĐÃ SỬA]: Chỉ dùng tên hành động làm key (để lấy dữ liệu tổng thể người chơi đã làm)
+                string key = act.actionName;
 
                 int progress = actionProgress.ContainsKey(key) ? actionProgress[key] : 0;
                 if (progress < act.amount) return false;
@@ -131,26 +126,19 @@ public class QuestManager : MonoBehaviour
 
     public void ReportAction(string actionName, int amount = 1)
     {
-        bool hasChanged = false;
-        foreach (QuestData q in activeQuests)
+        if (!actionProgress.ContainsKey(actionName))
         {
-            if (q.questType == QuestType.Action && q.requiredActions != null)
-            {
-                foreach (var act in q.requiredActions)
-                {
-                    if (act.actionName == actionName)
-                    {
-                        string key = q.questID + "_" + actionName;
-                        if (!actionProgress.ContainsKey(key)) actionProgress[key] = 0;
-                        actionProgress[key] += amount;
-                        hasChanged = true;
-                        Debug.Log($"Tiến độ {q.questName}: {actionProgress[key]}/{act.amount}");
-                    }
-                }
-            }
+            actionProgress[actionName] = 0;
         }
-        if (hasChanged && QuestJournalUIManager.Instance != null && QuestJournalUIManager.Instance.IsOpen())
+        actionProgress[actionName] += amount;
+
+        Debug.Log($"Đã ghi nhận hành động: {actionName} (Tổng: {actionProgress[actionName]})");
+
+        // Refresh UI nếu bảng nhiệm vụ đang mở
+        if (QuestJournalUIManager.Instance != null && QuestJournalUIManager.Instance.IsOpen())
+        {
             QuestJournalUIManager.Instance.RefreshJournal();
+        }
     }
     public QuestStatus GetQuestStatus(QuestData quest)
     {
