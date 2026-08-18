@@ -3006,7 +3006,6 @@ GameObject:
   - component: {fileID: 7746749957473953950}
   - component: {fileID: 4011907886997494523}
   - component: {fileID: 8689419364611282507}
-  - component: {fileID: 7606727400456296962}
   m_Layer: 5
   m_Name: InteractionCanvas
   m_TagString: Untagged
@@ -3113,19 +3112,6 @@ MonoBehaviour:
   promptPanel: {fileID: 8807414338852089875}
   promptText: {fileID: 8065769820619062188}
   progressBar: {fileID: 3353516021067509511}
---- !u!114 &7606727400456296962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1320423746048564967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e03d108b53204a43bd92d2608e71682, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableOutline
-  outlineLayerIndex: 8
 --- !u!1 &1350039495447805336
 GameObject:
   m_ObjectHideFlags: 0

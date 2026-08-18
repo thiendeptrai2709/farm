@@ -11,7 +11,7 @@ public class FarmingZone : MonoBehaviour, IInteractable
     [SerializeField] private TerrainPainter terrainPainter;
 
     [Header("Grid Settings")]
-    public float gridSize = 1.2f;
+    public float gridSize = 1f;
     public Vector3 gridOffset;
 
     [Header("Prefabs (Kéo 2 loại vào đây)")]
