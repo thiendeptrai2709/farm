@@ -8,9 +8,11 @@ public class PlayerScanner : MonoBehaviour
     public float interactAngle = 90f;
     public Vector3 checkOffset = new Vector3(0, 1f, 0);
     public LayerMask interactableLayer;
+    public int outlineLayerIndex = 8;
 
-    // Biến này để Public Getter cho file Interaction nó đọc được
     public IInteractable currentTarget { get; private set; }
+    private GameObject currentOutlineObject;
+    private System.Collections.Generic.Dictionary<GameObject, int> originalLayers = new System.Collections.Generic.Dictionary<GameObject, int>();
 
     private void Update()
     {
@@ -31,6 +33,8 @@ public class PlayerScanner : MonoBehaviour
 
         if (currentTarget is FarmPlot p) p.SetTargeted(false);
         else if (currentTarget is TreePit t) t.SetTargeted(false);
+
+        DisableCurrentOutline();
 
         currentTarget = null;
     }
@@ -111,6 +115,8 @@ public class PlayerScanner : MonoBehaviour
 
         if (currentTarget != bestInteractable)
         {
+            DisableCurrentOutline();
+
             if (currentTarget is FarmPlot oldPlot) oldPlot.SetTargeted(false);
             else if (currentTarget is TreePit oldPit) oldPit.SetTargeted(false);
 
@@ -118,6 +124,11 @@ public class PlayerScanner : MonoBehaviour
 
             if (currentTarget is FarmPlot newPlot) newPlot.SetTargeted(true);
             else if (currentTarget is TreePit newPit) newPit.SetTargeted(true);
+
+            if (currentTarget is MonoBehaviour newMono)
+            {
+                EnableOutline(newMono.gameObject);
+            }
         }
 
         if (currentTarget != null)
@@ -196,5 +207,37 @@ public class PlayerScanner : MonoBehaviour
 
         Gizmos.DrawRay(checkPos, leftBound * interactRadius);
         Gizmos.DrawRay(checkPos, rightBound * interactRadius);
+    }
+    private void EnableOutline(GameObject targetObj)
+    {
+        currentOutlineObject = targetObj;
+        originalLayers.Clear();
+        StoreAndSetLayer(targetObj.transform, outlineLayerIndex);
+    }
+
+    private void DisableCurrentOutline()
+    {
+        if (currentOutlineObject == null) return;
+
+        foreach (var kvp in originalLayers)
+        {
+            if (kvp.Key != null)
+            {
+                kvp.Key.layer = kvp.Value;
+            }
+        }
+        originalLayers.Clear();
+        currentOutlineObject = null;
+    }
+
+    private void StoreAndSetLayer(Transform parent, int newLayer)
+    {
+        originalLayers[parent.gameObject] = parent.gameObject.layer;
+        parent.gameObject.layer = newLayer;
+
+        foreach (Transform child in parent)
+        {
+            StoreAndSetLayer(child, newLayer);
+        }
     }
 }
