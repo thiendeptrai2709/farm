@@ -117,6 +117,9 @@ public class FarmingZone : MonoBehaviour, IInteractable
         UpdateTargetGrid();
         PulseBoundaryVisual();
     }
+
+    [HideInInspector] public bool forceShowBoundary = false; // [ĐÃ THÊM] Cờ ép bật viền cho kịch bản
+
     private void PulseBoundaryVisual()
     {
         if (boundaryLine == null || lineMaterial == null) return;
@@ -138,8 +141,8 @@ public class FarmingZone : MonoBehaviour, IInteractable
         }
         wasHoldingToolLastFrame = isCurrentlyHoldingTool;
 
-        // 3. Xử lý hiển thị (CHỈ CẦN TIMER > 0 LÀ CHẠY, ĐẾCH CẦN BIẾT CẦM GÌ)
-        bool shouldShow = currentShowTimer > 0;
+        // 3. Xử lý hiển thị (CHỈ CẦN TIMER > 0 HOẶC CỜ FORCE = TRUE)
+        bool shouldShow = currentShowTimer > 0 || forceShowBoundary;
         boundaryLine.gameObject.SetActive(shouldShow);
 
         if (shouldShow)
@@ -151,10 +154,10 @@ public class FarmingZone : MonoBehaviour, IInteractable
             float wave = (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f;
             float currentAlpha = Mathf.Lerp(0.05f, maxAlpha, wave);
 
-            // Hiệu ứng Fade out mượt mà trong 1 giây cuối
-            if (currentShowTimer < 1f)
+            // Hiệu ứng Fade out mượt mà trong 1 giây cuối (Chỉ tính khi KHÔNG bị ép sáng)
+            if (currentShowTimer < 1f && !forceShowBoundary)
             {
-                currentAlpha *= currentShowTimer;
+                currentAlpha *= Mathf.Max(0f, currentShowTimer);
             }
 
             c.a = currentAlpha;
